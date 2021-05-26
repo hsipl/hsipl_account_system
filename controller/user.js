@@ -4,6 +4,7 @@ const {
   encrypt: encryptPassword,
   decrypt: decryptPassword,
 } = require("../utils/encryptPassword");
+const TokenController = require("../utils/tokenController");
 
 class UserController {
   async register(req, res, next) {
@@ -51,10 +52,18 @@ class UserController {
     if (!checkPassword) {
       return next(errorHandler.infoErr());
     }
+
+    const token = await TokenController.signToken({
+      id: user._id,
+      name: user.name,
+    });
+
     res.status(200).json({
       msg: `Login Suceess.Welcome back ${user.name} `,
+      token: token,
     });
   }
+  
 }
 
 module.exports = new UserController();
