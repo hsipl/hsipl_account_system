@@ -5,4 +5,5 @@ const TokenController = require("../utils/tokenController");
 
 router.post("/", UserController.register);
 router.post("/login", UserController.login);
+router.get("/",TokenController.verifyToken,UserController.getUser)
 module.exports = router;

@@ -63,6 +63,15 @@ class UserController {
       token: token,
     });
   }
+  async getUser(req, res, next) {
+    const { name } = req.user;
+    const user = await User.findOne({ name: name });
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      money: user.money,
+    });
+  }
   
 }
 

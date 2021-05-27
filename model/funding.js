@@ -1,35 +1,58 @@
 const mongoose = require("mongoose");
-
-const fundingSchema = new mongoose.Schema(
-  {
-    items: {
-      type: String,
-      require: true,
-    },
-    cost: {
-      type: Number,
-      require: true,
-    },
-    purchaseDate: {
-      type: Date,
-      requrie: true,
-    },
-    payer_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    recorder_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    recorder_ip: {
-      type: String,
-      required: true,
-    },
+const timeZone = require("mongoose-timezone");
+const fundingSchema = new mongoose.Schema({
+  types: {
+    type: String,
+    require: true,
   },
-  { timestamps: true }
-);
+  items: {
+    type: String,
+    require: true,
+  },
+  cost: {
+    type: Number,
+    require: true,
+  },
+  purchaseDate: {
+    type: Date,
+    requrie: true,
+  },
+  payer_id: {
+    type: "String",
+    ref: "User",
+  },
+  recorder_id: {
+    type: "String",
+    ref: "User",
+  },
+  recorder_ip: {
+    type: String,
+    required: true,
+  },
+  isDelete: {
+    type: Boolean,
+    require: true,
+    default: false,
+  },
+  createdAt: {
+    type: String,
+    require: true,
+  },
+  updatedAt: {
+    type: Array,
+    require: true,
+  },
+});
+fundingSchema.pre("save", function (next) {
+  this.createdAt = new Date().toLocaleString();
+  this.updatedAt.push(new Date().toLocaleString());
 
-const funding = mongoose.model("Funding",fundingSchema)
+  next();
+});
+fundingSchema.pre("findOneAndUpdate", function (next) {
+  this._update["$push"] = { updatedAt: new Date().toLocaleString() };
+  next();
+});
+const funding = mongoose.model("Funding", fundingSchema);
 
-module.exports = funding
+module.exports = funding;

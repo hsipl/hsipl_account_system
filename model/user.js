@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const timeZone = require("mongoose-timezone");
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -26,13 +26,10 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps:true,
+    timestamps: true,
   }
 );
+userSchema.plugin(timeZone);
+const user = mongoose.model("User", userSchema);
 
-const user = mongoose.model("User",userSchema)
-
-
-
-
-module.exports = user
+module.exports = user;

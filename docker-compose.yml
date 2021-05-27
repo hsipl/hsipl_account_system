@@ -1,0 +1,15 @@
+version: "0.1"
+services:
+    backend:
+        container_name:docker-lab_account
+        restart:always
+        build:.
+        ports:
+          -  '3003:3003'
+        link:
+          - mongo
+    mongo:
+        container_name:mongo
+        image:mongo
+        ports:
+          - '27017:27017'
