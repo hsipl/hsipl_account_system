@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyparser = require("body-parser")
+const cors = require("cors")
 const connectDb = require("./server/db");
 const apiErrorHandler = require("./middleware/api-errorHandler")
 const userSchema = require("./model/user");
@@ -8,7 +9,7 @@ const fundRoute = require("./router/fund")
 const app = express();
 
 connectDb();
-
+app.use(cors())
 app.use(bodyparser.json())
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)
