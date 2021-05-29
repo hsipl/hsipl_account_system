@@ -20,7 +20,7 @@ describe("POST /api/user", () => {
   let data = {
     username: "123",
     password: "456",
-  };
+  };   
   test("success", async () => {
     const res = await testUser();
     expect(res.status).toBe(201);
