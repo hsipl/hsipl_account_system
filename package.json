@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test":"jest --watch",
+    "test":"jest",
     "dev": "nodemon server.js",
-    "test-fund":"jest fund.test.js --watch",
+    "test-fund":"jest fund.test.js ",
     "start":"node server.js"
   },
   "keywords": [],

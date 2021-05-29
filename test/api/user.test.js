@@ -4,14 +4,14 @@ const User = require("../../model/user");
 const mongoose = require("mongoose");
 const { testUser, getToken } = require("../testUser");
 
-beforeEach(async () => {
+beforeAll(async () => {
   await mongoose.connect(
     "mongodb+srv://p5341500:5341500@cluster0.n2jal.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
   );
   await User.deleteMany();
 });
 
-afterEach(async () => {
+afterAll(async () => {
   await User.deleteMany();
   mongoose.disconnect();
 });
