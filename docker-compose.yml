@@ -1,15 +1,19 @@
 version: "0.1"
 services:
     backend:
-        container_name:docker-lab_account
-        restart:always
-        build:.
+        restart: always
+        build: .
         ports:
-          -  '3003:3003'
-        link:
+          -  3003:3003
+        links:
           - mongo
+        volumes:
+          - .:/usr/src/app
     mongo:
-        container_name:mongo
-        image:mongo
+        image: mongo
         ports:
-          - '27017:27017'
+          - 27017:27017
+        volumes: 
+          - mongodbdata:/data/db
+
+        
