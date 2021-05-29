@@ -9,9 +9,9 @@ const TokenController = require("../utils/tokenController");
 
 class FundController {
   async getAll(req, res, next) {
-    const allFunding = await Funding.find({ isDelete: false }).select(
-      "-recorder_ip -createdAt -updatedAt -__v -isDelete"
-    ).sort("-_id");
+    const allFunding = await Funding.find({ isDelete: false })
+      .select("-recorder_ip -createdAt -updatedAt -__v -isDelete")
+      .sort("-_id");
     res.status(200).json(allFunding);
   }
   async post(req, res, next) {
@@ -73,8 +73,11 @@ class FundController {
         upsert: true,
         setDefaultsOnInsert: true,
       };
+
       const funding = await Funding.findOneAndUpdate(
-        fundingId,
+        {
+          _id: fundingId,
+        },
         {
           types,
           items,
@@ -97,9 +100,14 @@ class FundController {
       return next(errorHandler.infoErr());
     }
     try {
-      const funding = await Funding.findOneAndUpdate(fundingId, {
-        isDelete: true,
-      }).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
+      const funding = await Funding.findOneAndUpdate(
+        {
+          _id: fundingId,
+        },
+        {
+          isDelete: true,
+        }
+      ).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
       res.status(200).json({
         msg: "delete success.",
       });
