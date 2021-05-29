@@ -8,7 +8,6 @@ const userRoute = require("./router/user")
 const fundRoute = require("./router/fund")
 const app = express();
 
-connectDb();
 app.use(cors())
 app.use(bodyparser.json())
 app.use("/api/user",userRoute)
@@ -21,6 +20,5 @@ app.get("/test", (req, res) => {
 });
 
 app.use(apiErrorHandler);
-app.listen(3000, () => {
-  console.log("server is running on 3000.");
-});
+
+module.exports = app;
