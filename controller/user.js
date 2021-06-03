@@ -8,12 +8,12 @@ const TokenController = require("../utils/tokenController");
 
 class UserController {
   async register(req, res, next) {
-    const { name, username, password } = req.body;
+    const { name, username, password,money } = req.body;
     let { ip } = req;
     ip = ip.replace("::ffff", "").toString();
-    if (!ip.startsWith("140.125")) {
-      return next(errorHandler.accessError());
-    }
+    // if (!ip.startsWith("140.125")) {
+    //   return next(errorHandler.accessError());
+    // }
     if (!name || !username || !password) {
       return next(errorHandler.infoErr());
     }
@@ -31,7 +31,9 @@ class UserController {
       name: name,
       username: username,
       password: ePassword,
+
       money: money
+
     });
 
     if (createUser) {
