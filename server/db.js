@@ -5,7 +5,7 @@ dotenv.config();
 
 const connectDb = async () => {
   try {
-   const mongodb_url =
+    const mongodb_url =
       process.env.NODE_ENV === "development"
         ? process.env.MONGODB_URL
         : process.env.MONGODB_PROD;
@@ -20,6 +20,5 @@ const connectDb = async () => {
     process.exit(1);
   }
 };
-
 
 module.exports = connectDb;

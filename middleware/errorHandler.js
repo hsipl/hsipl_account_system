@@ -29,6 +29,12 @@ class errorHandler {
       msg: "token wrong,please login again.",
     };
   }
+  accessError(){
+    return {
+      statusCode:400,
+      msg:"access error."
+    }
+  }
 }
 
 module.exports = new errorHandler();
