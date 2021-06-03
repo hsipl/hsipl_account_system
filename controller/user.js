@@ -8,12 +8,17 @@ const TokenController = require("../utils/tokenController");
 
 class UserController {
   async register(req, res, next) {
-    const { name, username, password,money } = req.body;
+
+
+    const { name, username, password, money } = req.body;
+ 
     let { ip } = req;
     ip = ip.replace("::ffff", "").toString();
-    // if (!ip.startsWith("140.125")) {
-    //   return next(errorHandler.accessError());
-    // }
+    if (!ip.startsWith("140.125")) {
+      return next(errorHandler.accessError());
+    }
+
+
     if (!name || !username || !password) {
       return next(errorHandler.infoErr());
     }
@@ -79,6 +84,29 @@ class UserController {
       money: user.money,
     });
   }
+
+
+  /** 實驗室總經費 */
+  async getLabTotal(req, res, next) {
+    const allUserData = await User.find({}).select("money");
+    let total = 0;
+    allUserData.forEach((item) => {
+      total += item.money;
+    })
+    res.status(200).json({
+      money: total
+    });
+  }
+  /** 取得所有支付者 */
+  async getAllData(req, res, next) {
+    const getAllData = await User.find({})
+      .select("name _id");
+    res.status(200).json(
+      getAllData
+    );
+  }
+
+
 }
 
 module.exports = new UserController();
