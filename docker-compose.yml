@@ -1,19 +1,22 @@
 version: "0.1"
 services:
-    backend:
-        restart: always
+    backend:       
         build: .
+        restart: always
         ports:
-          -  3003:3003
+          -  3003:3000
         links:
           - mongo
         volumes:
-          - .:/usr/src/app
+          - ../hsipl_account_system:/usr/src/app
+          - /usr/src/app/node_modules
+        
     mongo:
         image: mongo
+        restart: always
         ports:
           - 27017:27017
         volumes: 
-          - mongodbdata:/data/db
+          - ./mongodbdata:/data/db
 
         
