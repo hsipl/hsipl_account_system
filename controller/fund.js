@@ -18,19 +18,25 @@ class FundController {
     const { types, items, cost, purchaseDate, payer_id } = req.body;
     const { ip } = req;
     const { name } = req.user;
+
     if (!types || !items || !cost || !purchaseDate || !payer_id) {
       return next(errorHandler.infoErr());
     }
     try {
+      const payer = await User.findById({ _id: payer_id }).select("name money");
+
       const funding = await Funding.create({
         types,
         items,
         cost,
         purchaseDate,
-        payer_id,
+        payer_id: payer.name,
         recorder_id: name,
         recorder_ip: ip,
       });
+      payer.money += parseInt(cost);
+      await payer.save({ isNew: false });
+
       res.status(200).json({
         id: funding._id,
         types: funding.types,
@@ -61,6 +67,7 @@ class FundController {
   async update(req, res, next) {
     const { fundingId } = req.params;
     const { types, items, cost, purchaseDate, payer_id } = req.body;
+
     if (!types || !items || !cost || !purchaseDate || !payer_id) {
       return next(errorHandler.infoErr());
     }
@@ -68,13 +75,22 @@ class FundController {
       return next(errorHandler.infoErr());
     }
     try {
+      const funding = await Funding.findById({
+        _id: fundingId,
+      }).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
+      const payer = await User.findById({ _id: payer_id });
+      const old_cost = parseInt(funding.cost);
+      if (old_cost < 0) {
+        payer.money += Math.abs(old_cost) + parseInt(cost);
+      } else {
+        payer.money += old_cost + parseInt(cost);
+      }
       const options = {
         new: true,
         upsert: true,
         setDefaultsOnInsert: true,
       };
-
-      const funding = await Funding.findOneAndUpdate(
+      const newFunding = await Funding.findOneAndUpdate(
         {
           _id: fundingId,
         },
@@ -87,8 +103,8 @@ class FundController {
         },
         options
       ).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
-
-      res.status(200).json(funding);
+      await payer.save({ isNew: false });
+      res.status(200).json(newFunding);
     } catch (error) {
       console.log(error);
       return next(errorHandler.infoErr());
