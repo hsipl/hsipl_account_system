@@ -31,7 +31,9 @@ class UserController {
       name: name,
       username: username,
       password: ePassword,
-      money:money
+
+      money: money
+
     });
 
     if (createUser) {
