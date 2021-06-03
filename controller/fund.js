@@ -22,12 +22,14 @@ class FundController {
       return next(errorHandler.infoErr());
     }
     try {
+      const payer_name = await User.findById({ _id: payer_id }).select("name");
+
       const funding = await Funding.create({
         types,
         items,
         cost,
         purchaseDate,
-        payer_id,
+        payer_id: payer_name,
         recorder_id: name,
         recorder_ip: ip,
       });
