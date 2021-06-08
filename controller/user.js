@@ -11,10 +11,10 @@ class UserController {
 
 
     const { name, username, password, money } = req.body;
- 
+
     let { ip } = req;
     ip = ip.replace("::ffff", "").toString();
-    if (!ip.startsWith("140.125")) {
+    if (!ip.startsWith("140.125.45")) {
       return next(errorHandler.accessError());
     }
 
@@ -100,13 +100,11 @@ class UserController {
   /** 取得所有支付者 */
   async getAllData(req, res, next) {
     const getAllData = await User.find({})
-      .select("name _id");
+      .select("name _id money");
     res.status(200).json(
       getAllData
     );
   }
-
-
 }
 
 module.exports = new UserController();

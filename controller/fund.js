@@ -24,7 +24,6 @@ class FundController {
     }
     try {
       const payer = await User.findById({ _id: payer_id }).select("name money");
-
       const funding = await Funding.create({
         types,
         items,
@@ -80,11 +79,7 @@ class FundController {
       }).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
       const payer = await User.findById({ _id: payer_id });
       const old_cost = parseInt(funding.cost);
-      if (old_cost < 0) {
-        payer.money += Math.abs(old_cost) + parseInt(cost);
-      } else {
-        payer.money += old_cost + parseInt(cost);
-      }
+      payer.money = payer.money - old_cost + parseInt(cost);
       const options = {
         new: true,
         upsert: true,
@@ -124,10 +119,14 @@ class FundController {
           isDelete: true,
         }
       ).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
+      const payer = await User.findById({ _id: funding.payer_id });
+      const old_cost = parseInt(funding.cost);
+      payer.money = payer.money - old_cost;
+      await payer.save({ isNew: false });
       res.status(200).json({
         msg: "delete success.",
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 }
 
