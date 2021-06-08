@@ -29,8 +29,8 @@ class FundController {
         items,
         cost,
         purchaseDate,
-        payer_id: payer.name,
-        recorder_id: name,
+        payer_id: payer_id,
+        recorder_name: name,
         recorder_ip: ip,
       });
       payer.money += parseInt(cost);
@@ -42,8 +42,8 @@ class FundController {
         items: funding.items,
         cost: funding.cost,
         purchaseDate: funding.purchaseDate,
-        payer_id: funding.payer_id,
-        recorder_id: funding.recorder_id,
+        payer_name: payer.name,
+        recorder_name: funding.recorder_name,
       });
     } catch (error) {
       return next(errorHandler.infoErr());
@@ -77,9 +77,8 @@ class FundController {
       const funding = await Funding.findById({
         _id: fundingId,
       }).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
-      const payer = await User.findById({ _id: payer_id });
+      const oldPayer = await User.findById({ _id: funding.payer_id });
       const old_cost = parseInt(funding.cost);
-      payer.money = payer.money - old_cost + parseInt(cost);
       const options = {
         new: true,
         upsert: true,
@@ -98,8 +97,31 @@ class FundController {
         },
         options
       ).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
-      await payer.save({ isNew: false });
-      res.status(200).json(newFunding);
+      let newPayerName;
+      // 支付者沒有做變更
+      if (funding.payer_id == payer_id) {
+        oldPayer.money = oldPayer.money - old_cost + parseInt(cost);
+        newPayerName = oldPayer.name;
+      } else { // 支付者做了變更
+        const newPayer = await User.findById({ _id: payer_id });
+        oldPayer.money = oldPayer.money - old_cost;
+        newPayer.money = newPayer.money + parseInt(cost);
+        await newPayer.save({ isNew: false });
+        newPayerName = newPayer.name;
+      }
+      await oldPayer.save({ isNew: false });
+      res.status(200).json({
+        _id: newFunding._id,
+        types: newFunding.types,
+        items: newFunding.items,
+        cost: newFunding.cost,
+        purchaseDate: newFunding.purchaseDate,
+        payer_name: newPayerName,
+        recorder_name: newFunding.recorder_name
+        
+      });
+
+
     } catch (error) {
       console.log(error);
       return next(errorHandler.infoErr());
