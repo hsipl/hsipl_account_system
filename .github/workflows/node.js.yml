@@ -19,4 +19,4 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        script: cd ~/Server && whoami
+        script: cd ~/Server/hsipl_account_system && git pull && sudo docker-compose down && sudo docker-compose up -d
