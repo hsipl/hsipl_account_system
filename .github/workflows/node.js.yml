@@ -22,6 +22,6 @@ jobs:
         script: |
           cd ~/Server/hsipl_account_system
           git pull
-          sudo docker-compose restart
+          docker-compose restart
           
           
