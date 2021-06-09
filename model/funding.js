@@ -21,7 +21,7 @@ const fundingSchema = new mongoose.Schema({
     type: "String",
     ref: "User",
   },
-  recorder_id: {
+  recorder_name: {
     type: "String",
     ref: "User",
   },
