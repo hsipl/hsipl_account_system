@@ -21,8 +21,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         script: |
           cd ~/Server/hsipl_account_system
-          ls
           git pull
-          docker-compose restart
+          sudo docker-compose restart
           
           
