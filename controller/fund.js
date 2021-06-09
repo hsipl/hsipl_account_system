@@ -22,6 +22,7 @@ class FundController {
           items: val.items,
           cost: val.cost,
           purchaseDate: val.purchaseDate,
+          payer_id: val.payer_id,
           payer_name: payerName.name,
           recorder_name: val.recorder_name
         });
