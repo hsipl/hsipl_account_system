@@ -35,6 +35,12 @@ class errorHandler {
       msg:"access error."
     }
   }
+  payerError(){
+    return {
+      statusCode:400,
+      msg:"payer profile does not exist."
+    }
+  }
 }
 
 module.exports = new errorHandler();
