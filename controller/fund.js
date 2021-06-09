@@ -12,7 +12,25 @@ class FundController {
     const allFunding = await Funding.find({ isDelete: false })
       .select("-recorder_ip -createdAt -updatedAt -__v -isDelete")
       .sort("-_id");
-    res.status(200).json(allFunding);
+    let allNewFunding = [];
+    try {
+      for (const val of allFunding) {
+        const payerName = await User.findById({ _id: val.payer_id }).select("name");
+        allNewFunding.push({
+          _id: val._id,
+          types: val.types,
+          items: val.items,
+          cost: val.cost,
+          purchaseDate: val.purchaseDate,
+          payer_name: payerName.name,
+          recorder_name: val.recorder_name
+        });
+      }
+    } catch (error) {
+      return next(errorHandler.payerError());
+    }
+
+    res.status(200).json(allNewFunding);
   }
   async post(req, res, next) {
     const { types, items, cost, purchaseDate, payer_id } = req.body;
@@ -118,7 +136,7 @@ class FundController {
         purchaseDate: newFunding.purchaseDate,
         payer_name: newPayerName,
         recorder_name: newFunding.recorder_name
-        
+
       });
 
 
