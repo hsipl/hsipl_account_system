@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyparser = require("body-parser")
 const cors = require("cors")
-const connectDb = require("./server/db");
 const apiErrorHandler = require("./middleware/api-errorHandler")
 const userSchema = require("./model/user");
 const userRoute = require("./router/user")

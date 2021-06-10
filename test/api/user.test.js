@@ -7,6 +7,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 
 beforeAll(async () => {
   const mongoServer = new MongoMemoryServer();
+  
   app.enable("trust proxy");
   mongoServer.getUri().then(async (mongoUri) => {
     const mongooseOpts = {
@@ -33,7 +34,9 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await User.deleteMany();
-  mongoose.disconnect();
+  await mongoose.disconnect();
+  await mongoose.connection.close()
+  
   // process.exit(0)
 });
 

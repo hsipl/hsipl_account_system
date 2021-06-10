@@ -35,7 +35,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await User.deleteMany();
-  mongoose.disconnect();
+  await mongoose.disconnect();
+  await mongoose.connection.close()
   // process.exit(0)
 });
 
