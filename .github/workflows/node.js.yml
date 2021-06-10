@@ -5,45 +5,37 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 jobs:
+  build:
+    runs-on: ubuntu-latest
 
-
-  test:
     strategy:
       matrix:
-        node-version: [14.x,15.x]
-
-    runs-on: ubuntu-latest
+        node-version: [ 14.x, 15.x]
     steps:
-    - name: Test
-      uses: actions/checkout@main
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{matrix.node-version}}
-      run: npm ci
-      run: npm run build --if-present
-      run: npm run test
-      env:
-        JWTSECRET : ${{secrets.JWTSECRET}}
-        GENSALT : ${{secrets.GENSALT}}
-        NODE_ENV : ${{secrets.NODE_ENV}}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        script: |
-          cd ~/Server/hsipl_account_system
-          git pull
-          docker-compose restart
-          
-          
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd ~/Server/hsipl_account_system
+            git pull
+            docker-compose restart
