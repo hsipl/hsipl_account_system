@@ -18,22 +18,18 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@main
     - name: Test
-    - uses: actions/setup-node@v2
+      uses: actions/checkout@main
+      uses: actions/setup-node@v2
       with:
         node-version: ${{matrix.node-version}}
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm run test
+      run: npm ci
+      run: npm run build --if-present
+      run: npm run test
       env:
         JWTSECRET : ${{secrets.JWTSECRET}}
         GENSALT : ${{secrets.GENSALT}}
         NODE_ENV : ${{secrets.NODE_ENV}}
-        
-
-
-
 
   deploy:
     name: Deploy
