@@ -36,6 +36,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await User.deleteMany();
   mongoose.disconnect();
+  process.exit(0)
 });
 
 describe("GET /api/fund", () => {
