@@ -26,9 +26,10 @@ jobs:
           JWTSECRET : ${{secrets.JWTSECRET}}
           GENSALT : ${{secrets.GENSALT}}
           NODE_ENV : ${{secrets.NODE_ENV}}
-        run: npm ci
-        run: npm run build --if-present
-        run: npm test
+        run: |
+          npm ci
+          npm run build --if-present
+          npm test
 
   deploy:
     name: Deploy
