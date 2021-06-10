@@ -16,5 +16,6 @@ const getToken = async () => {
   const token = "Bearer " + res.body.token;
   return token
 };
+console.log("this is test")
 
 module.exports = {testUser,getToken};
