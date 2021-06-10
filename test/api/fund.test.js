@@ -3,12 +3,32 @@ const req = require("supertest")(app);
 const User = require("../../model/user");
 const mongoose = require("mongoose");
 const { testUser, getToken } = require("../testUser");
+const { MongoMemoryServer } = require("mongodb-memory-server");
 
 let token;
 beforeAll(async () => {
-  await mongoose.connect(
-    "mongodb+srv://p5341500:5341500@cluster0.n2jal.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-  );
+    const mongoServer = new MongoMemoryServer();
+    app.enable("trust proxy");
+    mongoServer.getUri().then(async (mongoUri) => {
+      const mongooseOpts = {
+        // options for mongoose 4.11.3 and above
+        autoReconnect: true,
+        reconnectTries: Number.MAX_VALUE,
+        reconnectInterval: 1000,
+      };
+      await mongoose.connect(mongoUri, mongooseOpts);
+      mongoose.connection.on("error", (e) => {
+        if (e.message.code === "ETIMEDOUT") {
+          console.log(e);
+          mongoose.connect(mongoUri, mongooseOpts);
+        }
+        console.log(e);
+      });
+  
+      mongoose.connection.once("open", () => {
+        console.log(`MongoDB successfully connected to ${mongoUri}`);
+      });
+    });
   await User.deleteMany();
   token = await getToken();
 });

@@ -6,7 +6,7 @@ let data = {
   password: "test",
 };
 const testUser = async () => {
-  const res = await req.post("/api/user").send(data);
+  const res = await req.post("/api/user").send(data).set('X-Forwarded-For', '140.125.45.162');
   return res;
 };
 
