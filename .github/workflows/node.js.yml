@@ -45,3 +45,13 @@ jobs:
             cd ~/Server/hsipl_account_system
             git pull
             docker-compose restart
+  notify:
+    runs-on: ubuntu-latest
+    name: send default message
+    steps:
+      - name: line-notify
+        uses: louis70109/line-notify-action@master
+        with:
+          token: ${{ secrets.LINE_NOTIFY_TOKEN }}
+          message: 'request a PR for hsipl_account_system.'
+
