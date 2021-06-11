@@ -93,6 +93,7 @@ class FundController {
       return next(errorHandler.infoErr());
     }
     try {
+      const { name } = req.user;
       const funding = await Funding.findById({
         _id: fundingId,
       }).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");
@@ -113,6 +114,7 @@ class FundController {
           cost,
           purchaseDate,
           payer_id,
+          recorder_name: name
         },
         options
       ).select("-recorder_ip -createdAt -updatedAt -__v -isDelete");

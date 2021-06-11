@@ -7,28 +7,28 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 
 let token;
 beforeAll(async () => {
-    const mongoServer = new MongoMemoryServer();
-    app.enable("trust proxy");
-    mongoServer.getUri().then(async (mongoUri) => {
-      const mongooseOpts = {
-        // options for mongoose 4.11.3 and above
-        autoReconnect: true,
-        reconnectTries: Number.MAX_VALUE,
-        reconnectInterval: 1000,
-      };
-      await mongoose.connect(mongoUri, mongooseOpts);
-      mongoose.connection.on("error", (e) => {
-        if (e.message.code === "ETIMEDOUT") {
-          console.log(e);
-          mongoose.connect(mongoUri, mongooseOpts);
-        }
+  const mongoServer = new MongoMemoryServer();
+  app.enable("trust proxy");
+  mongoServer.getUri().then(async (mongoUri) => {
+    const mongooseOpts = {
+      // options for mongoose 4.11.3 and above
+      autoReconnect: true,
+      reconnectTries: Number.MAX_VALUE,
+      reconnectInterval: 1000,
+    };
+    await mongoose.connect(mongoUri, mongooseOpts);
+    mongoose.connection.on("error", (e) => {
+      if (e.message.code === "ETIMEDOUT") {
         console.log(e);
-      });
-  
-      mongoose.connection.once("open", () => {
-        console.log(`MongoDB successfully connected to ${mongoUri}`);
-      });
+        mongoose.connect(mongoUri, mongooseOpts);
+      }
+      console.log(e);
     });
+
+    mongoose.connection.once("open", () => {
+      console.log(`MongoDB successfully connected to ${mongoUri}`);
+    });
+  });
   await User.deleteMany();
   token = await getToken();
 });
@@ -54,8 +54,34 @@ describe("GET /api/fund", () => {
       .get("/api/fund")
       .expect(401)
       .expect("Content-Type", /json/);
-    expect(res.body).toStrictEqual({"msg":"token wrong,please login again."});
+    expect(res.body).toStrictEqual({ "msg": "token wrong,please login again." });
   });
 });
+
+// describe("POST /api/fund", () => {
+//   const data = {
+//     types: "test",
+//     items: "test",
+//     cost: "333",
+//     purchaseDate: "2021/06/11",
+//     payer_id: "123321123135"
+//   }
+//   test("success", async () => {
+//     const res = await req
+//       .post("/api/fund")
+//       .set("Authorization", token)
+//       .expect(200)
+//       .expect("content-Type", /json/);
+//     expect(res.body).send(data).expect(400);
+//   });
+//   test("error",async()=>{
+//     const res = await req
+//       .post("/api/fund")
+//       .set("Authorization", token)
+//       .expect(400)
+//       .expect("Content-Type", /json/);
+//       expect(res.body).toStrictEqual({ "msg": "your info is wrong." });
+//   });
+// })
 
 
