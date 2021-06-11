@@ -45,3 +45,12 @@ jobs:
             cd ~/Server/hsipl_account_system
             git pull
             docker-compose restart
+  line_notify:
+    name: Notify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: snow-actions/line-notify@v1.0.0
+        with:
+          access_token: ${{ secrets.LINE_ACCESS_TOKEN }}
+          message: Request a PR to hsipl_account_system.
+      
