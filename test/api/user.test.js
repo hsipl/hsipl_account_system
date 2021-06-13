@@ -95,7 +95,7 @@ describe("GET /api/user", () => {
       .expect(200);
   });
 
-  test("success", async () => {
+  test("error", async () => {
     const token = await getToken();
     const res = await req
       .get("/api/user")

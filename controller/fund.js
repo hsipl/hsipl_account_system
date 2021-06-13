@@ -54,7 +54,6 @@ class FundController {
       });
       payer.money += parseInt(cost);
       await payer.save({ isNew: false });
-
       res.status(200).json({
         id: funding._id,
         types: funding.types,
