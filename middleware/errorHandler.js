@@ -17,6 +17,12 @@ class errorHandler {
       msg: "user not exist.",
     };
   }
+  dataNotFind(){
+    return {
+      statusCode: 404,
+      msg: "data not find.",
+    };
+  }
   loginError() {
     return {
       statusCode: 400,
