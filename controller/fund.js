@@ -9,29 +9,49 @@ const TokenController = require("../utils/tokenController");
 
 class FundController {
   async getAll(req, res, next) {
-    const allFunding = await Funding.find({ isDelete: false })
-      .select("-recorder_ip -createdAt -updatedAt -__v -isDelete")
-      .sort("-_id");
-    let allNewFunding = [];
-    try {
-      for (const val of allFunding) {
-        const payerName = await User.findById({ _id: val.payer_id }).select("name");
-        allNewFunding.push({
-          _id: val._id,
-          types: val.types,
-          items: val.items,
-          cost: val.cost,
-          purchaseDate: val.purchaseDate,
-          payer_id: val.payer_id,
-          payer_name: payerName.name,
-          recorder_name: val.recorder_name
-        });
+    const { page, keyword } = req.query;
+    if (!page && !keyword) {
+      const allFunding = await Funding.find({ isDelete: false })
+        .select("-recorder_ip -createdAt -updatedAt -__v -isDelete")
+        .sort("-_id");
+      let allNewFunding = [];
+      try {
+        for (const val of allFunding) {
+          const payerName = await User.findById({ _id: val.payer_id }).select("name");
+          allNewFunding.push({
+            _id: val._id,
+            types: val.types,
+            items: val.items,
+            cost: val.cost,
+            purchaseDate: val.purchaseDate,
+            payer_id: val.payer_id,
+            payer_name: payerName.name,
+            recorder_name: val.recorder_name
+          });
+        }
+      } catch (error) {
+        return next(errorHandler.payerError());
       }
-    } catch (error) {
-      return next(errorHandler.payerError());
+      res.status(200).json(allNewFunding);
+    } else {
+      let findSearch = { isDelete: false };
+      let skipNumber = null;
+      if (keyword) {
+        findSearch.items = new RegExp(keyword);
+      }
+      if (page) {
+        skipNumber = (page - 1) * 15;
+      }
+      const funding = await Funding.find(findSearch)
+        .select("-recorder_ip -createdAt -updatedAt -__v -isDelete")
+        .sort("purchaseDate")
+        .skip(skipNumber).limit(15);
+      if(funding.length != 0){
+        res.status(200).json(funding);
+      }else{
+        return next(errorHandler.dataNotFind());
+      }
     }
-
-    res.status(200).json(allNewFunding);
   }
   async post(req, res, next) {
     const { types, items, cost, purchaseDate, payer_id } = req.body;

@@ -38,14 +38,15 @@ beforeAll(async () => {
     "password": "testPayer",
     "name": "testPayer"
   });
-  // const testFund = await Funding.create({
-  //   "types": "test",
-  //   "items": "test",
-  //   "cost": "300",
-  //   "purchaseDate": "2021/06/11",
-  //   "payer_id": testUser._id
-  // });
-  // fundId = testFund._id;
+  const testFund = await Funding.create({
+    "types": "test",
+    "items": "test",
+    "cost": "300",
+    "purchaseDate": "2021/06/11",
+    "payer_id": testUser._id,
+    "recorder_ip":"test"
+  });
+  fundId = testFund._id;
   payerId = testUser._id;
   token = await getToken();
 });
@@ -64,7 +65,7 @@ describe("GET /api/fund", () => {
       .set("Authorization", token)
       .expect(200)
       .expect("Content-Type", /json/);
-    expect(res.body).toStrictEqual([]);
+    expect(res.body);
   });
   test("error", async () => {
     const res = await req
@@ -72,6 +73,54 @@ describe("GET /api/fund", () => {
       .expect(401)
       .expect("Content-Type", /json/);
     expect(res.body).toStrictEqual({ "msg": "token wrong,please login again." });
+  });
+  test("success", async () => {
+    const res = await req
+      .get("/api/fund?keyword=t&page=1")
+      .set("Authorization", token)
+      .expect(200)
+      .expect("Content-Type", /json/);
+    expect(res.body);
+  });
+  test("success", async () => {
+    const res = await req
+      .get("/api/fund?keyword=t")
+      .set("Authorization", token)
+      .expect(200)
+      .expect("Content-Type", /json/);
+    expect(res.body);
+  });
+  test("success", async () => {
+    const res = await req
+      .get("/api/fund?page=1")
+      .set("Authorization", token)
+      .expect(200)
+      .expect("Content-Type", /json/);
+    expect(res.body);
+  });
+  test("error", async () => {
+    const res = await req
+      .get("/api/fund?keyword=333&page=1")
+      .set("Authorization", token)
+      .expect(404)
+      .expect("Content-Type", /json/);
+    expect(res.body).toStrictEqual({ "msg": "data not find." });
+  });
+  test("error", async () => {
+    const res = await req
+      .get("/api/fund?keyword=333")
+      .set("Authorization", token)
+      .expect(404)
+      .expect("Content-Type", /json/);
+    expect(res.body).toStrictEqual({ "msg": "data not find." });
+  });
+  test("error", async () => {
+    const res = await req
+      .get("/api/fund?page=3")
+      .set("Authorization", token)
+      .expect(404)
+      .expect("Content-Type", /json/);
+    expect(res.body).toStrictEqual({ "msg": "data not find." });
   });
 });
 /** 尚未修改 */
