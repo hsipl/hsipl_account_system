@@ -10,6 +10,7 @@ let token;
 let payerId;
 let fundId;
 beforeAll(async () => {
+  jest.setTimeout(60000)
   const mongoServer = new MongoMemoryServer();
   app.enable("trust proxy");
   mongoServer.getUri().then(async (mongoUri) => {
