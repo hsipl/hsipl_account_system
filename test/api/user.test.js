@@ -6,6 +6,7 @@ const { testUser, getToken } = require("../testUser");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
 beforeAll(async () => {
+  jest.setTimeout(60000)
   const mongoServer = new MongoMemoryServer();
   
   app.enable("trust proxy");
