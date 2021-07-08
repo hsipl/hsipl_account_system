@@ -41,6 +41,12 @@ class errorHandler {
       msg:"access error."
     }
   }
+  ipError(){
+    return{
+      statusCode:400,
+      msg:"Authentication failed."
+    }
+  }
   payerError(){
     return {
       statusCode:400,

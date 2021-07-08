@@ -11,10 +11,11 @@ class UserController {
     const { name, username, password, money } = req.body;
 
     let { ip } = req;
+    console.log(ip);
     ip = ip.replace("::ffff", "").toString();
-    if (!ip.startsWith("140.125.45")) {
-      return next(errorHandler.accessError());
-    }
+    // if (!ip.startsWith("140.125.45")) {
+    //   return next(errorHandler.ipError());
+    // }
 
     if (!name || !username || !password) {
       return next(errorHandler.infoErr());
