@@ -13,7 +13,7 @@ class UserController {
     let { ip } = req;
     ip = ip.replace("::ffff", "").toString();
     if (!ip.startsWith("140.125.45")) {
-      return next(errorHandler.accessError());
+      return next(errorHandler.ipError());
     }
 
     if (!name || !username || !password) {
