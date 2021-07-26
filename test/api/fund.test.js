@@ -123,18 +123,23 @@ describe("GET /api/fund", () => {
       .expect("Content-Type", /json/);
     expect(res.body).toStrictEqual({ "msg": "data not find." });
   });
+  test("success", async () => {
+    const res = await req
+      .get("/api/fund/" + fundId)
+      .set("Authorization", token)
+      .expect(200)
+      .expect("content-Type", /json/);
+    expect(res.body);
+  });
+  test("error", async () => {
+    const res = await req
+      .get("/api/fund/" + '123')
+      .set("Authorization", token)
+      .expect(400)
+      .expect("content-Type", /json/);
+    expect(res.body).toStrictEqual({ "msg": "your info is wrong." });
+  });
 });
-/** 尚未修改 */
-// describe("GET /api/fund/:fundingId", () => {
-//   test("success", async () => {
-//     const res = await req
-//       .get("/api/fund/" + fundId)
-//       .set("Authorization", token)
-//       .expect(200)
-//       .expect("content-Type", /json/);
-//     expect(res.body).toStrictEqual([]);
-//   });
-// });
 /** post 測試 */
 describe("POST /api/fund", () => {
   let data = {
