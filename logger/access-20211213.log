@@ -1,0 +1,8 @@
+127.0.0.1 - - [13/Dec/2021:09:07:19 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
+127.0.0.1 - - [13/Dec/2021:09:09:45 +0000] "POST /api/user/login HTTP/1.1" 200 254 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
+127.0.0.1 - - [13/Dec/2021:09:13:10 +0000] "GET /api/user/total HTTP/1.1" 401 41 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
+127.0.0.1 - - [13/Dec/2021:09:14:29 +0000] "GET /api/user/total HTTP/1.1" 401 41 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
+127.0.0.1 - - [13/Dec/2021:09:14:45 +0000] "GET /api/user/total HTTP/1.1" 401 41 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
+127.0.0.1 - - [13/Dec/2021:09:22:59 +0000] "GET /api/user/total HTTP/1.1" 401 41 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
+127.0.0.1 - - [13/Dec/2021:09:27:39 +0000] "POST /api/user/login HTTP/1.1" 200 254 "-" "PostmanRuntime/7.28.4"
+127.0.0.1 - - [13/Dec/2021:09:28:15 +0000] "GET /api/user/total HTTP/1.1" 200 15 "-" "PostmanRuntime/7.28.4"
