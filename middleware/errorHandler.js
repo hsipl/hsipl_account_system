@@ -1,7 +1,9 @@
+const errorlogHandler = require('./errorlogHandler')
+
 class errorHandler {
   infoErr() {
     const txt = "your info is wrong"
-    console.log(txt)
+    errorlogHandler(txt)
     return {
       statusCode: 400,
       msg: txt,
@@ -9,7 +11,7 @@ class errorHandler {
   }
   userAlreadyExist() {
     const txt = "user already exist."
-    console.log(txt)
+    errorlogHandler(txt)
     return {
       statusCode: 409,
       msg: txt,
@@ -17,7 +19,7 @@ class errorHandler {
   }
   userNotExist() {
     const txt = "user not exist."
-    console.log(txt)
+    errorlogHandler(txt)
     return {
       statusCode: 404,
       msg: txt,
@@ -25,7 +27,7 @@ class errorHandler {
   }
   dataNotFind(){
     const txt = "data not find."
-    console.log(txt)
+    errorlogHandler(txt)
     return {
       statusCode: 404,
       msg: txt,
@@ -33,7 +35,7 @@ class errorHandler {
   }
   loginError() {
     const txt = "username or password is wrong."
-    console.log(txt)
+    errorlogHandler(txt)
     return {
       statusCode: 400,
       msg: txt,
@@ -41,7 +43,7 @@ class errorHandler {
   }
   tokenError() {
     const txt = "token wrong,please login again."
-    console.log(txt)
+    errorlogHandler(txt)
     return {
       statusCode: 401,
       msg: txt,
@@ -49,7 +51,7 @@ class errorHandler {
   }
   accessError(){
     const txt = "access error."
-    console.log(txt)
+    errorlogHandler(txt)
     return {
       statusCode:400,
       msg: txt
@@ -57,7 +59,7 @@ class errorHandler {
   }
   ipError(){
     const txt = "Authentication failed."
-    console.log(txt)
+    errorlogHandler(txt)
     return{
       statusCode:400,
       msg: txt
@@ -65,7 +67,7 @@ class errorHandler {
   }
   payerError(){
     const txt = "payer profile does not exist."
-    console.log(txt)``
+    errorlogHandler(txt)
     return {
       statusCode:400,
       msg: txt
