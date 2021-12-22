@@ -1,56 +1,74 @@
 class errorHandler {
   infoErr() {
+    const txt = "your info is wrong"
+    console.log(txt)
     return {
       statusCode: 400,
-      msg: "your info is wrong.",
+      msg: txt,
     };
   }
   userAlreadyExist() {
+    const txt = "user already exist."
+    console.log(txt)
     return {
       statusCode: 409,
-      msg: "user already exist.",
+      msg: txt,
     };
   }
   userNotExist() {
+    const txt = "user not exist."
+    console.log(txt)
     return {
       statusCode: 404,
-      msg: "user not exist.",
+      msg: txt,
     };
   }
   dataNotFind(){
+    const txt = "data not find."
+    console.log(txt)
     return {
       statusCode: 404,
-      msg: "data not find.",
+      msg: txt,
     };
   }
   loginError() {
+    const txt = "username or password is wrong."
+    console.log(txt)
     return {
       statusCode: 400,
-      msg: "username or password is wrong.",
+      msg: txt,
     };
   }
   tokenError() {
+    const txt = "token wrong,please login again."
+    console.log(txt)
     return {
       statusCode: 401,
-      msg: "token wrong,please login again.",
+      msg: txt,
     };
   }
   accessError(){
+    const txt = "access error."
+    console.log(txt)
     return {
       statusCode:400,
-      msg:"access error."
+      msg: txt
     }
   }
   ipError(){
+    const txt = "Authentication failed."
+    console.log(txt)
     return{
       statusCode:400,
-      msg:"Authentication failed."
+      msg: txt
     }
   }
   payerError(){
+    const txt = "payer profile does not exist."
+    console.log(txt)``
     return {
       statusCode:400,
-      msg:"payer profile does not exist."
+      msg: txt
     }
   }
 }
