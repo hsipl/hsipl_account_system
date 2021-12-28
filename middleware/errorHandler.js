@@ -1,7 +1,10 @@
 const errorlogHandler = require('./errorlogHandler')
+const logHandler = require('./logHandler')
 
 class errorHandler {
-  infoErr() {
+
+
+ infoErr() {
     const txt = "your info is wrong"
     errorlogHandler(txt)
     return {
@@ -18,15 +21,18 @@ class errorHandler {
     };
   }
   userNotExist() {
-    const txt = "user not exist."
+    this.txt = "user not exist."
+    logHandler()
     errorlogHandler(txt)
     return {
       statusCode: 404,
       msg: txt,
     };
+    
   }
   dataNotFind(){
     const txt = "data not find."
+   
     errorlogHandler(txt)
     return {
       statusCode: 404,
@@ -74,5 +80,20 @@ class errorHandler {
     }
   }
 }
+
+morgan.token('log',(req, res)=>{
+  req.txt =errorhandler.userNotExist().txt
+  console.log('enter sucess2')
+  return req.txt
+})
+morgan.format('cust','[cust] :methods :url :log')
+app.use(morgan('cust'))
+
+
+
+
+console.log('enter sucess')
+
+
 
 module.exports = new errorHandler();

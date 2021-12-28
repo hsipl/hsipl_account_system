@@ -1,0 +1,3 @@
+172.20.0.1 - - [25/Dec/2021:00:31:09 +0000] "GET / HTTP/1.1" 404 139 "-" "-"
+172.20.0.1 - - [25/Dec/2021:00:52:07 +0000] "GET / HTTP/1.0" 404 139 "-" "https://gdnplus.com:Gather Analyze Provide."
+172.20.0.1 - - [25/Dec/2021:01:39:37 +0000] "GET / HTTP/1.1" 404 139 "-" "https://gdnplus.com:Gather Analyze Provide."
