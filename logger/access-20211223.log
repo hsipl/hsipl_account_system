@@ -1,8 +1,0 @@
-127.0.0.1 - - [22/Dec/2021:20:30:35 +0000] "POST /api/user/login HTTP/1.1" 400 28 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:20:34:26 +0000] "POST /api/user/login HTTP/1.1" 400 28 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:20:37:33 +0000] "POST /api/user/login HTTP/1.1" 400 28 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:20:39:01 +0000] "POST /api/user/login HTTP/1.1" 400 28 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:20:47:08 +0000] "POST /api/user/login HTTP/1.1" 404 25 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:20:49:38 +0000] "POST /api/user/login HTTP/1.1" 200 254 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:20:50:07 +0000] "GET /api/user/total HTTP/1.1" 401 41 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:20:50:24 +0000] "GET /api/user/total HTTP/1.1" 200 15 "-" "PostmanRuntime/7.28.4"

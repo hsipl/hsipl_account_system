@@ -1,99 +1,59 @@
-const errorlogHandler = require('./errorlogHandler')
-const logHandler = require('./logHandler')
-
 class errorHandler {
-
-
  infoErr() {
-    const txt = "your info is wrong"
-    errorlogHandler(txt)
     return {
       statusCode: 400,
-      msg: txt,
+      msg: "your info is wrong",
     };
   }
   userAlreadyExist() {
-    const txt = "user already exist."
-    errorlogHandler(txt)
     return {
       statusCode: 409,
-      msg: txt,
+      msg: "user already exist.",
     };
   }
   userNotExist() {
-    this.txt = "user not exist."
-    logHandler()
-    errorlogHandler(txt)
     return {
       statusCode: 404,
-      msg: txt,
+      msg: "user not exist.",
     };
     
   }
   dataNotFind(){
-    const txt = "data not find."
-   
-    errorlogHandler(txt)
     return {
       statusCode: 404,
-      msg: txt,
+      msg: "data not find.",
     };
   }
   loginError() {
-    const txt = "username or password is wrong."
-    errorlogHandler(txt)
     return {
       statusCode: 400,
-      msg: txt,
+      msg: "username or password is wrong.",
     };
   }
   tokenError() {
-    const txt = "token wrong,please login again."
-    errorlogHandler(txt)
     return {
       statusCode: 401,
-      msg: txt,
+      msg: "token wrong,please login again.",
     };
   }
   accessError(){
-    const txt = "access error."
-    errorlogHandler(txt)
     return {
       statusCode:400,
-      msg: txt
+      msg: "access error."
     }
   }
   ipError(){
-    const txt = "Authentication failed."
-    errorlogHandler(txt)
     return{
-      statusCode:400,
-      msg: txt
+      statusCode:401,
+      msg: "Authentication failed."
     }
   }
   payerError(){
-    const txt = "payer profile does not exist."
-    errorlogHandler(txt)
     return {
       statusCode:400,
-      msg: txt
+      msg: "payer profile does not exist."
     }
   }
 }
-
-morgan.token('log',(req, res)=>{
-  req.txt =errorhandler.userNotExist().txt
-  console.log('enter sucess2')
-  return req.txt
-})
-morgan.format('cust','[cust] :methods :url :log')
-app.use(morgan('cust'))
-
-
-
-
-console.log('enter sucess')
-
-
 
 module.exports = new errorHandler();

@@ -19,9 +19,8 @@ var accessLogStream = FileStreamRotator.getStream({
   frequency: 'daily',
   verbose: false
 })
-// setup the logger
-app.use(morgan('combined', {stream: accessLogStream}))
-
+morgan.format("apiLog",":method :url :status :err")
+app.use(morgan("apiLog",{stream: accessLogStream}))
 app.use(cors())
 app.use(bodyparser.json())
 app.use("/api/user",userRoute)

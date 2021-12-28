@@ -1,2 +1,0 @@
-127.0.0.1 - - [22/Dec/2021:05:52:15 +0000] "POST /api/user/login HTTP/1.1" 400 29 "-" "PostmanRuntime/7.28.4"
-127.0.0.1 - - [22/Dec/2021:06:03:05 +0000] "POST /api/user/login HTTP/1.1" 400 28 "-" "PostmanRuntime/7.28.4"

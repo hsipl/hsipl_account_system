@@ -1,4 +1,0 @@
-172.20.0.1 - - [18/Dec/2021:11:57:57 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36"
-172.20.0.1 - - [18/Dec/2021:11:57:57 +0000] "GET /fuel HTTP/1.1" 404 143 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36"
-172.20.0.1 - - [18/Dec/2021:22:13:40 +0000] "GET / HTTP/1.1" 404 139 "-" "Chrome/54.0 (Windows NT 10.0)"
-172.20.0.1 - - [18/Dec/2021:22:13:40 +0000] "GET /favicon.ico HTTP/1.1" 404 150 "-" "Chrome/54.0 (Windows NT 10.0)"
