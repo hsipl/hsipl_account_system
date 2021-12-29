@@ -5,7 +5,12 @@ dotenv.config();
 
 const connectDb = async () => {
   try {
-    const mongodb_url =
+    const mongoDB = 'mongodb://localhost:27017'
+    mongoose.connect(mongoDB,{
+
+    })
+    console.log('mongodb connect local sucess!')
+    /*const mongodb_url =
       process.env.NODE_ENV === "development"
         ? process.env.MONGODB_URL
         : process.env.MONGODB_PROD;
@@ -14,7 +19,8 @@ const connectDb = async () => {
       useUnifiedTopology: true,
       useFindAndModify: false,
     });
-    console.log(`mongodb connected : ${conn.connection.host}`);
+    console.log(`mongodb connected remote sucess!: ${conn.connection.host}`);*/
+    
   } catch (error) {
     console.log(error);
     process.exit(1);
