@@ -5,11 +5,13 @@ dotenv.config();
 
 const connectDb = async () => {
   try {
-    const mongoDB = 'mongodb://localhost:27017'
-    mongoose.connect(mongoDB,{
-
-    })
-    console.log('mongodb connect local sucess!')
+    mongoose.connect('mongodb://localhost/mydb',{
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    }).then(() =>console.log('mongodb connect local sucess!'))
+    
     /*const mongodb_url =
       process.env.NODE_ENV === "development"
         ? process.env.MONGODB_URL
