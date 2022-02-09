@@ -19,11 +19,16 @@ var accessLogStream = FileStreamRotator.getStream({
   frequency: 'daily',
   verbose: false
 })
-morgan.format("apiLog",":remote-addr - :remote-user [:date[clf]] ':method :url HTTP/:http-version':status :res[content-length] :'referrer' :'user-agent' :err"
+morgan.format("apiLog",":remote-addr - :remote-user [:date[clf]] ':method :url HTTP/:http-version':status :res[content-length] :'referrer' :'user-agent'"
 )
 app.use(morgan("apiLog",{stream: accessLogStream}))
 app.use(cors())
+app.use(express.urlencoded({
+  extended: true
+}))
+app.use(express.json())
 app.use(bodyparser.json())
+/*
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)
 app.get("/test", (req, res) => {
@@ -31,7 +36,7 @@ app.get("/test", (req, res) => {
     status: 200,
     info: "ok",
   });
-});
+});*/
 
 app.use(apiErrorHandler);
 

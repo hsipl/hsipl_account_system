@@ -1,5 +1,13 @@
 const app = require("./app")
-const connectDb = require("./server/db");
+const db = require('./models')
+require("./routes/userRoute")(app)
 
-connectDb()
-app.listen(3000,"0.0.0.0",()=>console.log("server is running."))
+//const connectDb = require("./server/db");
+//const connectDb = require('./models/index')
+//connectDb()
+
+
+(async () =>{
+    await sequelize.sync({force: true})
+    app.listen(3000,"0.0.0.0",()=>console.log("server is running."))
+})
