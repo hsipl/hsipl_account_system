@@ -1,4 +1,4 @@
-const db = require('../models')
+const db = require('../models/index2')
 const User = db.User
 
 class userController{
@@ -8,7 +8,10 @@ class userController{
                 name: req.body.name,
                 username: req.body.username,
                 password: req.body.password,
-                money: req.body.money 
+                money: req.body.money,
+                createdAt: null,
+                updatedAt: null 
+                
         });
             res.send({
                 message: "create User sucessfully!",
@@ -17,6 +20,7 @@ class userController{
         }
         catch(error){
             return res.send({
+                
                 message: error
             })
         }
@@ -45,7 +49,9 @@ class userController{
                     name: req.body.name,
                     username: req.body.username,
                     password: req.body.password,
-                    money: req.body.money 
+                    money: req.body.money,
+                    createdAt: null,
+                    updatedAt: null 
                 },{
                     where: {id: req.params.id}
                 })
