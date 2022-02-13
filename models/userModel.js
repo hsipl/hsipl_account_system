@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) =>{
             defaultValue:0
         }
         
+    },{
+        timestamps: false
     });
     return User;
 };

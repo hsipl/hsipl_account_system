@@ -1,48 +1,23 @@
-const fs = require('fs');
-const path = require('path');
+const dbConfig = require('../config/db.config');
+
 const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development'; //環境變數預設為develop
-const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
-
-//引入config.json存成變數config 並使用
-
-const connectDb = async () =>{
-  try{
-    let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
-
-//require相同根目錄底下的.js 以model.name當索引值放到db物件中
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes) 
-    //const model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
-  });
-
-  //執行db物件裡的每一.associate method
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
+const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+    host: dbConfig.HOST,
+    dialect: dbConfig.dialect,
+    operatorsAliases: false,
+    pool:{
+        max: dbConfig.pool.max,
+        min: dbConfig.pool.min,
+        acquire: dbConfig.pool.acquire,
+        idle: dbConfig.pool.idle
+    }
 });
 
-db.sequelize = sequelize;
+const db = {};
+
 db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-  }
-  catch (error) {
-    console.log(error)
-  }
-}
+db.User = require("./userModel")(sequelize, Sequelize);
 
-module.exports = connectDb
+module.exports = db;

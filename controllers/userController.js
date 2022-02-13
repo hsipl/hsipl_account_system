@@ -1,16 +1,45 @@
-const db = require('../models/index2')
+const db = require('../models')
 const User = db.User
+const errorHandler = require('../middleware/errorHandler')
+const {
+    encrypt: encryptPassword,
+    decrypt: decryptPassword,
+  } = require("../utils/encryptPassword");
+  const TokenController = require("../utils/tokenController");
 
 class userController{
     createUser = async(req, res) =>{
+        const { name, username, password, money } = req.body;
+
+        //check ip
+        /*let { ip } = req;
+        ip = ip.replace("::ffff", "").toString();
+        if (!ip.startsWith("140.125.45")) {
+          return res.send(errorHandler.ipError());
+        }*/
+        //check infor error
+        if (!name || !username || !password) {
+          return res.send(errorHandler.infoErr());
+        }
+
+        //check user exist
+        const checkUserExist = await User.findOne({
+            where:{name: name, username: username }
+        });
+    
+        if (checkUserExist) {
+          return res.send(errorHandler.userAlreadyExist());
+        }
+    
+        const ePassword = await encryptPassword(password);
+
         try{
             const user = await User.create({
                 name: req.body.name,
                 username: req.body.username,
                 password: req.body.password,
-                money: req.body.money,
-                createdAt: null,
-                updatedAt: null 
+                money: req.body.money
+               
                 
         });
             res.send({
@@ -25,13 +54,42 @@ class userController{
             })
         }
         }
+
+    login = async (req, res) => {
+        const { username, password } = req.body;
+        //console.log(req.body)
+        if (!username || !password) {
+            return res.send(errorHandler.infoErr());
+        }
+        //check user exist
+        const userexist = await User.findOne({
+            where: { username: username }});
+
+        if (!userexist) {
+            return res.send(errorHandler.userNotExist());
+        }
+        const checkPassword = await decryptPassword(password, User.password);
+        if (!checkPassword) {
+            return res.send(errorHandler.infoErr());
+        }
+    
+        const token = await TokenController.signToken({
+            id: User._id,
+            name: User.name,
+        });
+    
+        res.status(200).json({
+            msg: `Login Suceess.Welcome back ${user.name} `,
+            token: token,
+        });
+        }
         
     getUser = async (req, res) =>{
             try{
                 const user= await User.findOne({
                     where:{id :req.params.id}
                 })
-                res.send({
+                res.status(200).send({
                     message:"data fetched sucessfully",
                     data: user
                 })
@@ -49,15 +107,13 @@ class userController{
                     name: req.body.name,
                     username: req.body.username,
                     password: req.body.password,
-                    money: req.body.money,
-                    createdAt: null,
-                    updatedAt: null 
+                    money: req.body.money
                 },{
                     where: {id: req.params.id}
                 })
-                return res.send({
+                return res.status(200).send({
                     message: "Update sucessfully!",
-                    data: updateData
+                    data: `updatatd info:${req.body}`
         
                 })
             }

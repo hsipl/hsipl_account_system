@@ -1,5 +1,5 @@
 const app = require("./app")
-const db = require('./models/index2')
+const db = require('./models/index')
 
 
 //const connectDb = require("./server/db");
