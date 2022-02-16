@@ -21,5 +21,7 @@ module.exports = (sequelize, DataTypes) =>{
     },{
         timestamps: false
     });
+
+    User.hasMany(Fund, {})
     return User;
 };
