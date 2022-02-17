@@ -1,7 +1,5 @@
-const { Fund } = require(".");
-
 module.exports = (sequelize, DataTypes) =>{
-    const User = sequelize.define('Fund', {
+    const Fund = sequelize.define('Fund', {
         type:{
             type:DataTypes.STRING,
             allowNull: false
@@ -19,7 +17,7 @@ module.exports = (sequelize, DataTypes) =>{
             type:DataTypes.DATE,
             allowNull: false,
             defaultValue:0
-        },
+        }/*,
         payerId:{
             type:DataTypes.STRING,
             allowNull: false
@@ -39,13 +37,13 @@ module.exports = (sequelize, DataTypes) =>{
             type:DataTypes.INTEGER,
             allowNull: false,
             defaultValue:0
-        }
+        }*/
         
     },{
         timestamps: false
     });
 
 
-   Fund.belongsTo(User,{})
+
     return Fund;
 };

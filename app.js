@@ -11,7 +11,7 @@ const FileStreamRotator = require('file-stream-rotator')
 const apiErrorHandler = require("./middleware/api-errorHandler")
 const userSchema = require("./model/user");
 const userRoute = require("./routes/userRoute")
-const fundRoute = require("./router/fund")
+const fundRoute = require("./routes/fundRoute")
 
 const app = express();
 //loggerHandler
@@ -33,6 +33,7 @@ app.use(express.json())
 app.use(bodyparser.json())
 
 app.use("/api/user",userRoute)
+app.use("/api/fund",fundRoute)
 //app.use(apiErrorHandler);
 
 
