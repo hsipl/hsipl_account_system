@@ -10,7 +10,7 @@ const {
 class userController{
     createUser = async(req, res) =>{
         const { name, username, password, money } = req.body;
-
+        const {id} = req.body.id
         //check ip
         /*let { ip } = req;
         ip = ip.replace("::ffff", "").toString();
@@ -39,6 +39,7 @@ class userController{
                 username: req.body.username,
                 password: req.body.password,
                 money: req.body.money
+                
                
                 
         });

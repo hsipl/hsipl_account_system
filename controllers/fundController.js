@@ -23,7 +23,8 @@ class fundController{
                 items,
                 cost,
                 purchaseDate,
-                userId: 0
+                userId: 2
+                
             });
             return res.status(200).send({
                 message: "insert new item sucessfully",

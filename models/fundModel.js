@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) =>{
         },
         purchaseDate:{
             type:DataTypes.DATE,
-            allowNull: false,
-            defaultValue:0
+            allowNull: false
+          
         }/*,
         payerId:{
             type:DataTypes.STRING,
