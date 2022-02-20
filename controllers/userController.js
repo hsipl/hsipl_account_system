@@ -57,8 +57,12 @@ class userController{
         }
 
     login = async (req, res) => {
-        const { username, password } = req.body;
-        //console.log(req.body)
+       
+        const { username, password, name } = req.body
+        const payload = {
+            username,
+            name
+        }
         if (!username || !password) {
             return res.send(errorHandler.infoErr());
         }
@@ -69,20 +73,25 @@ class userController{
         if (!userexist) {
             return res.send(errorHandler.userNotExist());
         }
-        const checkPassword = await decryptPassword(password, User.password);
+        /*const checkPassword = await decryptPassword(password, User.password);
         if (!checkPassword) {
             return res.send(errorHandler.infoErr());
+        }*/
+
+        try{
+            const token = await TokenController.signToken({payload })
+
+            return res.status(200).send({
+                msg: `Login Suceess.Welcome back ${name}`,
+                token: token
+            })
         }
-    
-        const token = await TokenController.signToken({
-            id: User._id,
-            name: User.name,
-        });
-    
-        res.status(200).json({
-            msg: `Login Suceess.Welcome back ${user.name} `,
-            token: token,
-        });
+        catch(error){
+          return res.send({
+              message: error
+          })  
+        }
+     
         }
         
     getUser = async (req, res) =>{

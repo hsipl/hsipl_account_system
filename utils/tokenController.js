@@ -1,14 +1,16 @@
 const jwt = require("jsonwebtoken");
 const errorHandler = require("../middleware/errorHandler");
 const dotenv = require("dotenv").config();
-const User = require("../model/user");
-
+const User = require("../models/userModel");
+const SECRET = "123456789"
 class TokenController {
+  
   async signToken(payload) {
-    const token = await jwt.sign(payload, process.env.JWTSECRET, {
+   
+    const token = await jwt.sign(payload, SECRET, {
       expiresIn: "1d",
     });
-
+    console.log(payload)
     return token;
   }
   async verifyToken(req, res, next) {
@@ -18,7 +20,7 @@ class TokenController {
     }
     const rtoken = token.replace("Bearer ", "");
     try {
-      const result = await jwt.verify(rtoken, process.env.JWTSECRET);
+      const result = await jwt.verify(rtoken, SECRET);
       req.user = result
     } catch (error) {
       return next(errorHandler.tokenError());
