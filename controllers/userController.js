@@ -2,15 +2,14 @@ const db = require('../models')
 const User = db.User
 const errorHandler = require('../middleware/errorHandler')
 const {
-    encrypt: encryptPassword,
-    decrypt: decryptPassword,
+    encrypt: encrypt,
+    decrypt: decrypt,
   } = require("../utils/encryptPassword");
   const TokenController = require("../utils/tokenController");
 
 class userController{
     createUser = async(req, res) =>{
         const { name, username, password, money } = req.body;
-        const {id} = req.body.id
         //check ip
         /*let { ip } = req;
         ip = ip.replace("::ffff", "").toString();
@@ -31,21 +30,20 @@ class userController{
           return res.send(errorHandler.userAlreadyExist());
         }
     
-        const ePassword = await encryptPassword(password);
+        //const ePassword = await encryptPassword(password);
 
         try{
             const user = await User.create({
-                name: req.body.name,
-                username: req.body.username,
-                password: req.body.password,
-                money: req.body.money
-                
-               
-                
-        });
+                name: name,
+                username: username,
+                password: password,
+                money: money
+        })
+            console.log(user.id)
             res.send({
                 message: "create User sucessfully!",
                 data: user
+            
             })
         }
         catch(error){
@@ -57,11 +55,15 @@ class userController{
         }
 
     login = async (req, res) => {
-       
         const { username, password, name } = req.body
+        const user = await User.findAll({
+            name: name,
+            username: username,
+            password: password
+        })
         const payload = {
             username,
-            name
+            name,
         }
         if (!username || !password) {
             return res.send(errorHandler.infoErr());
@@ -73,10 +75,16 @@ class userController{
         if (!userexist) {
             return res.send(errorHandler.userNotExist());
         }
-        /*const checkPassword = await decryptPassword(password, User.password);
+        /*
+        //check password the same
+        const checkPassword = await decrypt(password, password);
         if (!checkPassword) {
             return res.send(errorHandler.infoErr());
+        }
+        else{
+            console.log('password same!')
         }*/
+        console.log(password, user.password)
 
         try{
             const token = await TokenController.signToken({payload })
