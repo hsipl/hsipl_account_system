@@ -56,15 +56,21 @@ class userController{
 
     login = async (req, res) => {
         const { username, password, name } = req.body
-        const user = await User.findAll({
-            name: name,
-            username: username,
-            password: password
+        const user = await User.findOne({
+            where:{
+                name: name,
+                username: username
+            }
+            
         })
+        const id = user.id
         const payload = {
             username,
-            name,
+            id
+            
         }
+
+        //check blank empty
         if (!username || !password) {
             return res.send(errorHandler.infoErr());
         }
@@ -75,16 +81,19 @@ class userController{
         if (!userexist) {
             return res.send(errorHandler.userNotExist());
         }
-        /*
-        //check password the same
-        const checkPassword = await decrypt(password, password);
-        if (!checkPassword) {
-            return res.send(errorHandler.infoErr());
+        
+        //check same password 
+        const checkPassword = await decrypt(password, user.password)
+        if (checkPassword) {
+            console.log('same password')
         }
         else{
-            console.log('password same!')
-        }*/
-        console.log(password, user.password)
+            console.log(password, user.password)
+            console.log(typeof(password), typeof(user.password))
+            console.log(checkPassword)
+            return res.send(errorHandler.infoErr());
+            
+        }
 
         try{
             const token = await TokenController.signToken({payload })
