@@ -112,10 +112,20 @@ class userController{
         }
         
     getUser = async (req, res) =>{
+            const {name, username} = req.body
+            const user = await User.findOne({
+                where:{
+                    name : name,
+                    username: username
+                }
+            })
+            console.log(name, username)
+            if (name != user.name || username != user.username){
+
+                //console.log(name, user.name, username, user.username)
+                return res.status(404).send(errorHandler.dataNotFind())
+            }
             try{
-                const user= await User.findOne({
-                    where:{id :req.params.id}
-                })
                 res.status(200).send({
                     message:"data fetched sucessfully",
                     data: user
