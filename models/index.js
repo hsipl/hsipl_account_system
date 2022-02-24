@@ -22,11 +22,10 @@ db.User = require("./userModel")(sequelize, Sequelize);
 db.Fund = require("./fundModel")(sequelize, Sequelize);
 
 db.User.hasMany(db.Fund,{
-    foreignKey: 'userId',
-    as: 'fund'
+    as: 'Fund'
 })
 db.Fund.belongsTo(db.User,{
     foreignKey: 'userId',
-    as:'user'
+    as:'User'
 })
 module.exports = db;

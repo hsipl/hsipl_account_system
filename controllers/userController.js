@@ -6,6 +6,7 @@ const {
     decrypt: decrypt,
   } = require("../utils/encryptPassword");
   const TokenController = require("../utils/tokenController");
+const { Fund } = require('../models');
 
 class userController{
     createUser = async(req, res) =>{
@@ -38,7 +39,9 @@ class userController{
                 username: username,
                 password: password,
                 money: money
-        })
+        },
+        )
+            
             console.log(user.id)
             res.send({
                 message: "create User sucessfully!",

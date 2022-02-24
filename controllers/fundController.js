@@ -15,9 +15,13 @@ class fundController{
 
         }
     }*/
+   
 
     addItem = async(req, res) =>{
         const {type, items, cost, purchaseDate} = req.body
+        const user = await User.findByPK({
+            
+        })
         try{
             
             const data = await Fund.create({
