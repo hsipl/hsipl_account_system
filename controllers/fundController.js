@@ -1,5 +1,6 @@
 const db = require('../models/index')
 const User = require('../models/userModel')
+const {Op} = require('sequelize')
 const Fund = db.Fund
 const errorHandler = require('../middleware/errorHandler')
 
@@ -16,8 +17,9 @@ class fundController{
     }*/
 
     addItem = async(req, res) =>{
+        const {type, items, cost, purchaseDate} = req.body
         try{
-            const {type, items, cost, purchaseDate} = req.body
+            
             const data = await Fund.create({
                 type,
                 items,
@@ -25,7 +27,8 @@ class fundController{
                 purchaseDate,
                 userId: 2
                 
-            });
+            })
+            
             return res.status(200).send({
                 message: "insert new item sucessfully",
                 data: data
@@ -39,7 +42,11 @@ class fundController{
     getById = async(req, res) =>{
         try{
             const data = await Fund.findOne({
-                where: {id :req.params.id}
+                include:{
+                    model: User
+                },
+                where: {id :req.params.id},
+                required: true
             })
 
             return res.status(200).send({
