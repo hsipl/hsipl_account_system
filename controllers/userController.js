@@ -30,14 +30,15 @@ class userController{
         if (checkUserExist) {
           return res.send(errorHandler.userAlreadyExist());
         }
-    
-        //const ePassword = await encryptPassword(password);
+        
+        //password encryption 
+        const ePassword = await encrypt(password);
 
         try{
             const user = await User.create({
                 name: name,
                 username: username,
-                password: password,
+                password: ePassword,
                 money: money
         },
         )

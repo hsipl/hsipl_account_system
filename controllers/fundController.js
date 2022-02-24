@@ -46,11 +46,9 @@ class fundController{
     getById = async(req, res) =>{
         try{
             const data = await Fund.findOne({
-                include:{
-                    model: User
-                },
-                where: {id :req.params.id},
-                required: true
+              
+                where: {id :req.params.id}
+                
             })
 
             return res.status(200).send({
