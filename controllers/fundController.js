@@ -1,5 +1,6 @@
 const db = require('../models/index')
-const User = require('../models/userModel')
+// const User = require('../models/userModel')
+const User = db.User
 const {Op} = require('sequelize')
 const Fund = db.Fund
 const errorHandler = require('../middleware/errorHandler')
@@ -8,28 +9,29 @@ const errorHandler = require('../middleware/errorHandler')
 
 class fundController{
 
-    
-
     addItem = async(req, res) =>{
    
-        const {type, items, cost, purchaseDate, payer_id } = req.body
-        //const users = await User.findByPk({userId, {include: funds}})
+        const {type, items, cost, userId } = req.body
+        const purchaseDate = Date.now()
+        const user = await User.findOne({where :{
+            id: userId
+        }})
+        //console.log(user)
 
-        
+        if (!type || !items || !cost || !purchaseDate || !userId) {
+            return res.send(errorHandler.infoErr());
+          }
         try{    
             const data = await Fund.create({
                 type,
                 items,
                 cost,
                 purchaseDate,
-                userId: 2
-                
-             }
-             
-            )
+                userId:user.id  
+             })
             
             return res.status(200).send({
-                message: "insert new item sucessfully",
+                message: `${user.name} insert new item sucessfully`,
                 data: data
             })
         }
@@ -39,16 +41,17 @@ class fundController{
     }
 
     getById = async(req, res) =>{
+        if (!req.params.id) {
+          return res.send(errorHandler.infoErr());
+        }
         try{
             const data = await Fund.findOne({
-              
-                where: {id :req.params.id}
-                
+                where: {id : req.params.id}
             })
-
+            console.log(data)
             return res.status(200).send({
-                message: 'search item sucessfully',
-                data: data
+                message: `search ${data.items} sucessfully`,
+                detail: data
             })
         }
         catch(error){
@@ -57,21 +60,30 @@ class fundController{
     }
 
     update = async(req, res) =>{
+        const {type, items, cost, userId} = req.body
+        const purchaseDate = Date.now()
+        const user = await User.findOne({
+            where: {id: userId}
+        })
+        console.log(user)
+        if (!type || !items || !cost || !purchaseDate || !userId) {
+            return res.send(errorHandler.infoErr());
+          }
         try{
-            const {types, items, cost, purchaseDate} = req.body
             const data = await Fund.update({
-                types,
+                type,
                 items,
                 cost,
-                purchaseDate
+                purchaseDate,
+                userId : user.id
 
             },{
                 where: {id : req.params.id}
             })
 
             return res.status(200).send({
-                message: 'update sucessfully',
-                data: data
+                message: `${user.name} updated sucessfully`,
+                update: purchaseDate
             })
         }
         catch(error){
@@ -80,13 +92,20 @@ class fundController{
     }
 
     delete = async(req, res) =>{
+        if (!req.params.id) {
+            return res.send(errorHandler.infoErr());
+          }
+
+        const deletedItem = await Fund.findOne({
+            where: {id : req.params.id}
+        })
+
         try{
             const data = await Fund.destroy({
-                where: {id :req.params.id}
+                where: {id : req.params.id}
             })
             return res.status(200).send({
-                message: 'delete itrm sucefully',
-                data: data
+                message: `delete ${deletedItem.items} sucefully`
             })
         }
         catch(error){
