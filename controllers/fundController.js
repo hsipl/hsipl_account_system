@@ -7,23 +7,16 @@ const errorHandler = require('../middleware/errorHandler')
 
 
 class fundController{
-    /*getAllFund = async(req, res) =>{
-        try{
-            
-        }
-        catch{
 
-        }
-    }*/
-   
+    
 
     addItem = async(req, res) =>{
-        const {type, items, cost, purchaseDate} = req.body
-        const user = await User.findByPK({
-            
-        })
-        try{
-            
+   
+        const {type, items, cost, purchaseDate, payer_id } = req.body
+        //const users = await User.findByPk({userId, {include: funds}})
+
+        
+        try{    
             const data = await Fund.create({
                 type,
                 items,
@@ -31,7 +24,9 @@ class fundController{
                 purchaseDate,
                 userId: 2
                 
-            })
+             }
+             
+            )
             
             return res.status(200).send({
                 message: "insert new item sucessfully",

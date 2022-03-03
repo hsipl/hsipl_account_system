@@ -8,7 +8,12 @@
     "dev": "nodemon server.js",
     "test-fund": "jest fund.test.js "
   },
-  "keywords": [],
+  "keywords": [
+    "node.js",
+    "sequelize",
+    "one-to-many",
+    "association"
+  ],
   "author": "Gary Hsu",
   "license": "ISC",
   "dependencies": {

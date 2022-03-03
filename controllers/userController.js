@@ -89,7 +89,7 @@ class userController{
         //check same password 
         const checkPassword = await decrypt(password, user.password)
         if (checkPassword) {
-            console.log('same password')
+            console.log('password checked OK')
         }
         else{
             console.log(password, user.password)
@@ -101,7 +101,7 @@ class userController{
 
         try{
             const token = await TokenController.signToken({payload })
-
+            res.cookie('token', token,{httpOnly: true})
             return res.status(200).send({
                 msg: `Login Suceess.Welcome back ${name}`,
                 token: token

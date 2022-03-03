@@ -28,11 +28,12 @@ var accessLogStream = FileStreamRotator.getStream({
 
 app.use(morgan("combined",{stream: accessLogStream}))
 app.use(cors())
+app.use(express.json())
+app.use(bodyparser.json())
 app.use(express.urlencoded({
   extended: true
 }))
-app.use(express.json())
-app.use(bodyparser.json())
+
 
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)
