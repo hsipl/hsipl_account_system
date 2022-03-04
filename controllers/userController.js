@@ -64,32 +64,29 @@ class userController{
 
     login = async (req, res) => {
         const { username, password } = req.body
-        const user = await User.findOne({
-            where:{
-                username: username
-            }
-            
-        })
-        const id = user.id
-        const payload = {
-            username,
-            id
-            
-        }
-
         try{
+        //check user exist
+            const userexist = await User.findOne({
+                where: { username: username }})
+            if (!userexist) {
+                return res.send(errorHandler.userNotExist());
+            }
+            //get user infor
+            const user = await User.findOne({
+                where:{
+                    username: username
+                } 
+            })
+            const id = user.id
+            const payload = {
+                username,
+                id      
+            }
             //check blank empty
             if (!username || !password) {
                 return res.send(errorHandler.infoErr());
             }
-            //check user exist
-            const userexist = await User.findOne({
-                where: { username: username }});
 
-            if (!userexist) {
-                return res.send(errorHandler.userNotExist());
-            }
-            
             //check same password 
             const checkPassword = await decrypt(password, user.password)
             if (checkPassword) {
@@ -156,6 +153,8 @@ class userController{
                 const user = await User.findOne({
                     where: {password: password}
                 })
+
+                console.log(user)
 
                 const updateData = await User.update({
                     name: name,
