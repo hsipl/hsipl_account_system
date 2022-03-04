@@ -9,4 +9,4 @@ const db = require('./models/index')
 
 
 
-app.listen(3000,"0.0.0.0",()=>console.log("server is running."))
+app.listen(6969,"0.0.0.0",()=>console.log("server is running."))

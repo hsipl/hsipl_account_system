@@ -5,8 +5,8 @@ const encrypt = async(password) => {
     const ePassword = await bcrypt.hash(password,salt)
     return ePassword
 }
-const decrypt = async(reqPassword,dbPassword) => {
-    const result = await bcrypt.compare(reqPassword,dbPassword)
+const decrypt = async(password1,password2) => {
+    const result = await bcrypt.compare(password1,password2)
     return result
 }
 

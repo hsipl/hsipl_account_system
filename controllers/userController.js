@@ -6,35 +6,39 @@ const {
     decrypt: decrypt,
   } = require("../utils/encryptPassword");
   const TokenController = require("../utils/tokenController");
-const { Fund } = require('../models');
 
 class userController{
     createUser = async(req, res) =>{
-        const { name, username, password, money } = req.body;
-        //check ip
-        /*let { ip } = req;
-        ip = ip.replace("::ffff", "").toString();
-        if (!ip.startsWith("140.125.45")) {
-          return res.send(errorHandler.ipError());
-        }*/
-        //check infor error
-        if (!name || !username || !password) {
-          return res.send(errorHandler.infoErr());
-        }
-
-        //check user exist
-        const checkUserExist = await User.findOne({
-            where:{name: name, username: username }
-        });
-    
-        if (checkUserExist) {
-          return res.send(errorHandler.userAlreadyExist());
-        }
-        
-        //password encryption 
-        const ePassword = await encrypt(password);
-
+        const { name, username, password1,password2, money } = req.body
         try{
+        //check ip location
+            /*let { ip } = req;
+            ip = ip.replace("::ffff", "").toString();
+            if (!ip.startsWith("140.125.45")) {
+            return res.send(errorHandler.ipError());
+            }*/
+        //check infor error
+        if ( !name|| !username || !password1 || !password2)  {
+            return res.send(errorHandler.infoErr());
+          }
+  
+          //check user exist
+          const checkUserExist = await User.findOne({
+              where:{ username: username }
+          });
+      
+          if (checkUserExist) {
+            return res.send(errorHandler.userAlreadyExist());
+          }
+          
+         if(password1 !== password2){
+             return res.send({
+                 message: "password need the same"
+             })
+         }
+          //password encryption 
+          const ePassword = await encrypt(password1)
+
             const user = await User.create({
                 name: name,
                 username: username,
@@ -43,10 +47,10 @@ class userController{
         },
         )
             
-            console.log(user.id)
-            res.send({
+            //console.log(user.id)
+            return  res.send({
                 message: "create User sucessfully!",
-                data: user
+                detail: user
             
             })
         }
@@ -59,10 +63,9 @@ class userController{
         }
 
     login = async (req, res) => {
-        const { username, password, name } = req.body
+        const { username, password } = req.body
         const user = await User.findOne({
             where:{
-                name: name,
                 username: username
             }
             
@@ -74,36 +77,37 @@ class userController{
             
         }
 
-        //check blank empty
-        if (!username || !password) {
-            return res.send(errorHandler.infoErr());
-        }
-        //check user exist
-        const userexist = await User.findOne({
-            where: { username: username }});
-
-        if (!userexist) {
-            return res.send(errorHandler.userNotExist());
-        }
-        
-        //check same password 
-        const checkPassword = await decrypt(password, user.password)
-        if (checkPassword) {
-            console.log('password checked OK')
-        }
-        else{
-            console.log(password, user.password)
-            console.log(typeof(password), typeof(user.password))
-            console.log(checkPassword)
-            return res.send(errorHandler.infoErr());
-            
-        }
-
         try{
+            //check blank empty
+            if (!username || !password) {
+                return res.send(errorHandler.infoErr());
+            }
+            //check user exist
+            const userexist = await User.findOne({
+                where: { username: username }});
+
+            if (!userexist) {
+                return res.send(errorHandler.userNotExist());
+            }
+            
+            //check same password 
+            const checkPassword = await decrypt(password, user.password)
+            if (checkPassword) {
+                console.log('password checked OK')
+            }
+            else{
+                console.log(password, user.password)
+                console.log(typeof(password), typeof(user.password))
+                console.log(checkPassword)
+                return res.send(errorHandler.infoErr());
+                
+            }
+
+            
             const token = await TokenController.signToken({payload })
             res.cookie('token', token,{httpOnly: true})
             return res.status(200).send({
-                msg: `Login Suceess.Welcome back ${name}`,
+                msg: `Login Suceess.Welcome back ${username}`,
                 token: token
             })
         }
@@ -116,23 +120,24 @@ class userController{
         }
         
     getUser = async (req, res) =>{
-            const {name, username} = req.body
+            const { name } = req.body
             const user = await User.findOne({
                 where:{
-                    name : name,
-                    username: username
+                    name : name
                 }
             })
-            console.log(name, username)
-            if (name != user.name || username != user.username){
-
-                //console.log(name, user.name, username, user.username)
-                return res.status(404).send(errorHandler.dataNotFind())
-            }
+            //console.log(name)
+     
             try{
-                res.status(200).send({
-                    message:"data fetched sucessfully",
-                    data: user
+
+                if (name != user.name){
+
+                    //console.log(name, user.name, username, user.username)
+                    return res.send(errorHandler.dataNotFind())
+                }
+                return res.status(200).send({
+                    message: `fetched ${user.name} sucessfully`,
+                    detail: user
                 })
             }
             catch(error){
@@ -143,12 +148,20 @@ class userController{
         }
         
     updateUser = async (req, res) => {
+            const { name, username, password, money } = req.body
             try{
+                if(!password){
+                    return res.send("Plz enter the password to continue.")
+                }
+                const user = await User.findOne({
+                    where: {password: password}
+                })
+
                 const updateData = await User.update({
-                    name: req.body.name,
-                    username: req.body.username,
-                    password: req.body.password,
-                    money: req.body.money
+                    name: name,
+                    username: username,
+                    password: password,
+                    money: money
                 },{
                     where: {id: req.params.id}
                 })

@@ -1,5 +1,4 @@
 const db = require('../models/index')
-// const User = require('../models/userModel')
 const User = db.User
 const {Op} = require('sequelize')
 const Fund = db.Fund
@@ -48,6 +47,9 @@ class fundController{
             const data = await Fund.findOne({
                 where: {id : req.params.id}
             })
+            if (!data){
+                return res.send(errorHandler.dataNotFind())
+            }
             console.log(data)
             return res.status(200).send({
                 message: `search ${data.items} sucessfully`,
