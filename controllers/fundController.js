@@ -17,10 +17,12 @@ class fundController{
         }})
         //console.log(user)
 
-        if (!type || !items || !cost || !purchaseDate || !userId) {
-            return res.send(errorHandler.infoErr());
-          }
-        try{    
+
+        try{   
+            if (!type || !items || !cost || !purchaseDate || !userId) {
+                return res.send(errorHandler.infoErr());
+              }
+               
             const data = await Fund.create({
                 type,
                 items,

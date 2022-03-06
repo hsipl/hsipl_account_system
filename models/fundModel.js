@@ -17,7 +17,19 @@ module.exports = (sequelize, DataTypes) =>{
             type:DataTypes.DATE,
             allowNull: false
           
-        }/*,
+        },
+        createdAt:{
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: Date.now()
+        },
+        updatedAt:{
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: Date.now()
+        }
+        
+        /*,
         payerId:{
             type:DataTypes.STRING,
             allowNull: false

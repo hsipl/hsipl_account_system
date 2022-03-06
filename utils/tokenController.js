@@ -17,21 +17,24 @@ class TokenController {
 
   async verifyToken(req, res, next) {
     const token = req.headers.authorization;
-    if(!token){
-      return next(errorHandler.tokenError())
-    }
-    const rtoken = token.replace("Bearer ", "")
-    //console.log(rtoken)
+
     try {
+      if(!token){
+        return res.send(errorHandler.tokenError())
+      }
+      const rtoken = token.replace("Bearer ", "")
+      //console.log(rtoken)
+
       const result = await jwt.verify(rtoken, config.secret)
       req.user = result
-    } catch (error) {
+    } 
+    catch (error) {
       console.log(error)
-      return next(errorHandler.tokenError())
+      return res.send(errorHandler.tokenError())
     }
     
     return next()
-  }
+  } 
 }
 
 module.exports = new TokenController()
