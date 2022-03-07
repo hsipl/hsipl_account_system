@@ -22,8 +22,8 @@ class TokenController {
       if(!token){
         return res.send(errorHandler.tokenError())
       }
-      const rtoken = token.replace("Bearer ", "")
-      //console.log(rtoken)
+      const rtoken = token.replace("Bearer ","")
+      console.log(rtoken)
 
       const result = await jwt.verify(rtoken, config.secret)
       req.user = result

@@ -1,7 +1,7 @@
 const dbConfig = require('../config/db.config');
 
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD,  {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
     operatorsAliases: false,
@@ -10,7 +10,9 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
         min: dbConfig.pool.min,
         acquire: dbConfig.pool.acquire,
         idle: dbConfig.pool.idle
-    }
+    },
+    timezone: '+08:00'
+
 });
 
 const db = {};

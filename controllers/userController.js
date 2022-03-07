@@ -12,11 +12,11 @@ class userController{
         const { name, username, password1,password2, money } = req.body
         try{
         //check ip location
-            /*let { ip } = req;
+            let { ip } = req;
             ip = ip.replace("::ffff", "").toString();
             if (!ip.startsWith("140.125.45")) {
             return res.send(errorHandler.ipError());
-            }*/
+            }
             
         //check infor error
         if ( !name|| !username || !password1 || !password2)  {
@@ -126,7 +126,7 @@ class userController{
                     }
                 })
                 //console.log(name)
-                if (name != user.name){
+                if (!user){
                     return res.send(errorHandler.dataNotFind())
                 }
 

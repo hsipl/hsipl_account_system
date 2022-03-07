@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize')
+const moment = require('moment-timezone')
 module.exports = (sequelize, DataTypes) =>{
     const Fund = sequelize.define('Fund', {
         type:{
@@ -19,14 +21,14 @@ module.exports = (sequelize, DataTypes) =>{
           
         },
         createdAt:{
-            type: DataTypes.DATE,
+            type: DataTypes.DATE,                                     
             allowNull: false,
-            defaultValue: Date.now()
+            defaultValue: moment.utc().format('YYYY-MM-DD HH:mm:ss')
         },
         updatedAt:{
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: Date.now()
+            defaultValue: moment.utc().format('YYYY-MM-DD HH:mm:ss')
         }
         
         /*,
@@ -52,7 +54,7 @@ module.exports = (sequelize, DataTypes) =>{
         }*/
         
     },{
-        timestamps: false
+        timestamps: true
     });
 
 
