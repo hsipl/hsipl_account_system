@@ -211,6 +211,28 @@ class userController{
                 })
             }
         }
+
+        getAllUser = async (req, res) =>{
+            //const { name } = req.body
+            try{
+                const user = await User.findAll({raw: true})
+                //console.log(name)
+                if (!user){
+                    return res.send(errorHandler.dataNotFind())
+                }
+
+                return res.status(200).send({
+                    message: `fetched ${user.name} sucessfully`,
+                    detail: user
+                })
+            }
+            catch(error){
+                return res.send({
+                    message: error
+                })
+            }
+        }
+        
 }
 
 
