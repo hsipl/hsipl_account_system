@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const errorHandler = require("../middleware/errorHandler");
 const config = require('../config/auth.config')
 const db = require('../models/index')
-const User = db.User
 
 class TokenController {
   
@@ -23,7 +22,7 @@ class TokenController {
         return res.send(errorHandler.tokenError())
       }
       const rtoken = token.replace("Bearer ","")
-      console.log(rtoken)
+      //console.log(rtoken)
 
       const result = await jwt.verify(rtoken, config.secret)
       req.user = result
@@ -35,6 +34,10 @@ class TokenController {
     
     return next()
   } 
+
+
+
+
 }
 
 module.exports = new TokenController()

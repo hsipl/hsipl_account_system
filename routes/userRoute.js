@@ -4,10 +4,10 @@ const router = require('express').Router()
 
 router.post("/", userController.createUser)
 router.post("/login",userController.login)
-router.get("/:id", tokenController.verifyToken ,userController.getUser)
-router.put("/:id", tokenController.verifyToken, userController.updateUser)
-router.delete("/:id", tokenController.verifyToken, userController.deleteUser)
-router.get("/alluser", tokenController.verifyToken, userController.getAllUser)
+router.post("/:id", tokenController.verifyToken ,userController.findUser)
+router.put("/", tokenController.verifyToken, userController.updateUser)
+router.delete("/", tokenController.verifyToken, userController.deleteUser)
+router.get("/option", tokenController.verifyToken, userController.getSpecificRow)
 
 
 

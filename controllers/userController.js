@@ -9,36 +9,39 @@ const {
 
 class userController{
     createUser = async(req, res) =>{
-        const { name, username, password1,password2, money } = req.body
+        const { name, username, password,password2, money } = req.body
         try{
         //check ip location
-            let { ip } = req;
-            ip = ip.replace("::ffff", "").toString();
-            if (!ip.startsWith("140.125.45")) {
-            return res.send(errorHandler.ipError());
-            }
+            // let { ip } = req;
+            // ip = ip.replace("::ffff", "").toString();
+            // if (!ip.startsWith("140.125.45")) {
+            // return res.send(errorHandler.ipError());
+            // }
             
         //check infor error
-        if ( !name|| !username || !password1 || !password2)  {
+        if ( !name|| !username || !password || !password2)  {
             return res.send(errorHandler.infoErr());
           }
   
           //check user exist
           const checkUserExist = await User.findOne({
-              where:{ username: username }
-          });
+              where:{
+                  username: username,
+                  name: name
+              }
+          })
       
           if (checkUserExist) {
             return res.send(errorHandler.userAlreadyExist());
           }
           
-         if(password1 !== password2){
+         if(password !== password2){
              return res.send({
                  message: "password need the same"
              })
          }
           //password encryption 
-          const ePassword = await encrypt(password1)
+          const ePassword = await encrypt(password)
 
             const user = await User.create({
                 name: name,
@@ -50,7 +53,7 @@ class userController{
             
             //console.log(user.id)
             return  res.send({
-                message: "create User sucessfully!",
+                message: `create ${req.body.name} sucessfully!`,
                 detail: user
             
             })
@@ -117,7 +120,7 @@ class userController{
      
         }
         
-    getUser = async (req, res) =>{
+    findUser = async (req, res) =>{
             const { name } = req.body
             try{
                 const user = await User.findOne({
@@ -143,40 +146,33 @@ class userController{
         }
         
     updateUser = async (req, res) => {
-            const { name, username, password, money } = req.body
+            const { name,  password } = req.body
             try{
-                if(!password){
-                    return res.send({
-                        message: "Plz enter the password to continue."
-                    })
-                }
                 const user = await User.findOne({
-                    where: {password: password}
+                    where: {username: req.user.payload.username}
                 })
-
-                if(username){
+                console.log(req.user.payload)
+                console.log(user)
+                if(name){
                   const  checkUserExist  = await User.findOne({
-                        where:{username: username}
+                        where:{name: name}
                     })
                 if (checkUserExist){
                     return res.send(errorHandler.userAlreadyExist())
-                }
-                }
+                }}
                 const ePassword = await encrypt(password)
 
-                console.log(user)
 
                 const updateData = await User.update({
                     name: name,
-                    username: username,
-                    password: ePassword,
-                    money: money
+                    password: ePassword
                 },{
-                    where: {id: req.params.id}
+                    where: {id: user.id}
                 })
                 return res.status(200).send({
                     message: "Update sucessfully!",
-                    data: `updatatd info:`
+                    infor: `updated data: ${req.body}`
+
         
                 })
             }
@@ -188,21 +184,16 @@ class userController{
         }
         
     deleteUser = async (req, res) =>{
-            //const {id} =req.params.id
-            try{
-                const checkIdExist = await User.findOne({
-                    where: {id: req.params.id}
-                })
-                if(!checkIdExist){
-                    return res.send(errorHandler.userNotExist())
-                }
 
+            try{
+                const user = await User.findOne({
+                    where: {id: req.user.payload.id}
+                })
                 const delData = await User.destroy({
-                    where: {id: req.params.id}
+                    where: {id: user.id}
                 })
-                return res.send({
-                    message: "delete User Sucessfully!",
-                    data: delData
+                return res.status('200').send({
+                    message: "delete User Sucessfully!"
                 })
             }
             catch(error){
@@ -212,26 +203,32 @@ class userController{
             }
         }
 
-        getAllUser = async (req, res) =>{
-            //const { name } = req.body
-            try{
-                const user = await User.findAll({raw: true})
-                //console.log(name)
-                if (!user){
-                    return res.send(errorHandler.dataNotFind())
-                }
-
-                return res.status(200).send({
-                    message: `fetched ${user.name} sucessfully`,
-                    detail: user
+    getSpecificRow = async (req, res) =>{
+        const attributes   = req.query
+        console.log(Object.keys(attributes))
+        try{
+            if (!attributes){
+                const user = await User.findAll({
+                    raw: true
                 })
+                 return res.status(200).send({
+                     data: user
+                 })
             }
-            catch(error){
-                return res.send({
-                    message: error
-                })
-            }
+            const user = await User.findAll({
+                attributes: Object.keys(attributes),
+               raw: true
+           })
+            return res.status(200).send({
+                data: user
+            })
         }
+        catch(error){
+            return res.send({
+                message: error
+            })
+        }
+    }
         
 }
 

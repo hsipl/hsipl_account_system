@@ -46,8 +46,19 @@ app.use(express.urlencoded({
 
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)
-//app.use(apiErrorHandler);
 
+app.use((req, res) =>{
+  return res.status('404').send({
+    message: "Page not found."
+  })
+})
+
+app.use((req, res) =>{
+  return res.status('500').send({
+    message: "Code have some wrong,plz wait a minute."
+  })
+})
+//app.use(apiErrorHandler);
 
 
 
