@@ -9,7 +9,7 @@ const {
 
 class userController{
     createUser = async(req, res) =>{
-        const { name, username, password,password2, money } = req.body
+        const { name, username, password,checkPassword, money } = req.body
         try{
         //check ip location
             // let { ip } = req;
@@ -19,7 +19,7 @@ class userController{
             // }
             
         //check infor error
-        if ( !name|| !username || !password || !password2)  {
+        if ( !name|| !username || !password || !checkPassword)  {
             return res.send(errorHandler.infoErr());
           }
   
@@ -35,7 +35,7 @@ class userController{
             return res.send(errorHandler.userAlreadyExist());
           }
           
-         if(password !== password2){
+         if(password !== checkPassword){
              return res.send({
                  message: "password need the same"
              })
@@ -203,11 +203,11 @@ class userController{
             }
         }
 
-    getSpecificRow = async (req, res) =>{
+    userOptionSearch = async (req, res) =>{
         const attributes   = req.query
         console.log(Object.keys(attributes))
         try{
-            if (!attributes){
+            if (JSON.stringify(attributes) === '{}'){
                 const user = await User.findAll({
                     raw: true
                 })
@@ -229,6 +229,7 @@ class userController{
             })
         }
     }
+
         
 }
 

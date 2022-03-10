@@ -27,16 +27,10 @@ var accessLogStream = FileStreamRotator.getStream({
   verbose: false
 })
 
-//const origin = ['http://140.125.45.161:3000']
 
 app.use(morgan("combined",{stream: accessLogStream}))
 app.use(cors())
-// app.use((req, res) => {
-//     const origin = req.headers.origin
-//     res.setHeader('Access-Control-Allow-Origin', origin)
-//     res.header('Access-Control-Allow-Credentials', true)
 
-// })
 app.use(express.json())
 app.use(bodyparser.json())
 app.use(express.urlencoded({
