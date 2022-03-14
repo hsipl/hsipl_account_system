@@ -1,57 +1,66 @@
 class errorHandler {
- infoErr() {
+  contentEmpty() {
     return {
       statusCode: 400,
-      msg: "your info is wrong",
-    };
+      message: "Your contents can not empty."
+    }
   }
-  userAlreadyExist() {
+  passwordNotMatch() {
     return {
-      statusCode: 409,
-      msg: "user already exist.",
-    };
+      statusCode: 400,
+      message: "Your password does not match."
+    }
   }
-  userNotExist() {
-    return {
-      statusCode: 404,
-      msg: "user not exist.",
-    };
-    
-  }
-  dataNotFind(){
-    return {
-      statusCode: 404,
-      msg: "data not find.",
-    };
-  }
+
   loginError() {
     return {
       statusCode: 400,
-      msg: "username or password is wrong.",
+      message: "Username or password is wrong.",
     };
   }
-  tokenError() {
-    return {
-      statusCode: 401,
-      msg: "token wrong,please login again.",
-    };
-  }
-  accessError(){
+
+  payerError(){
     return {
       statusCode:400,
-      msg: "access error."
+      message: "Payer profile does not exist."
     }
   }
   ipError(){
     return{
       statusCode:401,
-      msg: "Authentication failed."
+      message: "Authentication failed."
     }
   }
-  payerError(){
+
+  tokenError() {
     return {
-      statusCode:400,
-      msg: "payer profile does not exist."
+      statusCode: 401,
+      message: "Access denied,please login again.",
+    };
+  }
+  userNotExist() {
+    return {
+      statusCode: 404,
+      message: "User does not exist.",
+    }
+    
+  }
+  dataNotFind(){
+    return {
+      statusCode: 404,
+      message: "Data not find.",
+    };
+  }
+  userAlreadyExist() {
+    return {
+      statusCode: 409,
+      message: "User already exist."
+    }
+  }
+  serverError(){
+    return {
+      statusCode: 500,
+      message: "server has some problem, please wait."
     }
   }
 }

@@ -19,7 +19,7 @@ class TokenController {
 
     try {
       if(!token){
-        return res.send(errorHandler.tokenError())
+        return res.status('401').send(errorHandler.tokenError())
       }
       const rtoken = token.replace("Bearer ","")
       //console.log(rtoken)
@@ -29,7 +29,7 @@ class TokenController {
     } 
     catch (error) {
       console.log(error)
-      return res.send(errorHandler.tokenError())
+      return res.status('401').send(errorHandler.tokenError())
     }
     
     return next()

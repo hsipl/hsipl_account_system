@@ -1,118 +1,130 @@
 const db = require('../models/index')
 const User = db.User
-const {Op} = require('sequelize')
+const {Op} = require('@sequelize/core')
 const Fund = db.Fund
 const errorHandler = require('../middleware/errorHandler')
+const { restart } = require('nodemon/lib/monitor/run')
 
 
 
 class fundController{
 
     addItem = async(req, res) =>{
-   
-        const {type, items, cost, userId } = req.body
-        const purchaseDate = Date.now()
-        const user = await User.findOne({where :{
-            id: userId
-        }})
-        //console.log(user)
-
-
+        const {type, items, cost, purchaseDate, recorderName, userId } = req.body
         try{   
-            if (!type || !items || !cost || !purchaseDate || !userId) {
-                return res.send(errorHandler.infoErr());
+            const user = await User.findOne({where :{
+                id: userId
+            }})
+            //console.log(user)
+            if (!type || !items || !cost || !purchaseDate || !recorderName || !userId) {
+               return res.status('400').send(errorHandler.contentEmpty())
               }
-               
             const data = await Fund.create({
                 type,
                 items,
                 cost,
                 purchaseDate,
-                userId:user.id  
+                recorderName,
+                userId: user.id  
              })
             
-            return res.status(200).send({
+            return res.status('200').send({
                 message: `${user.name} insert ${items} sucessfully`,
                 detail: data
             })
         }
         catch(error){
-            return res.send(error)
+            return res.status('500').send({
+                message: error
+            })
         }
     }
 
     searchItem = async(req, res) =>{
+        const { items } = req.body
         try{
-            const {items} = req.body
-
             if (!items) {
-                return res.send(errorHandler.infoErr());
+                return res.status('400').send(errorHandler.contentEmpty());
               }
+
+            const itemExist = await Fund.findOne({
+            where: {items: items}
+        })
+            if (!itemExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
+            //console.log(item)
             const item = await Fund.findAll({
                 where: {items: items}
             })
-            if (!item){
-                return res.send(errorHandler.dataNotFind())
-            }
-            console.log(item)
-            return res.status(200).send({
-                message: `search sucessfully`,
+            return res.status('200').send({
+                message: `Search sucessfully.`,
                 detail: item
             })
         }
-        catch(error){
-            return res.send(error)
-        }
+         catch(error){
+             return res.status('500').send(error)
+         }
     }
 
     update = async(req, res) =>{
-        const {type, items, cost, userId, purchaseDate} = req.body
-        const user = await User.findOne({
-            where: {id: userId}
-        })
-        console.log(user)
-        
+        const {type, items, cost, purchaseDate, recorderName, userId} = req.body
+        const id = req.params.id
+        //console.log(id)
+        //console.log(user) 
         try{
+            const idExist = await Fund.findOne({
+                where: {id: id}
+            })
+            if (!idExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
+            const user = await User.findOne({
+                where: {id: userId}
+            })
             const data = await Fund.update({
                 type,
                 items,
                 cost,
                 purchaseDate,
+                recorderName,
                 userId : user.id
 
             },{
                 where: {id : req.params.id}
             })
 
-            return res.status(200).send({
-                message: `${user.name} updated sucessfully`,
-                update: purchaseDate
+            return res.status('200').send({
+                message: `${user.name} updated sucessfully`
             })
         }
         catch(error){
-            return res.send(error)
+            return res.status('500').send(error)
         }
     }
 
     delete = async(req, res) =>{
-        if (!req.params.id) {
-            return res.send(errorHandler.infoErr());
-          }
-
-        const deletedItem = await Fund.findOne({
-            where: {id : req.params.id}
-        })
-
+        const id = req.params.id
         try{
+            const idExist = await Fund.findOne({
+                where: {id: id}
+            })
+            if (!idExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
+
+            const deletedItem = await Fund.findOne({
+                where: {id : req.params.id}
+            })
             const data = await Fund.destroy({
                 where: {id : req.params.id}
             })
-            return res.status(200).send({
-                message: `delete ${deletedItem.items} sucefully`
+            return res.status('200').send({
+                message: `Deleted ${deletedItem.items} sucessfully`
             })
         }
         catch(error){
-            return res.send(error)
+            return res.status('500').send(error)
         }
     }
 
@@ -124,7 +136,7 @@ class fundController{
                     raw: true
                 })
                 //console.log(item)
-                 return res.status(200).send({
+                 return res.status('200').send({
                      detail: item 
                  })
             }
@@ -132,12 +144,12 @@ class fundController{
                 attributes: Object.keys(attributes),
                raw: true
            })
-            return res.status(200).send({
+            return res.status('200').send({
                 detail: item 
             })
         }
         catch(error){
-            return res.send({
+            return res.status('500').send({
                 message: error
             })
         }
@@ -153,20 +165,17 @@ class fundController{
         coutTotal.forEach((item) =>{
             total += item.cost
         })
-        console.log(total)
-        return res.send({
-            message: `total money is ${total}`
+        //console.log(total)
+        return res.status('200').send({
+            message: `Total money is ${total}`
         })
     }
-    catch(error){
-        return res.send({
+    catch(error){   
+        return res.status('500').send({
             message: error
-        })
-
-    }
+            })
+        }
     }
 }
-
-
 
 module.exports = new fundController()

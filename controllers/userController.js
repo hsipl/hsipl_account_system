@@ -1,44 +1,47 @@
 const db = require('../models')
 const User = db.User
+const { Op } = require('@sequelize/core')
 const errorHandler = require('../middleware/errorHandler')
 const {
     encrypt: encrypt,
     decrypt: decrypt,
   } = require("../utils/encryptPassword");
-  const TokenController = require("../utils/tokenController");
+const TokenController = require("../utils/tokenController");
 
 class userController{
     createUser = async(req, res) =>{
-        const { name, username, password,checkPassword, money } = req.body
-        try{
+        const { name, username, password, checkPassword, mail, phoneNum, money } = req.body
+        try{ 
         //check ip location
             // let { ip } = req;
             // ip = ip.replace("::ffff", "").toString();
             // if (!ip.startsWith("140.125.45")) {
-            // return res.send(errorHandler.ipError());
+            //return res.status('400').send(errorHandler.ipError());
             // }
             
-        //check infor error
-        if ( !name|| !username || !password || !checkPassword)  {
-            return res.send(errorHandler.infoErr());
+        //check body empty
+        if ( !name|| !username || !password || !checkPassword || !mail ||!phoneNum)  {
+            return res.status('400').send(errorHandler.contentEmpty())
           }
-  
+
           //check user exist
           const checkUserExist = await User.findOne({
-              where:{
-                  username: username,
-                  name: name
+              where: {
+                  [Op.or]: [
+                    {username: username},
+                    {name: name},
+                    {mail: mail},
+                    {phoneNum: phoneNum}
+                  ]
               }
           })
       
           if (checkUserExist) {
-            return res.send(errorHandler.userAlreadyExist());
+            return res.status('409').send(errorHandler.userAlreadyExist())
           }
           
          if(password !== checkPassword){
-             return res.send({
-                 message: "password need the same"
-             })
+             return res.status('400').send(errorHandler.passwordNotMatch())
          }
           //password encryption 
           const ePassword = await encrypt(password)
@@ -47,20 +50,19 @@ class userController{
                 name: name,
                 username: username,
                 password: ePassword,
+                mail: mail,
+                phoneNum: phoneNum,
                 money: money
-        },
-        )
-            
+        })
             //console.log(user.id)
-            return  res.send({
-                message: `create ${req.body.name} sucessfully!`,
+            return  res.status('200').send({
+                message: `Create ${req.body.name} sucessfully!`,
                 detail: user
             
             })
         }
         catch(error){
-            return res.send({
-                
+            return res.status('500').send({
                 message: error
             })
         }
@@ -69,11 +71,11 @@ class userController{
     login = async (req, res) => {
         const { username, password } = req.body
         try{
-        //check user exist
+            //check user exist
             const userexist = await User.findOne({
                 where: { username: username }})
             if (!userexist) {
-                return res.send(errorHandler.userNotExist());
+                return res.status('400').send(errorHandler.loginError())
             }
             //get user infor
             const user = await User.findOne({
@@ -88,37 +90,29 @@ class userController{
             }
             //check blank empty
             if (!username || !password) {
-                return res.send(errorHandler.infoErr());
+                return res.status('400').send(errorHandler.contentEmpty());
             }
 
             //check same password 
             const checkPassword = await decrypt(password, user.password)
-            if (checkPassword) {
-                console.log('password checked OK')
-            }
-            else{
-                console.log(password, user.password)
-                console.log(typeof(password), typeof(user.password))
-                console.log(checkPassword)
-                return res.send(errorHandler.infoErr());
-                
+            if (!checkPassword) {
+                //console.log('password checked OK')
+                return res.status('400').send(errorHandler.loginError())
             }
 
-            
-            const token = await TokenController.signToken({payload })
-            res.cookie('token', token,{httpOnly: true})
-            return res.status(200).send({
-                msg: `Login Suceess.Welcome back ${username}`,
-                token: token
+            const token = await TokenController.signToken({ payload })
+            res.cookie('token', token,{ httpOnly: true })
+            return res.status('200').send({
+                message: `Login suceess.Welcome back ${username}`,
+                token: `There is your accessToken: ${token} `
             })
         }
         catch(error){
-          return res.send({
+          return res.status('500').send({
               message: error
           })  
         }
-     
-        }
+      }
         
     findUser = async (req, res) =>{
             const { name } = req.body
@@ -130,38 +124,43 @@ class userController{
                 })
                 //console.log(name)
                 if (!user){
-                    return res.send(errorHandler.dataNotFind())
+                    return res.status('404').send(errorHandler.dataNotFind())
                 }
 
-                return res.status(200).send({
-                    message: `fetched ${user.name} sucessfully`,
+                return res.status('200').send({
+                    message: `Fetched ${user.name} sucessfully`,
                     detail: user
                 })
             }
             catch(error){
-                return res.send({
+                return res.status('500').send({
                     message: error
                 })
             }
         }
         
     updateUser = async (req, res) => {
-            const { name,  password } = req.body
+            const { name, password, mail, phoneNum } = req.body
             try{
                 const user = await User.findOne({
                     where: {username: req.user.payload.username}
                 })
-                console.log(req.user.payload)
-                console.log(user)
+                //console.log(req.user.payload)
+                //console.log(user)
                 if(name){
                   const  checkUserExist  = await User.findOne({
-                        where:{name: name}
+                        where:{
+                            [Op.or]: [
+                                {name: name},
+                                {mail: mail},
+                                {phoneNum: phoneNum}
+                            ]
+                        }
                     })
                 if (checkUserExist){
-                    return res.send(errorHandler.userAlreadyExist())
+                    return res.status('409').send(errorHandler.userAlreadyExist())
                 }}
                 const ePassword = await encrypt(password)
-
 
                 const updateData = await User.update({
                     name: name,
@@ -169,15 +168,15 @@ class userController{
                 },{
                     where: {id: user.id}
                 })
-                return res.status(200).send({
+                return res.status('200').send({
                     message: "Update sucessfully!",
-                    infor: `updated data: ${req.body}`
+                    detail: `Updated data: ${updateData}`
 
         
                 })
             }
             catch(error){
-                return res.send({
+                return res.status('500').send({
                     message: error
                 })
             }
@@ -197,7 +196,7 @@ class userController{
                 })
             }
             catch(error){
-                return res.send({
+                return res.status('500').send({
                     message: error
                 })
             }
@@ -205,13 +204,13 @@ class userController{
 
     userOptionSearch = async (req, res) =>{
         const attributes   = req.query
-        console.log(Object.keys(attributes))
+        //console.log(Object.keys(attributes))
         try{
             if (JSON.stringify(attributes) === '{}'){
                 const user = await User.findAll({
                     raw: true
                 })
-                 return res.status(200).send({
+                 return res.status('200').send({
                      data: user
                  })
             }
@@ -219,12 +218,12 @@ class userController{
                 attributes: Object.keys(attributes),
                raw: true
            })
-            return res.status(200).send({
+            return res.status('200').send({
                 data: user
             })
         }
         catch(error){
-            return res.send({
+            return res.status('500').send({
                 message: error
             })
         }
@@ -232,7 +231,6 @@ class userController{
 
         
 }
-
 
 
 module.exports = new userController()

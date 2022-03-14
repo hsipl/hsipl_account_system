@@ -6,6 +6,7 @@ const cors = require("cors")
 const path = require("path")
 const fs = require("fs")
 const FileStreamRotator = require('file-stream-rotator')
+const errorHandler = require('./middleware/errorHandler')
 
 //require middleware
 const apiErrorHandler = require("./middleware/api-errorHandler")
@@ -14,9 +15,8 @@ const userRoute = require("./routes/userRoute")
 const fundRoute = require("./routes/fundRoute")
 
 const app = express();
+
 //loggerHandler
-
-
 
 const logDirectory = path.join(__dirname, 'logger')
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
@@ -36,7 +36,6 @@ app.use(bodyparser.json())
 app.use(express.urlencoded({
   extended: true
 }))
-
 
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)

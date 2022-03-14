@@ -23,7 +23,9 @@ db.sequelize = sequelize;
 db.User = require("./userModel")(sequelize, Sequelize);
 db.Fund = require("./fundModel")(sequelize, Sequelize);
 
-db.User.hasMany(db.Fund)
+db.User.hasMany(db.Fund,{
+    foreignKey: 'userId'
+})
 db.Fund.belongsTo(db.User,{
     foreignKey: 'userId'
 })
