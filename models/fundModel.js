@@ -16,8 +16,12 @@ module.exports = (sequelize, DataTypes) =>{
             allowNull: false,
             defaultValue:0
         },
+        payer:{
+            type:DataTypes.STRING,
+            allowNull:false
+        },
         purchaseDate:{
-            type:DataTypes.DATE,
+            type:DataTypes.STRING,
             allowNull: false
           
         },

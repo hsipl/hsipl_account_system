@@ -5,6 +5,7 @@ const morgan = require("morgan")
 const cors = require("cors")
 const path = require("path")
 const fs = require("fs")
+const nodemailer = require('nodemailer')
 const FileStreamRotator = require('file-stream-rotator')
 const errorHandler = require('./middleware/errorHandler')
 
@@ -36,6 +37,7 @@ app.use(bodyparser.json())
 app.use(express.urlencoded({
   extended: true
 }))
+app.use(express.static(path.join(__dirname,'./public')))
 
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)

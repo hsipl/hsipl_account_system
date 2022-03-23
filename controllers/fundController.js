@@ -3,20 +3,20 @@ const User = db.User
 const {Op} = require('@sequelize/core')
 const Fund = db.Fund
 const errorHandler = require('../middleware/errorHandler')
-const { restart } = require('nodemon/lib/monitor/run')
+const Sequelize  = require('sequelize')
 
 
 
 class fundController{
 
     addItem = async(req, res) =>{
-        const {type, items, cost, purchaseDate, recorderName, userId } = req.body
+        const {type, items, cost, purchaseDate, payer, recorderName, userId } = req.body
         try{   
             const user = await User.findOne({where :{
                 id: userId
             }})
             //console.log(user)
-            if (!type || !items || !cost || !purchaseDate || !recorderName || !userId) {
+            if (!type || !items || !cost || !purchaseDate || !payer || !recorderName || !userId) {
                return res.status('400').send(errorHandler.contentEmpty())
               }
             const data = await Fund.create({
@@ -24,6 +24,7 @@ class fundController{
                 items,
                 cost,
                 purchaseDate,
+                payer,
                 recorderName,
                 userId: user.id  
              })
@@ -68,7 +69,7 @@ class fundController{
     }
 
     update = async(req, res) =>{
-        const {type, items, cost, purchaseDate, recorderName, userId} = req.body
+        const {type, items, cost, purchaseDate, payer, recorderName, userId} = req.body
         const id = req.params.id
         //console.log(id)
         //console.log(user) 
@@ -82,13 +83,17 @@ class fundController{
             const user = await User.findOne({
                 where: {id: userId}
             })
+
+            const time = new Date()
             const data = await Fund.update({
                 type,
                 items,
                 cost,
                 purchaseDate,
+                payer,
                 recorderName,
-                userId : user.id
+                userId : user.id,
+                updatedAt: time
 
             },{
                 where: {id : req.params.id}

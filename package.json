@@ -34,6 +34,7 @@
     "morgan": "^1.10.0",
     "morgan-body": "^2.6.6",
     "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.2",
     "nodemon": "^2.0.7",
     "sequelize": "^6.15.0",
     "sequelize-cli": "^6.4.1",
