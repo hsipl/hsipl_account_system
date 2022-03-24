@@ -10,13 +10,12 @@ const Sequelize  = require('sequelize')
 class fundController{
 
     addItem = async(req, res) =>{
-        const {type, items, cost, purchaseDate, payer, recorderName, userId } = req.body
-        try{   
-            const user = await User.findOne({where :{
-                id: userId
-            }})
-            //console.log(user)
-            if (!type || !items || !cost || !purchaseDate || !payer || !recorderName || !userId) {
+        const {type, items, cost, purchaseDate, payer } = req.body
+        try{
+            const user = await User.findOne({
+                where: {id: req.user.payload.id}
+            })   
+            if (!type || !items || !cost || !purchaseDate || !payer) {
                return res.status('400').send(errorHandler.contentEmpty())
               }
             const data = await Fund.create({
@@ -25,8 +24,8 @@ class fundController{
                 cost,
                 purchaseDate,
                 payer,
-                recorderName,
-                userId: user.id  
+                recorderName: user.name,
+                userId: user.id 
              })
             
             return res.status('200').send({
@@ -69,13 +68,14 @@ class fundController{
     }
 
     update = async(req, res) =>{
-        const {type, items, cost, purchaseDate, payer, recorderName, userId} = req.body
-        const id = req.params.id
+        const {type, items, cost, purchaseDate, payer, recorderName } = req.body
+        const itemid = req.params.id
+        const userId = req.user.payload.id
         //console.log(id)
         //console.log(user) 
         try{
             const idExist = await Fund.findOne({
-                where: {id: id}
+                where: {id: itemid}
             })
             if (!idExist){
                 return res.status('404').send(errorHandler.dataNotFind())
@@ -166,7 +166,7 @@ class fundController{
         const coutTotal = await Fund.findAll({
             where: Fund.cost
         })
-
+        //console.log(coutTotal)
         coutTotal.forEach((item) =>{
             total += item.cost
         })

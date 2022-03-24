@@ -1,5 +1,6 @@
 const db = require('../models')
 const User = db.User
+const Fund = db.Fund
 const { Op } = require('@sequelize/core')
 const errorHandler = require('../middleware/errorHandler')
 const {
@@ -94,7 +95,6 @@ class userController{
             if (!username || !password) {
                 return res.status('400').send(errorHandler.contentEmpty());
             }
-
             //check same password 
             const checkPassword = await decrypt(password, user.password)
             if (!checkPassword) {
@@ -104,6 +104,8 @@ class userController{
 
             const token = await TokenController.signToken({ payload })
             res.cookie('token', token,{ httpOnly: true })
+
+            //console.log(item)
             return res.status('200').send({
                 message: `Login suceess.Welcome back ${username}`,
                 token: `There is your accessToken: ${token} `
@@ -115,7 +117,43 @@ class userController{
           })  
         }
       }
-        
+    profile = async (req, res) =>{
+        try{
+            const user = await User.findOne({
+                where: {username :req.user.payload.username}
+            })
+            const items = await Fund.findAll({
+                attributes: ['type', 'items', 'cost'],
+                where: {[Op.and] :[
+                    { userId: req.user.payload.id },
+                     Fund.cost
+                ]}
+            })
+            //console.log(items)
+            let total = 0
+            items.forEach((item) =>{
+                total += item.cost
+            })
+
+            return res.status('200').send({
+                name: user.name,
+                username: user.username,
+                mail: user.mail,
+                phoneNum: user.phoneNum,
+                payed: items,
+                total: total
+            })
+
+        }
+
+        catch(error){
+            return res.status('500').send({
+                message: error
+            })
+        }
+
+    }
+      
     findUser = async (req, res) =>{
             const { name } = req.body
             try{
@@ -246,9 +284,6 @@ class userController{
         }
         const code = await createNum()
         //time = new Date.getTime()
-
- 
-    
 
         const user = await User.findOne({
             where :{mail: email}

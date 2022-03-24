@@ -9,6 +9,7 @@ router.put("/", tokenController.verifyToken, userController.updateUser)
 router.delete("/", tokenController.verifyToken, userController.deleteUser)
 router.get("/option", tokenController.verifyToken, userController.userOptionSearch)
 router.post("/email", tokenController.verifyToken, userController.mailCode)
+router.get("/profile", tokenController.verifyToken, userController.profile)
 
 
 
