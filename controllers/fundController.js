@@ -3,7 +3,7 @@ const User = db.User
 const {Op} = require('@sequelize/core')
 const Fund = db.Fund
 const errorHandler = require('../middleware/errorHandler')
-const Sequelize  = require('sequelize')
+
 
 
 

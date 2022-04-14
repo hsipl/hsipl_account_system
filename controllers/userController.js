@@ -108,7 +108,7 @@ class userController{
             //console.log(item)
             return res.status('200').send({
                 message: `Login suceess.Welcome back ${username}`,
-                token: `There is your accessToken: ${token} `
+                token: token
             })
         }
         catch(error){

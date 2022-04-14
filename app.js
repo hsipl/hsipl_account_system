@@ -10,10 +10,9 @@ const FileStreamRotator = require('file-stream-rotator')
 const errorHandler = require('./middleware/errorHandler')
 
 //require middleware
-const apiErrorHandler = require("./middleware/api-errorHandler")
-const userSchema = require("./model/user");
 const userRoute = require("./routes/userRoute")
 const fundRoute = require("./routes/fundRoute")
+const labRoute = require("./routes/labRoute")
 
 const app = express();
 
@@ -28,10 +27,9 @@ var accessLogStream = FileStreamRotator.getStream({
   verbose: false
 })
 
-
+app.use('src/image', express.static('./src/image'))
 app.use(morgan("combined",{stream: accessLogStream}))
 app.use(cors())
-
 app.use(express.json())
 app.use(bodyparser.json())
 app.use(express.urlencoded({
@@ -41,6 +39,7 @@ app.use(express.static(path.join(__dirname,'./public')))
 
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)
+app.use("/api/lab",labRoute)
 
 app.use((req, res) =>{
   return res.status('404').send({
@@ -53,7 +52,7 @@ app.use((req, res) =>{
     message: "Code have some wrong,plz wait a minute."
   })
 })
-//app.use(apiErrorHandler);
+
 
 
 

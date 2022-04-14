@@ -22,6 +22,12 @@ db.sequelize = sequelize;
 
 db.User = require("./userModel")(sequelize, Sequelize);
 db.Fund = require("./fundModel")(sequelize, Sequelize);
+db.ActImg = require("./lab/actImgModel")(sequelize, Sequelize);
+db.Awards = require("./lab/awardsModel")(sequelize, Sequelize);
+db.Members = require("./lab/membersModel")(sequelize, Sequelize);
+db.News = require("./lab/newsModel")(sequelize, Sequelize);
+db.Research = require("./lab/researchModel")(sequelize, Sequelize);
+db.Projects = require("./lab/projectsModel")(sequelize, Sequelize);
 
 db.User.hasMany(db.Fund,{
     foreignKey: 'userId'
