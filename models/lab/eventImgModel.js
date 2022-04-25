@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 
 
 module.exports = (sequelize, DataTypes) =>{
-    const ActImg = sequelize.define('ActImg',{
+    const EventImg = sequelize.define('EventImg',{
         img:{
             type:DataTypes.STRING,
             allowNull: false
@@ -12,5 +12,5 @@ module.exports = (sequelize, DataTypes) =>{
         timestamps: false
     })
 
-    return ActImg
+    return EventImg
 }

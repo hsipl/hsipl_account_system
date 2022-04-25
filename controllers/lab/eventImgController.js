@@ -1,17 +1,18 @@
 const db = require('../../models')
-const ActImg = db.ActImg
+const EventImg = db.EventImg
 const errorHandler = require('../../middleware/errorHandler')
 
 
-class ActImgController{
+class EventImgController{
     addImg = async(req, res) => {
         try {
             let infor = {
                 img: req.file.path
             }
-            const upload = await ActImg.create(infor)
+            const data = await EventImg.create(infor)
             return res.status('200').send({
-                message: upload
+                message: `Insert sucessfully!`,
+                detail: data
             })
             }
         catch (error) {
@@ -23,12 +24,12 @@ class ActImgController{
 
     showImg = async(req, res) =>{
         try{
-            const actImg = await ActImg.findAll({
+            const data = await EventImg.findAll({
                 raw: true
             })
 
             return res.status('200').send({
-                data: actImg 
+                data: data
             })
         }
         catch (error) {
@@ -39,13 +40,27 @@ class ActImgController{
     }
 
     updateImg = async(req, res) => {
-        try {
+       try {
             let infor = {
                 img: req.file.path
             }
-            const upload = await ActImg.update(infor)
+
+            const checkExist = await EventImg.findOne({
+                where:{
+                    id: req.params.id
+                }
+            })
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
+            const upload = await EventImg.update(infor,{
+                where: {
+                    id: req.params.id
+                }
+            })
             return res.status('200').send({
-                message: upload
+                message: "Update sucessfully!"
             })
             }
         catch (error) {
@@ -56,14 +71,18 @@ class ActImgController{
         }
 
     deleteImg = async(req, res) =>{
-        const id = req.params.id
         try {
-            const data = await ActImg.findOne({
+            const checkExist = await EventImg.findOne({
                 where:{
                     id: req.params.id
                 }
             })
-            const del = await ActImg.destroy({
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
+
+            const del = await EventImg.destroy({
                 where: {id : req.params.id}
             })
             return res.status('200').send({
@@ -79,4 +98,4 @@ class ActImgController{
 
     }
 }
-module.exports = new ActImgController()
+module.exports = new EventImgController()

@@ -1,23 +1,5 @@
 const multer = require('multer')
 const path = require('path')
-const imageFilter = (req, file, cb) =>{
-    try{
-        const fileTypes = /jpeg|jpg|png|gif|/
-        const mimetype = fileTypes.test(file.mimetype)
-        const extname = fileTypes.test(path.extname.originalname)
-        if (mimetype && extname){
-            return cb(null, true)
-        }
-        else{
-            cb("Please upload noly images.")
-        }
-    }
-    catch(error){
-        console.log(error)
-    }
- 
-}
-
 
 const storage =  multer.diskStorage({
     destination: (req, file, cb) =>{
@@ -33,7 +15,14 @@ const storage =  multer.diskStorage({
 const uploadFile = multer({
     storage: storage,
     limits:{fieldSize: '1000000'},
-    fileFilter: imageFilter
+    fileFilter: (req, file, cb) => {
+        if(file.mimetype == 'jpeg/png/gif/jpg'){
+            cb(null, true)
+        }
+        else{
+            cb("plz upload only img", false)
+        }
+    }
     
 }).single('img')
 

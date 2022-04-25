@@ -16,9 +16,10 @@ class AwardsController{
                 img: req.file.path,
                 content: content
             }
-            const upload = await Awards.create(infor)
+            const data = await Awards.create(infor)
             return res.status('200').send({
-                message: upload
+                message: "Insert sucessfully! ",
+                detail: data
             })
           }
         catch (error) {
@@ -40,11 +41,20 @@ class AwardsController{
 
     updateAwards = async(req, res) =>{
         try {
-            const {itemid} = req.params.id
             const {date, content } = req.body
 
             if (!date || !content ){
                 return res.status('400').send(errorHandler.contentEmpty())
+            }
+
+            const checkExist = await Awards.findOne({
+                where:{
+                    id: req.params.id
+                }
+            })
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
             }
   
             let infor = {
@@ -59,7 +69,7 @@ class AwardsController{
             })
 
             return res.status('200').send({
-                message: upload
+                message: "Update sucessfully!"
             })
         } catch (error) {
             return res.status('500').send({
@@ -70,13 +80,17 @@ class AwardsController{
     }
 
     deleteAward = async(req, res) =>{
-        const id = req.params.id
         try {
-            const data = await Awards.findOne({
+
+            const checkExist = await Awards.findOne({
                 where:{
                     id: req.params.id
                 }
             })
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
             const del = await Awards.destroy({
                 where: {id : req.params.id}
             })

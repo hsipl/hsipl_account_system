@@ -1,27 +1,25 @@
 const db = require('../../models')
-const News = db.News
+const Posters = db.Posters
 const errorHandler = require('../../middleware/errorHandler')
 
 
-class NewsController{
-    addNews = async(req, res) => {
+class PostersController{
+    addPoster = async(req, res) => {
         try {
-            const { content, date} = req.body
+            const {title}  = req.body
 
-            if (!date || !content ){
+            if (!title ){
                 return res.status('400').send(errorHandler.contentEmpty())
             }
-
             let infor = {
-                date :date, 
-                img: req.file.path,
-                content: content
+                title: title,
+                img: req.file.path
 
             }
-            const data = await News.create(infor)
+            const data = await Posters.create(infor)
             return res.status('200').send({
-                message: `Insert news sucessfully!`,
-                detail: data
+                message: `Insert ${data.title} sucessfully!`,
+                detail: data 
             })
            }
         catch (error) {
@@ -31,26 +29,24 @@ class NewsController{
           }
         }
 
-    showNews = async(req, res) =>{
-        const data = await News.findAll({
+    showPosters = async(req, res) =>{
+        const data = await Posters.findAll({
             raw: true
         })
 
         return res.status('200').send({
             data: data 
         })
-
     }
 
-    updateNews = async(req, res) => {
+    updatePoster = async(req, res) =>{
         try {
-            const {date, content } = req.body
-
-            if (!date || !content ){
+            const {title} = req.body
+            if (!title){
                 return res.status('400').send(errorHandler.contentEmpty())
             }
 
-            const checkExist = await News.findOne({
+            const checkExist = await Posters.findOne({
                 where:{
                     id: req.params.id
                 }
@@ -59,31 +55,31 @@ class NewsController{
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
-  
+    
             let infor = {
-                date: date,
-                img: req.file.path,
-                content: content
+                title: title,
+                img: req.file.path
             }
-            const data = await News.update(infor,{
+            const upload = await Posters.update(infor,{
                 where:{
                     id: req.params.id
                 }
             })
 
             return res.status('200').send({
-                message: 'Update sucessfully!'
+                message: "Update sucessfully!"
             })
         } catch (error) {
             return res.status('500').send({
                 message: error
             })
         }
+
     }
 
-    deleteNews = async(req, res) =>{
+    deletePoster = async(req, res) =>{
         try {
-            const checkExist = await News.findOne({
+            const checkExist = await Posters.findOne({
                 where:{
                     id: req.params.id
                 }
@@ -92,7 +88,7 @@ class NewsController{
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
-            const del = await News.destroy({
+            const del = await Posters.destroy({
                 where: {id : req.params.id}
             })
             return res.status('200').send({
@@ -107,8 +103,7 @@ class NewsController{
         
 
     }
-
     
 }
 
-module.exports = new NewsController()
+module.exports = new PostersController()

@@ -6,16 +6,21 @@ const errorHandler = require('../../middleware/errorHandler')
 class ResearchController{
     addResearch = async(req, res) => {
         try {
-            const { content } = req.body
+            const { content, title } = req.body
+
+            if (!title || !content){
+                return res.status('400').send(errorHandler.contentEmpty())
+            }
             let infor = {
-                data: Date.now(),
+                title: title,
                 img: req.file.path,
                 content: content
 
             }
-            const upload = await Research.create(infor)
+            const data = await Research.create(infor)
             return res.status('200').send({
-                message: upload
+                message: `Insert ${data.title} sucessfully!`,
+                detail: data 
             })
            }
         catch (error) {
@@ -37,11 +42,23 @@ class ResearchController{
 
     updateResearch = async(req, res) =>{
         try {
-            const {itemid} = req.params.id
-            const {date, content } = req.body
+            const {title, content } = req.body
+            if (!title || !content){
+                return res.status('400').send(errorHandler.contentEmpty())
+            }
+
+            const checkExist = await Research.findOne({
+                where:{
+                    id: req.params.id
+                }
+            })
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
     
             let infor = {
-                date: date,
+                title: title,
                 img: req.file.path,
                 content: content
             }
@@ -52,7 +69,7 @@ class ResearchController{
             })
 
             return res.status('200').send({
-                message: upload
+                message: "Update sucessfully!"
             })
         } catch (error) {
             return res.status('500').send({
@@ -63,13 +80,16 @@ class ResearchController{
     }
 
     deleteResearch = async(req, res) =>{
-        const id = req.params.id
         try {
-            const data = await Research.findOne({
+            const checkExist = await Research.findOne({
                 where:{
                     id: req.params.id
                 }
             })
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
             const del = await Research.destroy({
                 where: {id : req.params.id}
             })

@@ -5,6 +5,10 @@ const errorHandler = require('../../middleware/errorHandler')
 class ProjectsController{
     addProject = async(req, res) => {
         const {title, startDate, endDate, assistUnit, total} = req.body
+
+        if (!title || !startDate || !endDate || !total){
+            return res.status('400').send(errorHandler.contentEmpty())
+        }
         try{
             let infor = {
                 title: title,
@@ -16,7 +20,8 @@ class ProjectsController{
     
             const data = await Projects.create(infor)
             return res.status('200').send({
-                message: data
+                message: `Insert ${data.title} sucessfully!`,
+                detail: data
             })
         }
         catch(error){
@@ -29,12 +34,12 @@ class ProjectsController{
 
     showProject = async(req, res) => {
         try{
-            const actImg = await Projects.findAll({
+            const data = await Projects.findAll({
                 raw: true
             })
 
             return res.status('200').send({
-                data: actImg 
+                detail: data 
             })
         }
         catch (error) {
@@ -45,7 +50,22 @@ class ProjectsController{
     }
 
     updateProject = async(req, res) => {
-        try{
+        //try{
+            const {title, startDate, endDate, assistUnit, total} = req.body
+            if (!title || !startDate || !endDate || !total){
+                return res.status('400').send(errorHandler.contentEmpty())
+            }
+
+            const checkExist = await Projects.findOne({
+                where:{
+                    id: req.params.id
+                }
+            })
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
+
             let infor = {
                 title: title,
                 startDate: startDate,
@@ -54,28 +74,36 @@ class ProjectsController{
                 total: total
             }
     
-            const data = await Projects.update(infor)
+            const data = await Projects.update(infor,{
+                where:{
+                    id: req.params.id
+                }
+            })
             return res.status('200').send({
-                message: data
+                message: "Update sucessfully!"
             })
-        }
-        catch(error){
-            return res.status('500').send({
-                message: error
-            })
-        }
+        // }
+        // catch(error){
+        //     return res.status('500').send({
+        //         message: error
+        //     })
+        // }
 
     }
 
 
     deleteProject = async(req, res) => {
-        const id = req.params.id
+
         try {
-            const data = await Projects.findOne({
+            const checkExist = await Projects.findOne({
                 where:{
                     id: req.params.id
                 }
             })
+
+            if (!checkExist){
+                return res.status('404').send(errorHandler.dataNotFind())
+            }
             const del = await Projects.destroy({
                 where: {id : req.params.id}
             })
@@ -92,11 +120,6 @@ class ProjectsController{
     }
 
 
-
-
-
 }
-
-
 
 module.exports = new ProjectsController()
