@@ -2,7 +2,8 @@ const db = require('../../models')
 const Members = db.Members
 const errorHandler = require('../../middleware/errorHandler')
 const { Op } = require('@sequelize/core')
-
+const fs = require('fs')
+const delFile = require('../../middleware/deleteFile')
 
 class MembersController{
     addMember = async(req, res) => {
@@ -10,10 +11,12 @@ class MembersController{
             const { tag, name, researchDirection, mail, paperTopic } = req.body
 
             if (!tag || !name || !researchDirection || !mail){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
             if (tag == "alumnus"){
                 if (!paperTopic){
+                    delFile(`/${req.file.path}`)
                     return res.status('400').send(errorHandler.contentEmpty())
                 }
             }
@@ -28,10 +31,9 @@ class MembersController{
             })
 
             if (checkExist){
+                delFile(`/${req.file.path}`)
                 return res.status('409').send(errorHandler.userAlreadyExist())
             }
-
-
 
             let infor = {
                 tag: tag,
@@ -84,6 +86,8 @@ class MembersController{
                 }
             })
 
+            delFile(`/${checkExist.dataValues.img}`)
+            
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }

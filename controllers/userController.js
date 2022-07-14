@@ -1,3 +1,7 @@
+/*
+記帳系統&實驗室網站帳戶管理
+ */ 
+
 const db = require('../models')
 const User = db.User
 const Fund = db.Fund
@@ -12,10 +16,12 @@ const mailController = require('../utils/mailController')
 
 
 class userController{
+    //創建帳戶
     createUser = async(req, res) =>{
         const { name, username, password, checkPassword, mail, phoneNum, money } = req.body
         try{ 
         //check ip location
+
             // let { ip } = req;
             // ip = ip.replace("::ffff", "").toString();
             // if (!ip.startsWith("140.125.45")) {
@@ -43,6 +49,7 @@ class userController{
             return res.status('409').send(errorHandler.userAlreadyExist())
           }
           
+          //check same password
          if(password !== checkPassword){
              return res.status('400').send(errorHandler.passwordNotMatch())
          }
@@ -57,7 +64,6 @@ class userController{
                 phoneNum: phoneNum,
                 money: money
         })
-            //console.log(user.id)
             return  res.status('200').send({
                 message: `Create ${req.body.name} sucessfully!`,
                 detail: user
@@ -70,9 +76,9 @@ class userController{
             })
         }
         }
-
+    //登入
     login = async (req, res) => {
-        const { username, password } = req.body
+        const { username, password } = req.body //get username, password
         try{
             //check user exist
             const userexist = await User.findOne({
@@ -87,6 +93,7 @@ class userController{
                 } 
             })
             const id = user.id
+            //create patload for login token
             const payload = {
                 username,
                 id      
@@ -98,14 +105,14 @@ class userController{
             //check same password 
             const checkPassword = await decrypt(password, user.password)
             if (!checkPassword) {
-                //console.log('password checked OK')
                 return res.status('400').send(errorHandler.loginError())
             }
 
+            //send payload to TokenController & get return token
             const token = await TokenController.signToken({ payload })
             res.cookie('token', token,{ httpOnly: true })
 
-            //console.log(item)
+           
             return res.status('200').send({
                 message: `Login suceess.Welcome back ${username}`,
                 token: token
@@ -117,11 +124,15 @@ class userController{
           })  
         }
       }
+
+    //帳戶個人頁面
     profile = async (req, res) =>{
         try{
             const user = await User.findOne({
                 where: {username :req.user.payload.username}
             })
+
+            //get user detail
             const items = await Fund.findAll({
                 attributes: ['type', 'items', 'cost'],
                 where: {[Op.and] :[
@@ -129,7 +140,8 @@ class userController{
                      Fund.cost
                 ]}
             })
-            //console.log(items)
+            
+            //count user money
             let total = 0
             items.forEach((item) =>{
                 total += item.cost
@@ -153,7 +165,8 @@ class userController{
         }
 
     }
-      
+    
+    //搜尋使用者
     findUser = async (req, res) =>{
             const { name } = req.body
             try{
@@ -162,7 +175,7 @@ class userController{
                         name : name
                     }
                 })
-                //console.log(name)
+                //check user exist
                 if (!user){
                     return res.status('404').send(errorHandler.dataNotFind())
                 }
@@ -178,15 +191,14 @@ class userController{
                 })
             }
         }
-        
+
+    //更新帳戶    
     updateUser = async (req, res) => {
-            const { name, password, mail, phoneNum } = req.body
+            const { name, password, mail, phoneNum } = req.body //user can change name, password, mail, phoneNum
             try{
                 const user = await User.findOne({
                     where: {username: req.user.payload.username}
                 })
-                //console.log(req.user.payload)
-                //console.log(user)
                 if(name || mail || phoneNum){
                   const  checkUserExist  = await User.findOne({
                         where:{
@@ -197,11 +209,13 @@ class userController{
                             ]
                         }
                     })
+                //check user exist    
                 if (checkUserExist){
                     return res.status('409').send(errorHandler.userAlreadyExist())
                 }}
                 const ePassword = await encrypt(password)
 
+                //send updateData to dataBase
                 const updateData = await User.update({
                     name: name,
                     password: ePassword,
@@ -224,6 +238,7 @@ class userController{
             }
         }
         
+    //刪除帳戶    
     deleteUser = async (req, res) =>{
 
             try{
@@ -244,9 +259,9 @@ class userController{
             }
         }
 
+    //帳戶條件搜尋
     userOptionSearch = async (req, res) =>{
         const attributes   = req.query
-        //console.log(Object.keys(attributes))
         try{
             if (JSON.stringify(attributes) === '{}'){
                 const user = await User.findAll({
@@ -271,6 +286,7 @@ class userController{
         }
     }
 
+    //信箱驗證碼(待修)
     mailCode = async (req, res) =>{
         const {email} = req.body
         console.log(email)
@@ -300,10 +316,7 @@ class userController{
             })
 
         }
-
-
-   
-        
+  
     }
 
         

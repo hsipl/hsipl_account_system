@@ -1,7 +1,8 @@
 const db = require('../../models')
 const EventImg = db.EventImg
+const fs = require('fs')
 const errorHandler = require('../../middleware/errorHandler')
-
+const delFile = require('../../middleware/deleteFile')
 
 class EventImgController{
     addImg = async(req, res) => {
@@ -49,7 +50,9 @@ class EventImgController{
                 where:{
                     id: req.params.id
                 }
-            })
+            }) 
+
+            delFile(`/${checkExist.dataValues.img}`)
 
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
@@ -62,12 +65,12 @@ class EventImgController{
             return res.status('200').send({
                 message: "Update sucessfully!"
             })
-            }
-        catch (error) {
-            return res.status('500').send({
-                message: error
-            })
-          }
+                }
+         catch (error) {
+             return res.status('500').send({
+                 message: error
+             })
+           }
         }
 
     deleteImg = async(req, res) =>{

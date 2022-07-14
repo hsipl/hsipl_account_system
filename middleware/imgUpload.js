@@ -3,9 +3,9 @@ const path = require('path')
 
 const storage =  multer.diskStorage({
     destination: (req, file, cb) =>{
-        const a = req.url.split('/')
-        //console.log(a)
-        cb(null, `src/image/${a[1]}`)
+        const url = req.url.split('/')
+        //console.log(url)
+        cb(null, `src/image/${url[1]}`)
     },
     filename:(req, file, cb) =>{
         cb(null, Date.now() + path.extname(file.originalname))
@@ -16,7 +16,10 @@ const uploadFile = multer({
     storage: storage,
     limits:{fieldSize: '1000000'},
     fileFilter: (req, file, cb) => {
-        if(file.mimetype == 'jpeg/png/gif/jpg'){
+        const fileTypes = /jpeg|jpg|png|gif|PNG|JPG/;
+        const mimetype = fileTypes.test(file.mimetype);
+        const extname = fileTypes.test(path.extname(file.originalname));
+        if(mimetype && extname) {
             cb(null, true)
         }
         else{

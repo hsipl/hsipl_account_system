@@ -1,3 +1,6 @@
+/*
+記帳系統CRUD
+*/ 
 const db = require('../models/index')
 const User = db.User
 const {Op} = require('@sequelize/core')
@@ -8,13 +11,15 @@ const errorHandler = require('../middleware/errorHandler')
 
 
 class fundController{
-
+    //新增項目
     addItem = async(req, res) =>{
         const {type, items, cost, purchaseDate, payer } = req.body
         try{
             const user = await User.findOne({
                 where: {id: req.user.payload.id}
-            })   
+            })
+            
+            //check blank empty
             if (!type || !items || !cost || !purchaseDate || !payer) {
                return res.status('400').send(errorHandler.contentEmpty())
               }
@@ -40,6 +45,7 @@ class fundController{
         }
     }
 
+    //搜尋特定項目
     searchItem = async(req, res) =>{
         const { items } = req.body
         try{
@@ -66,13 +72,11 @@ class fundController{
              return res.status('500').send(error)
          }
     }
-
+    //更新項目
     update = async(req, res) =>{
         const {type, items, cost, purchaseDate, payer, recorderName } = req.body
         const itemid = req.params.id
         const userId = req.user.payload.id
-        //console.log(id)
-        //console.log(user) 
         try{
             const idExist = await Fund.findOne({
                 where: {id: itemid}
@@ -107,7 +111,8 @@ class fundController{
             return res.status('500').send(error)
         }
     }
-
+    
+    //刪除項目
     delete = async(req, res) =>{
         const id = req.params.id
         try{
@@ -133,6 +138,7 @@ class fundController{
         }
     }
 
+    //項目條件搜尋
     itemOptionSearch = async (req, res) =>{
         const attributes   = req.query
         try{
@@ -140,7 +146,6 @@ class fundController{
                 const item = await Fund.findAll({
                     raw: true
                 })
-                //console.log(item)
                  return res.status('200').send({
                      detail: item 
                  })
@@ -160,6 +165,8 @@ class fundController{
         }
     }
 
+
+    //算總額
     getTotal = async (req, res) =>{
         let total = 0
         try{

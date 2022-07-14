@@ -26,8 +26,7 @@ var accessLogStream = FileStreamRotator.getStream({
   frequency: 'daily',
   verbose: false
 })
-
-app.use('src/image', express.static('./src/image'))
+app.use(express.static(__dirname))
 app.use(morgan("combined",{stream: accessLogStream}))
 app.use(cors())
 app.use(express.json())
@@ -35,7 +34,7 @@ app.use(bodyparser.json())
 app.use(express.urlencoded({
   extended: true
 }))
-app.use(express.static(path.join(__dirname,'./public')))
+
 
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)
@@ -48,7 +47,7 @@ app.use((req, res) =>{
 })
 
 app.use((req, res) =>{
-  return res.status('500').send({
+  return res.status('500').send({ 
     message: "Code have some wrong,plz wait a minute."
   })
 })

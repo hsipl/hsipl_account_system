@@ -1,7 +1,8 @@
 const db = require('../../models')
 const News = db.News
+const fs = require('fs')
 const errorHandler = require('../../middleware/errorHandler')
-
+const delFile = require('../../middleware/deleteFile')
 
 class NewsController{
     addNews = async(req, res) => {
@@ -9,6 +10,7 @@ class NewsController{
             const { content, date} = req.body
 
             if (!date || !content ){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
 
@@ -47,6 +49,7 @@ class NewsController{
             const {date, content } = req.body
 
             if (!date || !content ){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
 
@@ -55,6 +58,8 @@ class NewsController{
                     id: req.params.id
                 }
             })
+
+            delFile(`/${checkExist.dataValues.img}`)
 
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
@@ -74,7 +79,8 @@ class NewsController{
             return res.status('200').send({
                 message: 'Update sucessfully!'
             })
-        } catch (error) {
+        } 
+        catch (error) {
             return res.status('500').send({
                 message: error
             })

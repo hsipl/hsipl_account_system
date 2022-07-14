@@ -1,16 +1,17 @@
 const db = require('../../models')
 const Awards = db.Awards
+const fs = require('fs')
 const errorHandler = require('../../middleware/errorHandler')
-
+const delFile = require('../../middleware/deleteFile')
 
 class AwardsController{
     addAward = async(req, res) => {
          try {
             const {date, content } = req.body
             if (!date || !content ){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
-
             let infor = {
                 date: date,
                 img: req.file.path,
@@ -21,7 +22,7 @@ class AwardsController{
                 message: "Insert sucessfully! ",
                 detail: data
             })
-          }
+         }
         catch (error) {
             return res.status('500').send({
                 message: error
@@ -35,7 +36,7 @@ class AwardsController{
         })
 
         return res.status('200').send({
-            data: data 
+            data: data,
         })
     }
 
@@ -44,14 +45,16 @@ class AwardsController{
             const {date, content } = req.body
 
             if (!date || !content ){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
-
             const checkExist = await Awards.findOne({
                 where:{
                     id: req.params.id
                 }
             })
+
+            delFile(`/${checkExist.dataValues.img}`)
 
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
@@ -71,7 +74,8 @@ class AwardsController{
             return res.status('200').send({
                 message: "Update sucessfully!"
             })
-        } catch (error) {
+        } 
+        catch (error) {
             return res.status('500').send({
                 message: error
             })

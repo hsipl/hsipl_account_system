@@ -1,7 +1,8 @@
 const db = require('../../models')
 const Research = db.Research
+const fs = require('fs')
 const errorHandler = require('../../middleware/errorHandler')
-
+const delFile = require('../../middleware/deleteFile')
 
 class ResearchController{
     addResearch = async(req, res) => {
@@ -9,6 +10,7 @@ class ResearchController{
             const { content, title } = req.body
 
             if (!title || !content){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
             let infor = {
@@ -44,6 +46,7 @@ class ResearchController{
         try {
             const {title, content } = req.body
             if (!title || !content){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
 
@@ -53,6 +56,7 @@ class ResearchController{
                 }
             })
 
+            delFile(`/${checkExist.dataValues.img}`)
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }

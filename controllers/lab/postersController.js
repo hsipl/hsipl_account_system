@@ -1,7 +1,8 @@
 const db = require('../../models')
 const Posters = db.Posters
+const fs = require('fs')
 const errorHandler = require('../../middleware/errorHandler')
-
+const delFile = require('../../middleware/deleteFile')
 
 class PostersController{
     addPoster = async(req, res) => {
@@ -9,6 +10,7 @@ class PostersController{
             const {title}  = req.body
 
             if (!title ){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
             let infor = {
@@ -43,6 +45,7 @@ class PostersController{
         try {
             const {title} = req.body
             if (!title){
+                delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
             }
 
@@ -51,6 +54,8 @@ class PostersController{
                     id: req.params.id
                 }
             })
+
+            delFile(`/${checkExist.dataValues.img}`)
 
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
