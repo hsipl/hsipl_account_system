@@ -1,7 +1,3 @@
-const Sequelize = require('sequelize')
-
-
-
 module.exports = (sequelize, DataTypes) =>{
     const Research = sequelize.define('Research',{
         title:{

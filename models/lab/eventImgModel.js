@@ -1,7 +1,3 @@
-const Sequelize = require('sequelize')
-
-
-
 module.exports = (sequelize, DataTypes) =>{
     const EventImg = sequelize.define('EventImg',{
         img:{

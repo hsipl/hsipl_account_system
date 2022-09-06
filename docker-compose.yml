@@ -1,20 +1,39 @@
-version: "0.1"
+version: "3"
 services:
-    backend:       
-        build: .
-        restart: always
-        ports:
-          -  3000:3000
-        # links:
-        #   - mongo
-        volumes:
-          - .:/usr/src/app
-          - /usr/src/app/node_modules
-        
-    # mongo:
-    #     image: mongo
-    #     restart: always
-    #     ports:
-    #       - 27017:27017
-    #     volumes: 
-    #       - ./mongodbdata:/data/db
+  db:
+    image: sequelize
+    container_name: sequelize
+    restart: always
+    enviroment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: help1
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: hsipl
+      volumes:
+        - /var/lib/docker/volumes/myvolume/_data
+      ports:
+        - 3306:3306
+      networks:
+        - account_net
+
+
+  backend:
+    build: .
+    restart: always
+    links:
+      - db
+    ports:
+      - 6969:6969
+    networks:
+      - account_net
+    volumes:
+      - /hsipl_account_system
+      
+    command: sh -c "npm install && npm run dev"
+
+# volumes: 
+#   backend_data
+
+networks:
+  account_net:
+    driver: bridge

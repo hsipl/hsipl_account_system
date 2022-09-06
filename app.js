@@ -13,6 +13,7 @@ const errorHandler = require('./middleware/errorHandler')
 const userRoute = require("./routes/userRoute")
 const fundRoute = require("./routes/fundRoute")
 const labRoute = require("./routes/labRoute")
+const teacherRoute = require('./routes/teacherRoute')
 
 const app = express();
 
@@ -26,9 +27,22 @@ var accessLogStream = FileStreamRotator.getStream({
   frequency: 'daily',
   verbose: false
 })
+
+const corsOptions = {
+  origin:[
+    "http://localhost",
+    "http://140.125.45.154:3000"
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization']
+}
+app.use( (req,res, next)=>{
+  res.header('Access-Control-Allow-Origin', "*");
+  next();
+})
+app.use(cors(corsOptions))
 app.use(express.static(__dirname))
 app.use(morgan("combined",{stream: accessLogStream}))
-app.use(cors())
 app.use(express.json())
 app.use(bodyparser.json())
 app.use(express.urlencoded({
@@ -39,6 +53,7 @@ app.use(express.urlencoded({
 app.use("/api/user",userRoute)
 app.use("/api/fund",fundRoute)
 app.use("/api/lab",labRoute)
+app.use("/api/lab",teacherRoute)
 
 app.use((req, res) =>{
   return res.status('404').send({

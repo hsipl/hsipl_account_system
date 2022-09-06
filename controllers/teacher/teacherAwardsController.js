@@ -1,28 +1,26 @@
 const db = require('../../models')
-const Posters = db.Posters
+const TeacherAwards = db.TeacherAwards
 const fs = require('fs')
 const errorHandler = require('../../middleware/errorHandler')
-const delFile = require('../../middleware/deleteFile')
 
-class PostersController{
-    addPoster = async(req, res) => {
-        const {title}  = req.body
+class TeacherAwardsController{
+    addTeacherAwards = async(req, res) => {
+        const {year, item, order} = req.body
         try {
-            if (!title ){
-                delFile(`/${req.file.path}`)
+            if (!year || !item || !order){
                 return res.status('400').send(errorHandler.contentEmpty())
             }
             let infor = {
-                title: title,
-                img: req.file.path
-
+               year: year,
+               item: item,
+               order: order
             }
-            const data = await Posters.create(infor)
+            const data = await TeacherAwards.create(infor)
             return res.status('200').send({
-                message: `Insert ${data.title} sucessfully!`,
-                detail: data 
+                message: "Insert sucessfully! ",
+                detail: data
             })
-           }
+         }
         catch (error) {
             return res.status('500').send({
                 message: error
@@ -30,14 +28,14 @@ class PostersController{
           }
         }
 
-    showPosters = async(req, res) =>{
+    showTeacherAwards = async(req, res) =>{
         try{
-            const data = await Posters.findAll({
+            const data = await TeacherAwards.findAll({
                 raw: true
             })
     
             return res.status('200').send({
-                data: data 
+                data: data
             })
         }
         catch (error) {
@@ -45,34 +43,33 @@ class PostersController{
                 message: error
             })
           }
-   
+
     }
 
-    updatePoster = async(req, res) =>{
-        const {title} = req.body
+    updateTeacherAwards = async(req, res) =>{
+        const {year, item, order} = req.body
         try {
-            if (!title){
-                delFile(`/${req.file.path}`)
+            if (!year || !item || !order){
                 return res.status('400').send(errorHandler.contentEmpty())
             }
 
-            const checkExist = await Posters.findOne({
+            const checkExist = await TeacherAwards.findOne({
                 where:{
                     id: req.params.id
                 }
             })
 
-            delFile(`/${checkExist.dataValues.img}`)
-
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
-    
+  
             let infor = {
-                title: title,
-                img: req.file.path
-            }
-            const upload = await Posters.update(infor,{
+                year: year,
+                item: item,
+                order: order
+             }
+
+            const upload = await TeacherAwards.update(infor,{
                 where:{
                     id: req.params.id
                 }
@@ -81,7 +78,8 @@ class PostersController{
             return res.status('200').send({
                 message: "Update sucessfully!"
             })
-        } catch (error) {
+        } 
+        catch (error) {
             return res.status('500').send({
                 message: error
             })
@@ -89,9 +87,9 @@ class PostersController{
 
     }
 
-    deletePoster = async(req, res) =>{
+    deleteTeacherAwards = async(req, res) =>{
         try {
-            const checkExist = await Posters.findOne({
+            const checkExist = await TeacherAwards.findOne({
                 where:{
                     id: req.params.id
                 }
@@ -100,7 +98,7 @@ class PostersController{
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
-            const del = await Posters.destroy({
+            const del = await TeacherAwards.destroy({
                 where: {id : req.params.id}
             })
             return res.status('200').send({
@@ -115,7 +113,8 @@ class PostersController{
         
 
     }
+
     
 }
 
-module.exports = new PostersController()
+module.exports = new TeacherAwardsController()

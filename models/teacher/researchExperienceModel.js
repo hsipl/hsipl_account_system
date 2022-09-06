@@ -1,19 +1,20 @@
 module.exports = (sequelize, DataTypes) =>{
-    const Awards = sequelize.define('Awards',{
-        date:{
+    const ResearchExperience = sequelize.define('ResearchExperience',{
+        year:{
             type: DataTypes.STRING,
             allowNull: false,                                     
         },
-        img:{
+        employer:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: false, 
         },
-        content:{
-            type:DataTypes.STRING
+        position:{
+            type: DataTypes.STRING,
+            allowNull: false, 
         }
     },{
         timestamps: false
     })
 
-    return Awards
+    return ResearchExperience
 }

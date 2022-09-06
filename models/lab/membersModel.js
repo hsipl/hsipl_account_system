@@ -1,7 +1,4 @@
 const Sequelize = require('sequelize')
-
-
-
 module.exports = (sequelize, DataTypes) =>{
     const Members = sequelize.define('Members',{
         tag:{

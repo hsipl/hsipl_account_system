@@ -31,13 +31,21 @@ class AwardsController{
         }
 
     showAwards = async(req, res) =>{
-        const data = await Awards.findAll({
-            raw: true
-        })
-
-        return res.status('200').send({
-            data: data,
-        })
+        try{
+            const data = await Awards.findAll({
+                raw: true
+            })
+    
+            return res.status('200').send({
+                data: data
+            })
+        }
+        catch (error) {
+            return res.status('500').send({
+                message: error
+            })
+          }
+    
     }
 
     updateAwards = async(req, res) =>{
@@ -85,7 +93,6 @@ class AwardsController{
 
     deleteAward = async(req, res) =>{
         try {
-
             const checkExist = await Awards.findOne({
                 where:{
                     id: req.params.id

@@ -6,9 +6,8 @@ const delFile = require('../../middleware/deleteFile')
 
 class NewsController{
     addNews = async(req, res) => {
+        const { content, date} = req.body
         try {
-            const { content, date} = req.body
-
             if (!date || !content ){
                 delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
@@ -34,20 +33,27 @@ class NewsController{
         }
 
     showNews = async(req, res) =>{
-        const data = await News.findAll({
-            raw: true
-        })
-
-        return res.status('200').send({
-            data: data 
-        })
+        try{
+            const data = await News.findAll({
+                raw: true
+            })
+    
+            return res.status('200').send({
+                data: data 
+            })
+        }
+        catch (error) {
+            return res.status('500').send({
+                message: error
+            })
+          }
+ 
 
     }
 
     updateNews = async(req, res) => {
+        const {date, content } = req.body
         try {
-            const {date, content } = req.body
-
             if (!date || !content ){
                 delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())

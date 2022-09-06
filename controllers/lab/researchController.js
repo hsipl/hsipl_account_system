@@ -6,9 +6,8 @@ const delFile = require('../../middleware/deleteFile')
 
 class ResearchController{
     addResearch = async(req, res) => {
+        const { content, title } = req.body
         try {
-            const { content, title } = req.body
-
             if (!title || !content){
                 delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())
@@ -33,18 +32,26 @@ class ResearchController{
         }
 
     showResearch = async(req, res) =>{
-        const data = await Research.findAll({
-            raw: true
-        })
+        try{
+            const data = await Research.findAll({
+                raw: true
+            })
+    
+            return res.status('200').send({
+                data: data 
+            })
+        }
+        catch (error) {
+            return res.status('500').send({
+                message: error
+            })
+          }
 
-        return res.status('200').send({
-            data: data 
-        })
     }
 
     updateResearch = async(req, res) =>{
+        const {title, content } = req.body
         try {
-            const {title, content } = req.body
             if (!title || !content){
                 delFile(`/${req.file.path}`)
                 return res.status('400').send(errorHandler.contentEmpty())

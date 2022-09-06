@@ -29,6 +29,14 @@ db.News = require("./lab/newsModel")(sequelize, Sequelize);
 db.Research = require("./lab/researchModel")(sequelize, Sequelize);
 db.Projects = require("./lab/projectsModel")(sequelize, Sequelize);
 db.Posters = require("./lab/postersModel")(sequelize, Sequelize);
+db.Equipment = require('./lab/equipmentModel')(sequelize, Sequelize);
+db.Education = require("./teacher/educationModel")(sequelize, Sequelize);
+db.ResearchExperience = require("./teacher/researchExperienceModel")(sequelize, Sequelize);
+db.Articles = require("./teacher/articleModel")(sequelize, Sequelize);
+db.Talks = require("./teacher/talksModel")(sequelize, Sequelize);
+db.Conference = require("./teacher/conferenceModel")(sequelize, Sequelize);
+db.TeacherAwards = require("./teacher/teacherAwardsModel")(sequelize, Sequelize);
+db.Service = require("./teacher/serviceModel")(sequelize, Sequelize);
 
 db.User.hasMany(db.Fund,{
     foreignKey: 'userId'

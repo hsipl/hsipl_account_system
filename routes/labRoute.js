@@ -1,4 +1,4 @@
-const TokenController = require('../utils/TokenController')
+const TokenController = require('../utils/tokenController')
 const imgUpload = require('../middleware/imgUpload')
 const EventController = require('../controllers/lab/eventImgController')
 const NewsController = require('../controllers/lab/newsController')
@@ -6,7 +6,8 @@ const AwardsController = require('../controllers/lab/awardsController.js')
 const MembersController = require('../controllers/lab/membersController')
 const ResearchController = require('../controllers/lab/researchController')
 const ProjectsController = require('../controllers/lab/projectsController')
-const PostersController = require('../controllers/lab/postersController') 
+const PostersController = require('../controllers/lab/postersController')
+const EquipmentController = require('../controllers/lab/equipmentController') 
 
 const router = require('express').Router()
 
@@ -57,5 +58,10 @@ router.get('/posters', PostersController.showPosters)
 router.put('/posters/:id', TokenController.verifyToken, imgUpload, PostersController.updatePoster)
 router.delete('/posters/:id', TokenController.verifyToken, PostersController.deletePoster)
 
+//equipment
+router.post('/equipment', TokenController.verifyToken, imgUpload, EquipmentController.addEquipment)
+router.get('/equipment', EquipmentController.showEquipment)
+router.put('/equipment/:id', TokenController.verifyToken, imgUpload, EquipmentController.updateEquipment)
+router.delete('/equipment/:id', TokenController.verifyToken, EquipmentController.deleteEquipment)
 
 module.exports = router

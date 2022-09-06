@@ -4,16 +4,14 @@ const errorHandler = require('../../middleware/errorHandler')
 
 class ProjectsController{
     addProject = async(req, res) => {
-        const {title, startDate, endDate, assistUnit, total} = req.body
-
-        if (!title || !startDate || !endDate || !total){
+        const {title, date, assistUnit, total} = req.body
+        try{
+        if (!title || !date || !total){
             return res.status('400').send(errorHandler.contentEmpty())
         }
-        try{
             let infor = {
                 title: title,
-                startDate: startDate,
-                endDate: endDate,
+                date: date,
                 assistUnit: assistUnit,
                 total: total
             }
@@ -50,9 +48,9 @@ class ProjectsController{
     }
 
     updateProject = async(req, res) => {
-        //try{
-            const {title, startDate, endDate, assistUnit, total} = req.body
-            if (!title || !startDate || !endDate || !total){
+        const {title, date,  assistUnit, total} = req.body
+        try{
+            if (!title  || !date || !total){
                 return res.status('400').send(errorHandler.contentEmpty())
             }
 
@@ -68,8 +66,7 @@ class ProjectsController{
 
             let infor = {
                 title: title,
-                startDate: startDate,
-                endDate: endDate,
+                date: date,
                 assistUnit: assistUnit,
                 total: total
             }
@@ -82,18 +79,17 @@ class ProjectsController{
             return res.status('200').send({
                 message: "Update sucessfully!"
             })
-        // }
-        // catch(error){
-        //     return res.status('500').send({
-        //         message: error
-        //     })
-        // }
+        }
+        catch(error){
+            return res.status('500').send({
+                message: error
+            })
+        }
 
     }
 
 
     deleteProject = async(req, res) => {
-
         try {
             const checkExist = await Projects.findOne({
                 where:{

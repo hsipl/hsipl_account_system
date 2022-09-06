@@ -38,7 +38,6 @@ class userController{
               where: {
                   [Op.or]: [
                     {username: username},
-                    {name: name},
                     {mail: mail},
                     {phoneNum: phoneNum}
                   ]

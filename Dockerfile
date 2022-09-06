@@ -1,15 +1,10 @@
-FROM node
+FROM node:latest
 
-MAINTAINER GaryHsu
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
+WORKDIR /hsipl_account_system
+COPY package*.json /
 RUN npm install
 
 COPY . .
 
-EXPOSE 6969
 
-CMD ["npm","start"]
+# CMD ["npm","start"]

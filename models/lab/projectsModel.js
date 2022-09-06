@@ -4,12 +4,8 @@ module.exports = (sequelize, DataTypes) =>{
             type: DataTypes.STRING,
             allowNull: false
         },
-        startDate:{
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        endDate:{
-            type: DataTypes.DATE,
+        date:{
+            type: DataTypes.STRING,
             allowNull: false
         },
         assistUnit:{
