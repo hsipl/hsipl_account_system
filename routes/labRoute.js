@@ -49,7 +49,7 @@ router.delete('/research/:id',TokenController.verifyToken, ResearchController.de
 router.post('/projects', TokenController.verifyToken, imgUpload, ProjectsController.addProject)
 router.get('/projects', ProjectsController.showProject)
 router.put('/projects/:id', TokenController.verifyToken, imgUpload, ProjectsController.updateProject)
-router.delete('/project/:id', TokenController.verifyToken, ProjectsController.deleteProject)
+router.delete('/projects/:id', TokenController.verifyToken, ProjectsController.deleteProject)
 
 //posters
 

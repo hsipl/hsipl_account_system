@@ -1,14 +1,15 @@
 version: "3"
 services:
   db:
-    image: sequelize
-    container_name: sequelize
+    image: mysql
+    container_name: mysql
     restart: always
-    enviroment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: help1
-      MYSQL_PASSWORD: password
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: hsipl206
       MYSQL_DATABASE: hsipl
+      security_opt:
+        - seccomp:unconfined
       volumes:
         - /var/lib/docker/volumes/myvolume/_data
       ports:
@@ -20,6 +21,15 @@ services:
   backend:
     build: .
     restart: always
+    environment:
+      MODE: dev
+      PORT: 6969
+      DEV_USERNAME: hsipl
+      DEV_PASSWORD: hsipl206
+      DEV_HOST: db
+      DEV_PORT: 3306
+      DEV_DB: dev_db
+
     links:
       - db
     ports:
@@ -31,8 +41,8 @@ services:
       
     command: sh -c "npm install && npm run dev"
 
-# volumes: 
-#   backend_data
+volumes: 
+  backend_data
 
 networks:
   account_net:
