@@ -8,8 +8,6 @@ const Fund = db.Fund
 const errorHandler = require('../middleware/errorHandler')
 
 
-
-
 class fundController{
     //新增項目
     addItem = async(req, res) =>{

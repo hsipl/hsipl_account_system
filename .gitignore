@@ -4,4 +4,3 @@ mongodbdata
 mongodb_data
 ./logger
 *.log
-*src
