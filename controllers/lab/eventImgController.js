@@ -50,13 +50,14 @@ class EventImgController{
                 where:{
                     id: req.params.id
                 }
-            }) 
-
-            delFile(`/${checkExist.dataValues.img}`)
+            })
 
             if (!checkExist){
+                delFile(`/${req.file.path}`)
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+            delFile(`/${checkExist.dataValues.img}`)
+
             const upload = await EventImg.update(infor,{
                 where: {
                     id: req.params.id
@@ -85,6 +86,7 @@ class EventImgController{
                 return res.status('404').send(errorHandler.dataNotFind())
             }
 
+            delFile(`/${checkExist.dataValues.img}`)
             const del = await EventImg.destroy({
                 where: {id : req.params.id}
             })

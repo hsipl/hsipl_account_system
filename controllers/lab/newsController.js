@@ -65,11 +65,12 @@ class NewsController{
                 }
             })
 
-            delFile(`/${checkExist.dataValues.img}`)
-
             if (!checkExist){
+                delFile(`/${req.file.path}`)
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+
+            delFile(`/${checkExist.dataValues.img}`)
   
             let infor = {
                 date: date,
@@ -104,6 +105,7 @@ class NewsController{
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+            delFile(`/${checkExist.dataValues.img}`)
             const del = await News.destroy({
                 where: {id : req.params.id}
             })

@@ -86,18 +86,17 @@ class MembersController{
                     return res.status('400').send(errorHandler.contentEmpty())
                 }
             }
-
             const checkExist = await Members.findOne({
                 where:{
                     id: req.params.id
                 }
             })
-
-            delFile(`/${checkExist.dataValues.img}`)
-            
             if (!checkExist){
+                delFile(`/${req.file.path}`)
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+
+            delFile(`/${checkExist.dataValues.img}`)
 
             let infor = {
                 tag: tag,
@@ -135,6 +134,8 @@ class MembersController{
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+
+            delFile(`/${checkExist.dataValues.img}`)
 
             const del = await Members.destroy({
                 where: {id : req.params.id}

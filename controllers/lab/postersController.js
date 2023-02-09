@@ -62,11 +62,13 @@ class PostersController{
                 }
             })
 
-            delFile(`/${checkExist.dataValues.img}`)
+          
 
             if (!checkExist){
+                delFile(`/${req.file.path}`)
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+            delFile(`/${checkExist.dataValues.img}`)
     
             let infor = {
                 title: title,
@@ -100,6 +102,8 @@ class PostersController{
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+
+            delFile(`/${checkExist.dataValues.img}`)
             const del = await Posters.destroy({
                 where: {id : req.params.id}
             })

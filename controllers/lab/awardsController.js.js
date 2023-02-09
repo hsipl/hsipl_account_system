@@ -62,11 +62,12 @@ class AwardsController{
                 }
             })
 
-            delFile(`/${checkExist.dataValues.img}`)
-
             if (!checkExist){
+                delFile(`/${req.file.path}`)
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+
+            delFile(`/${checkExist.dataValues.img}`)
   
             let infor = {
                 date: date,
@@ -102,6 +103,8 @@ class AwardsController{
             if (!checkExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
+
+            delFile(`/${checkExist.dataValues.img}`)
             const del = await Awards.destroy({
                 where: {id : req.params.id}
             })

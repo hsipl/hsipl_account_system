@@ -63,11 +63,12 @@ class ResearchController{
                 }
             })
 
-            delFile(`/${checkExist.dataValues.img}`)
+          
             if (!checkExist){
+                delFile(`/${req.file.path}`)
                 return res.status('404').send(errorHandler.dataNotFind())
             }
-    
+            delFile(`/${checkExist.dataValues.img}`)
             let infor = {
                 title: title,
                 img: req.file.path,
