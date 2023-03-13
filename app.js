@@ -11,9 +11,11 @@ const errorHandler = require('./middleware/errorHandler')
 
 //require middleware
 const userRoute = require("./routes/userRoute")
+const profileRoute = require('./routes/userRoute')
 const fundRoute = require("./routes/fundRoute")
 const labRoute = require("./routes/labRoute")
 const teacherRoute = require('./routes/teacherRoute')
+
 
 const app = express();
 
@@ -50,10 +52,11 @@ app.use(express.urlencoded({
 }))
 
 
-app.use("/api/user",userRoute)
-app.use("/api/fund",fundRoute)
-app.use("/api/lab",labRoute)
-app.use("/api/lab",teacherRoute)
+app.use("/api/user", userRoute)
+app.use("/api/profile", profileRoute)
+app.use("/api/fund", fundRoute)
+app.use("/api/lab", labRoute)
+app.use("/api/lab", teacherRoute)
 
 app.use((req, res) =>{
   return res.status('404').send({

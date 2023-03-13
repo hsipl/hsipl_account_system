@@ -33,6 +33,7 @@ db.Talks = require("./teacher/talksModel")(sequelize, Sequelize);
 db.Conference = require("./teacher/conferenceModel")(sequelize, Sequelize);
 db.TeacherAwards = require("./teacher/teacherAwardsModel")(sequelize, Sequelize);
 db.Service = require("./teacher/serviceModel")(sequelize, Sequelize);
+db.UserLog = require("./userLogModel")(sequelize, Sequelize);
 
 db.User.hasMany(db.Fund,{
     foreignKey: 'userId'

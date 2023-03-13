@@ -5,30 +5,57 @@ module.exports = (sequelize, DataTypes) =>{
     const Fund = sequelize.define('Fund', {
         type:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
-        items:{
+        content:{
             type:DataTypes.STRING,
             allowNull: false
         },
-        cost:{
+        payments:{
+            type:DataTypes.STRING,
+            allowNull: false
+        },
+        tag:{
+            type:DataTypes.STRING,
+            allowNull: false
+        },
+        price:{
+            type:DataTypes.INTEGER,
+            allowNull: true,
+        },
+        quantity:{
+            type:DataTypes.INTEGER,
+            allowNull: true,
+        },
+        sum:{
             type:DataTypes.INTEGER,
             allowNull: false,
             defaultValue:0
         },
         payer:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
-        purchaseDate:{
+        date:{
             type:DataTypes.STRING,
             allowNull: false
           
         },
         recorderName:{
             type:DataTypes.STRING,
-            allowNull: false
-            
+            allowNull: true
+        },
+        note:{
+            type:DataTypes.STRING,
+            allowNull: true
+        },
+        transferFrom:{
+            type:DataTypes.STRING,
+            allowNull: true
+        },
+        transferTo:{
+            type:DataTypes.STRING,
+            allowNull: true
         },
         createdAt:{
             type: DataTypes.DATE,
@@ -45,7 +72,8 @@ module.exports = (sequelize, DataTypes) =>{
             get() {
                 return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss');
             }
-        }
+        },
+ 
         /*,
         recorderIp:{
             type:DataTypes.INTEGER,
@@ -60,6 +88,8 @@ module.exports = (sequelize, DataTypes) =>{
     },{
         timestamps: false
     });
+
+
 
 
 

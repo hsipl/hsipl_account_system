@@ -4,3 +4,9 @@ mongodbdata
 mongodb_data
 ./logger
 *.log
+.env
+*.PNG
+*.png
+*.gif
+*.jpg
+*.jpeg

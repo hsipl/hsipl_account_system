@@ -12,6 +12,13 @@ class errorHandler {
     }
   }
 
+  balanceNotEnough() {
+    return {
+      statusCode: 400,
+      message: "Your balance does not enough."
+    }
+  }
+
   loginError() {
     return {
       statusCode: 400,

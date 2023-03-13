@@ -13,14 +13,16 @@ const {
   } = require("../utils/encryptPassword")
 const TokenController = require("../utils/tokenController")
 const mailController = require('../utils/mailController')
+const delFile = require('../middleware/deleteFile')
 
 
 class userController{
     //創建帳戶
     createUser = async(req, res) =>{
-        const { name, username, password, checkPassword, mail, phoneNum, money } = req.body
+       
+        const {name, username, password, checkPassword, mail } = req.body
         try{ 
-        //check ip location
+        //check ip address
 
             // let { ip } = req;
             // ip = ip.replace("::ffff", "").toString();
@@ -29,7 +31,8 @@ class userController{
             // }
             
         //check body empty
-        if ( !name|| !username || !password || !checkPassword || !mail ||!phoneNum)  {
+        if ( !name || !username || !password || !checkPassword || !mail )
+          {
             return res.status('400').send(errorHandler.contentEmpty())
           }
 
@@ -37,37 +40,35 @@ class userController{
           const checkUserExist = await User.findOne({
               where: {
                   [Op.or]: [
+                    {name: name},
                     {username: username},
                     {mail: mail},
-                    {phoneNum: phoneNum}
                   ]
               }
           })
-      
           if (checkUserExist) {
             return res.status('409').send(errorHandler.userAlreadyExist())
           }
           
           //check same password
          if(password !== checkPassword){
-             return res.status('400').send(errorHandler.passwordNotMatch())
+            return res.status('400').send(errorHandler.passwordNotMatch())
          }
           //password encryption 
-          const ePassword = await encrypt(password)
+        const ePassword = await encrypt(password)
 
-            const user = await User.create({
-                name: name,
-                username: username,
-                password: ePassword,
-                mail: mail,
-                phoneNum: phoneNum,
-                money: money
+    
+        let infor = {
+            name: name,
+            username: username,
+            password: ePassword,
+            mail: mail,
+        }
+
+        const user = await User.create(infor)
+        return  res.status('200').send({
+            message: `Created ${req.body.name} sucessfully!`
         })
-            return  res.status('200').send({
-                message: `Create ${req.body.name} sucessfully!`,
-                detail: user
-            
-            })
         }
         catch(error){
             return res.status('500').send({
@@ -113,7 +114,7 @@ class userController{
 
            
             return res.status('200').send({
-                message: `Login suceess.Welcome back ${username}`,
+                message: `Login suceess.Welcome back ${user.name}`,
                 token: token
             })
         }
@@ -123,47 +124,6 @@ class userController{
           })  
         }
       }
-
-    //帳戶個人頁面
-    profile = async (req, res) =>{
-        try{
-            const user = await User.findOne({
-                where: {username :req.user.payload.username}
-            })
-
-            //get user detail
-            const items = await Fund.findAll({
-                attributes: ['type', 'items', 'cost'],
-                where: {[Op.and] :[
-                    { userId: req.user.payload.id },
-                     Fund.cost
-                ]}
-            })
-            
-            //count user money
-            let total = 0
-            items.forEach((item) =>{
-                total += item.cost
-            })
-
-            return res.status('200').send({
-                name: user.name,
-                username: user.username,
-                mail: user.mail,
-                phoneNum: user.phoneNum,
-                payed: items,
-                total: total
-            })
-
-        }
-
-        catch(error){
-            return res.status('500').send({
-                message: error
-            })
-        }
-
-    }
     
     //搜尋使用者
     findUser = async (req, res) =>{
@@ -181,7 +141,14 @@ class userController{
 
                 return res.status('200').send({
                     message: `Fetched ${user.name} sucessfully`,
-                    detail: user
+                    detail: {
+                        name: user.name,
+                        studentID: user.studentID,
+                        mail: user.mail,
+                        phoneNum: user.phoneNum,
+                        birthday: user.birthday,
+                        lineID : user.lineID
+                    }
                 })
             }
             catch(error){
@@ -191,55 +158,9 @@ class userController{
             }
         }
 
-    //更新帳戶    
-    updateUser = async (req, res) => {
-            const { name, password, mail, phoneNum } = req.body //user can change name, password, mail, phoneNum
-            try{
-                const user = await User.findOne({
-                    where: {username: req.user.payload.username}
-                })
-                if(name || mail || phoneNum){
-                  const  checkUserExist  = await User.findOne({
-                        where:{
-                            [Op.or]: [
-                                {name: name},
-                                {mail: mail},
-                                {phoneNum: phoneNum}
-                            ]
-                        }
-                    })
-                //check user exist    
-                if (checkUserExist){
-                    return res.status('409').send(errorHandler.userAlreadyExist())
-                }}
-                const ePassword = await encrypt(password)
-
-                //send updateData to dataBase
-                const updateData = await User.update({
-                    name: name,
-                    password: ePassword,
-                    mail: mail,
-                    phoneNum: phoneNum
-                },{
-                    where: {id: user.id}
-                })
-                return res.status('200').send({
-                    message: "Update sucessfully!",
-                    detail: `Updated data: ${updateData}`
-
-        
-                })
-            }
-            catch(error){
-                return res.status('500').send({
-                    message: error
-                })
-            }
-        }
-        
     //刪除帳戶    
     deleteUser = async (req, res) =>{
-
+ 
             try{
                 const user = await User.findOne({
                     where: {id: req.user.payload.id}
