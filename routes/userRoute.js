@@ -14,7 +14,7 @@ router.post("/email", tokenController.verifyToken, userController.mailCode)
 
 router.get("/", tokenController.verifyToken, profileController.showProfile)
 router.put("/", tokenController.verifyToken, profileController.addUserInfor)
-
+router.put("/changePassword", tokenController.verifyToken, profileController.changePassword)
 
 
 

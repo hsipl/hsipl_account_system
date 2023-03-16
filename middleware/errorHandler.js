@@ -58,6 +58,12 @@ class errorHandler {
       message: "Data not find.",
     };
   }
+  balanceNotZero() {
+    return {
+      statusCode: 409,
+      message: "Please transfer your balance before you deleted the account.."
+    }
+  }
   userAlreadyExist() {
     return {
       statusCode: 409,

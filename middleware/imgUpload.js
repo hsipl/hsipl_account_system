@@ -22,7 +22,7 @@ const uploadFile = multer({
             cb(null, true)
         }
         else{
-            cb("plz upload only img", false)
+            cb("Please upload only image.", false)
         }
     }
     

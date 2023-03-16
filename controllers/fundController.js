@@ -1,5 +1,5 @@
 /*
-記帳系統CRUD
+實驗室記帳系統
 */ 
 const db = require('../models/index')
 const User = db.User
@@ -7,19 +7,20 @@ const {Op} = require('@sequelize/core')
 const Fund = db.Fund
 const UserLog = db.UserLog
 const errorHandler = require('../middleware/errorHandler')
-
+const {conutTotalAmout: conutTotalAmout} = require('../utils/countTotalAmount')
 
 
 class fundController{
-    //新增項目
+
     addItem = async(req, res) =>{
+        try{
         let sum = 0
         const {type, content, payments, tag, price, quantity, date, payer } = req.body
-        try{
+            //獲取付款人相關訊息
             const payerName = await User.findOne({
                 where: {name: payer}
             })
-
+            //獲取紀錄者相關訊息
             const recorderName = await User.findOne({
                 where: {username: req.user.payload.username}
             })
@@ -32,11 +33,11 @@ class fundController{
                return res.status('400').send(errorHandler.contentEmpty())
               }
 
+            //若付款方式為支出 則該品項總額為負數
             sum = price * quantity
             if (payments == 'expenditure'){
                 sum = 0 - sum
             }
-            //插入新物品並更新目前Fund內的總額
             const data = await Fund.create({
                 type,
                 content,
@@ -53,25 +54,8 @@ class fundController{
               
 
             //新增物品後更新User內payer的總額
-            let payerAllPayedSum = 0
-            const payerAllPayed = await Fund.findAll({
-                where: { 
-                    [Op.or]: [
-                        { payer: payer },
-                        { transferFrom: payer},
-                        { transferTo: payer },
-                    ] }
-                 
-            })
-            payerAllPayed.forEach((content) => {
-                if ( content.transferFrom == payer){
-                    payerAllPayedSum-= content.sum
-                }
-                else{
-                    payerAllPayedSum+= content.sum
-                }
-
-            })
+            const payerAllPayedSum = await conutTotalAmout(payer)
+ 
             await User.update({balance: payerAllPayedSum}, {where: {name: payer}})
             //寫入UserLog
             await UserLog.create({
@@ -89,7 +73,6 @@ class fundController{
             })
         }
     }
-    //經費轉移
     fundTransfer = async(req, res) => {
         try{
             const {content ,date, payments, tag, fromName, toName, amount} = req.body
@@ -100,7 +83,7 @@ class fundController{
             const toNameExist = await User.findOne({
                 where: {name: toName}
             })
-
+            //確認轉帳方 & 收款方皆存在於資料庫內
             if (!fromNameExist || !toNameExist ){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
@@ -108,7 +91,7 @@ class fundController{
             const totalAmount = await Fund.sum('sum',{
                 where: { payments: { [Op.or]: ['expenditure', 'income'] }}
             })
-            
+            //若實驗室目前經費小於匯款金額 則轉帳失敗
             if(totalAmount < amount){
                 return res.status('400').send(errorHandler.balanceNotEnough() )
             }
@@ -127,65 +110,18 @@ class fundController{
                 message: `${fromName} transfered ${amount} to ${toName}.`
             })
 
-            //更新轉帳人餘額
-            let fromNameAllPayedSum = 0
-            const fromNamePayerAllPayed = await Fund.findAll({
-                where: {
-                    [Op.or]: [
-                        { payer: fromName },
-                        { transferFrom: fromName },
-                        { transferTo: fromName },
-                    ]
-                }       
-            })
-    
-            fromNamePayerAllPayed.forEach((content) => {
-                if (content.transferFrom == fromName){
-                    fromNameAllPayedSum-= content.sum
-                }
-                else{
-                    fromNameAllPayedSum+= content.sum
-                }
-            })
-
-      
+            //更新轉帳方餘額
+            const fromNameAllPayedSum = await conutTotalAmout(fromName)
             await User.update({balance: fromNameAllPayedSum},{where: {name: fromName}  })
-
-
-
-            //更新受款者餘額
-
-            let toNameAllPayedSum = 0
-            const toNamePayerAllPayed = await Fund.findAll({
-                where: { 
-                    [Op.or]: [
-                        { payer: toName },
-                        {transferFrom: toName},
-                        {transferTo: toName},
-                    ]
-                 }
-            })
-    
-            toNamePayerAllPayed.forEach((content) => {
-                if ( content.transferFrom == toName){
-                    toNameAllPayedSum-= content.sum
-                }
-                else{
-                    toNameAllPayedSum+= content.sum
-                }
-            })
-
-     
+            
+            //更新收款方餘額
+            const toNameAllPayedSum = await conutTotalAmout(toName)
             await User.update({balance: toNameAllPayedSum},{where: {name: toName}   })
-
 
             return res.status('200').send({
                 state: "Sucess!",
                 detail: fundTransfer
             })
-
-
-
 
         }
         catch(error){
@@ -194,15 +130,13 @@ class fundController{
 
     }
 
-    //get all item
-
     getAllItem = async(req, res) =>{
         try{ 
             const allItem = await Fund.findAll({
                 raw: true
             })
             return res.status('200').send({
-                message: `Search all raw sucessfully.`,
+                message: `Search all data sucessfully.`,
                 detail: allItem
             })
         }
@@ -211,33 +145,25 @@ class fundController{
          }
     }
 
-    //搜尋特定項目
     searchItem = async(req, res) =>{
-        const { content } = req.body
         try{
+            const { content } = req.body
             if (!content) {
                 return res.status('400').send(errorHandler.contentEmpty());
               }
 
-            const contentExist = await Fund.findOne({
-            where: {content: content}
-        })
+            const contentExist = await Fund.findAll({ where: { content: content } })
             if (!contentExist){
                 return res.status('404').send(errorHandler.dataNotFind())
             }
-            const content = await Fund.findAll({
-                where: {content: content}
-            })
-            return res.status('200').send({
-                message: `Search sucessfully.`,
-                detail: content
-            })
+   
+            return res.status('200').send({contentExist})
         }
          catch(error){
-             return res.status('500').send(error)
+            return res.status('500').send(error)
          }
     }
-    //更新項目
+
     update = async(req, res) =>{
         try{
         let sum = 0
@@ -248,11 +174,10 @@ class fundController{
         const itemExist = await Fund.findOne({
             where: {id: itemId}
         })
-
+        //確認新付款人存在
         const payerExist = await User.findOne({
             where: {name: payer}
         })
-
         //獲取登入user用於recorderName
         const recorderName = await User.findOne({
             where: {username: req.user.payload.username}
@@ -261,12 +186,11 @@ class fundController{
             return res.status('404').send(errorHandler.dataNotFind())
         }
    
-
+        //獲取原付款人相關資訊
         const originalPayer = await User.findOne({
             where:{ name: itemExist.payer}
         })
 
-        const time = new Date()
         sum = price * quantity
         if (payments == "expenditure"){
             sum = 0 - sum
@@ -282,57 +206,19 @@ class fundController{
             date,
             payer,
             recorderName: recorderName.name,
-            userId : payerExist.id,
-            updatedAt: time
+            userId : payerExist.id
 
         },{
             where: {id : req.params.id}
         })
         //若更改付款人，則更新原付款人之餘額
         if (originalPayer.name !== payer){
-            let OriginalPayerAllPayedSum = 0
-
-            const originalPayerAllPayed = await Fund.findAll({
-                where: { 
-                    [Op.or]: [
-                    { payer: originalPayer.name },
-                    { transferFrom: originalPayer.name},
-                    { transferTo: originalPayer.name },
-                ] }
-            })
-    
-            originalPayerAllPayed.forEach((content) => {
-                if ( content.transferFrom == originalPayer.name){
-                    OriginalPayerAllPayedSum-= content.sum
-                }
-                else{
-                    OriginalPayerAllPayedSum+= content.sum
-                }
-            })
-
-               await User.update({balance: OriginalPayerAllPayedSum},{where: {name: originalPayer.name}  })
+            const OriginalPayerAllPayedSum = await conutTotalAmout(originalPayer.name)
+            await User.update({balance: OriginalPayerAllPayedSum},{where: {name: originalPayer.name}  })
         }
 
-        //更新物品後重新計算該付款人之餘額
-        let payerAllPayedSum = 0
-        const payerAllPayed = await Fund.findAll({
-            where: {  
-                [Op.or]: [
-                { payer: payer },
-                { transferFrom: payer },
-                { transferTo: payer },
-            ] }
-        })
-
-        payerAllPayed.forEach((content) => {
-            if ( content.transferFrom == payer){
-                payerAllPayedSum-= content.sum
-            }
-            else{
-                payerAllPayedSum+= content.sum
-            }
-        })
-        
+        //更新物品後重新計算新付款人之餘額
+        const payerAllPayedSum = await conutTotalAmout(payer)
         await User.update({balance: payerAllPayedSum}, {where: {name: payer}})
 
         await UserLog.create({
@@ -348,44 +234,56 @@ class fundController{
             return res.status('500').send(error)
         }
     }
-    
-    //刪除項目
-    delete = async(req, res) =>{
-        const contentId = req.params.id
-        try{
+     
+    delete = async (req, res) => {
+        try {
             const user = await User.findOne({
-                where: {id: req.user.payload.username}
+              where: { id: req.user.payload.id }
             })
-            const idExist = await Fund.findOne({
-                where: {id: contentId}
-            })
-            if (!idExist){
-                return res.status('404').send(errorHandler.dataNotFind())
-            }
+            //確認欲刪除項目存在
             const deletedItem = await Fund.findOne({
-                where: {id : req.params.id}
+              where: { id: req.params.id }
+        
             })
-            const data = await Fund.destroy({
-                where: {id : req.params.id}
+      
+            if (!deletedItem) {
+              return res.status('404').send(errorHandler.dataNotFind())
+            }
+      
+            await Fund.destroy({
+              where: { id: req.params.id }
+    
             })
+            //若刪除項目為轉帳紀錄 則更新該筆紀錄之付款方及受款方之餘額
+            if (deletedItem.transferFrom != null || deletedItem.transferTo != null){
+                const transferFromNameAllPayedSum = await conutTotalAmout(deletedItem.transferFrom)
+                const transferToNameAllPayedSum = await conutTotalAmout(deletedItem.transferTo)
+                
+                await User.update({balance: transferFromNameAllPayedSum},{where: {name: deletedItem.transferFrom}})
+                await User.update({balance: transferToNameAllPayedSum},{where: {name: deletedItem.transferTo}})
+            }
+            await UserLog.create({
+              message: `${user.name} deleted ${deletedItem.content} successfully.`,
+          
+            })
+          
+      
+          return res.status('200').send({
+            state: 'Success!'
+          })
 
-            const writeMessage = await UserLog.create({
-                message: `${user.name} deleted ${deletedItem.items} sucessfully.`
-            })
-
-            return res.status('200').send({
-                state: "Sucess!"
-            })
+        } 
+        catch (error) {
+          return res.status('500').send(error)
         }
-        catch(error){
-            return res.status('500').send(error)
-        }
-    }
+      }
 
-    //項目條件搜尋
     itemOptionSearch = async (req, res) =>{
-        const attributes   = req.query
         try{
+
+            //透過queryString篩選所有需求資料
+            const attributes   = req.query
+            //若queryString為空，則回傳所有資料
             if (JSON.stringify(attributes) === '{}'){
                 const item = await Fund.findAll({
                     raw: true
@@ -410,8 +308,7 @@ class fundController{
     }
 
 
-    //算實驗室總經費
-
+    //計算實驗室總經費
     getTotal = async (req, res) =>{
         try{
         const totalAmount = await Fund.sum('sum',{
@@ -419,7 +316,7 @@ class fundController{
         })
 
         return res.status('200').send({
-            message: `Total money is ${totalAmount}`
+            balance: totalAmount
         })
     }
     catch(error){   

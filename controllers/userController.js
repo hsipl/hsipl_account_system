@@ -1,10 +1,11 @@
 /*
-記帳系統&實驗室網站帳戶管理
+實驗室網站帳戶管理
  */ 
 
 const db = require('../models')
 const User = db.User
 const Fund = db.Fund
+const UserLog = db.UserLog
 const { Op } = require('@sequelize/core')
 const errorHandler = require('../middleware/errorHandler')
 const {
@@ -17,26 +18,21 @@ const delFile = require('../middleware/deleteFile')
 
 
 class userController{
-    //創建帳戶
     createUser = async(req, res) =>{
-       
-        const {name, username, password, checkPassword, mail } = req.body
         try{ 
-        //check ip address
-
-            // let { ip } = req;
-            // ip = ip.replace("::ffff", "").toString();
-            // if (!ip.startsWith("140.125.45")) {
-            //return res.status('400').send(errorHandler.ipError());
-            // }
+        const {name, username, password, mail } = req.body
+        //確認ip位址(白名單為實驗室ip)
+        const whitelist = ['140.125.45.160']
+        const  ip  = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        if (!whitelist.includes(ip)) {
+            return res.status('400').send(errorHandler.ipError())
+        }
             
-        //check body empty
-        if ( !name || !username || !password || !checkPassword || !mail )
+        if ( !name || !username || !password || !mail )
           {
             return res.status('400').send(errorHandler.contentEmpty())
           }
 
-          //check user exist
           const checkUserExist = await User.findOne({
               where: {
                   [Op.or]: [
@@ -50,24 +46,19 @@ class userController{
             return res.status('409').send(errorHandler.userAlreadyExist())
           }
           
-          //check same password
-         if(password !== checkPassword){
-            return res.status('400').send(errorHandler.passwordNotMatch())
-         }
-          //password encryption 
+        //密碼加鹽
         const ePassword = await encrypt(password)
 
-    
         let infor = {
             name: name,
             username: username,
             password: ePassword,
             mail: mail,
         }
+        await User.create(infor)
 
-        const user = await User.create(infor)
-        return  res.status('200').send({
-            message: `Created ${req.body.name} sucessfully!`
+        return res.status('200').send({
+            message: `Created ${req.body.name} sucessfully.`
         })
         }
         catch(error){
@@ -76,46 +67,44 @@ class userController{
             })
         }
         }
-    //登入
+
     login = async (req, res) => {
-        const { username, password } = req.body //get username, password
         try{
-            //check user exist
-            const userexist = await User.findOne({
-                where: { username: username }})
-            if (!userexist) {
+        const { username, password } = req.body 
+        
+            const userExist = await User.findOne({
+                where: { 
+                    username: username 
+                }
+            })
+            if (!userExist) {
                 return res.status('400').send(errorHandler.loginError())
             }
-            //get user infor
-            const user = await User.findOne({
-                where:{
-                    username: username
-                } 
-            })
-            const id = user.id
-            //create patload for login token
+ 
+            const id = userExist.id
+            //token由user的id & username 組成
             const payload = {
                 username,
                 id      
             }
-            //check blank empty
+
             if (!username || !password) {
                 return res.status('400').send(errorHandler.contentEmpty());
             }
-            //check same password 
-            const checkPassword = await decrypt(password, user.password)
+            //確認密碼有無一致
+            const checkPassword = await decrypt(password, userExist.password)
             if (!checkPassword) {
                 return res.status('400').send(errorHandler.loginError())
             }
 
-            //send payload to TokenController & get return token
+            //將payload送去tokenController & 返回token 
             const token = await TokenController.signToken({ payload })
             res.cookie('token', token,{ httpOnly: true })
 
            
             return res.status('200').send({
-                message: `Login suceess.Welcome back ${user.name}`,
-                token: token
+                message: `Login sucessfully! Welcome back ${userExist.name}.`,
+                accessToken: token
             })
         }
         catch(error){
@@ -125,7 +114,6 @@ class userController{
         }
       }
     
-    //搜尋使用者
     findUser = async (req, res) =>{
             const { name } = req.body
             try{
@@ -134,10 +122,25 @@ class userController{
                         name : name
                     }
                 })
-                //check user exist
+    
                 if (!user){
                     return res.status('404').send(errorHandler.dataNotFind())
                 }
+                //找尋該位user付款項目之'type', 'contnet', 'sum', 'tag'
+                const allContent = await Fund.findAll({
+                    attributes: ['type', 'content', 'sum', 'tag'],
+                    where: { userId: user.id }
+                })
+                //找尋該位user轉帳紀錄之'content', 'date', 'sum', 'transferFrom', 'transferTo'
+                const transferLog = await Fund.findAll({
+                    attributes: [ 'content', 'date', 'sum', 'transferFrom', 'transferTo' ],
+                    where:{
+                        [Op.or]: [
+                            { transferFrom: user.name},
+                            { transferTo: user.name },
+                        ] }
+                    
+                })
 
                 return res.status('200').send({
                     message: `Fetched ${user.name} sucessfully`,
@@ -147,7 +150,10 @@ class userController{
                         mail: user.mail,
                         phoneNum: user.phoneNum,
                         birthday: user.birthday,
-                        lineID : user.lineID
+                        lineID : user.lineID,
+                        payed: allContent,
+                        transferLog,
+                        balance: user.balance
                     }
                 })
             }
@@ -157,19 +163,23 @@ class userController{
                 })
             }
         }
-
-    //刪除帳戶    
+   
     deleteUser = async (req, res) =>{
- 
             try{
+
                 const user = await User.findOne({
                     where: {id: req.user.payload.id}
                 })
-                const delData = await User.destroy({
-                    where: {id: user.id}
-                })
+                //確認刪除該位user前餘額為0，以保證實驗室經費正確
+                if ( user.balance !== 0 ) {
+                    return res.status('409').send(errorHandler.balanceNotZero())
+                }
+                await User.destroy({where: {id: user.id}})
+
+                await UserLog.create({message: `${user.name} was deleted.`})
+
                 return res.status('200').send({
-                    message: "delete User Sucessfully!"
+                    message: `Deleted ${user.name} Sucessfully!`
                 })
             }
             catch(error){
@@ -179,21 +189,21 @@ class userController{
             }
         }
 
-    //帳戶條件搜尋
+  
     userOptionSearch = async (req, res) =>{
-        const attributes   = req.query
         try{
+            //透過queryString篩選所有需求資料
+            const attributes  = req.query
+            //若queryString為空，則回傳所有資料
             if (JSON.stringify(attributes) === '{}'){
                 const user = await User.findAll({
                     raw: true
                 })
-                 return res.status('200').send({
-                     data: user
-                 })
+                return res.status('200').send({data: user })
             }
             const user = await User.findAll({
                 attributes: Object.keys(attributes),
-               raw: true
+                raw: true
            })
             return res.status('200').send({
                 data: user
