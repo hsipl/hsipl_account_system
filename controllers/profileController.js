@@ -1,6 +1,6 @@
 /*
 個人頁面系統
- */ 
+ */
 
 const db = require('../models')
 const User = db.User
@@ -10,25 +10,27 @@ const errorHandler = require('../middleware/errorHandler')
 const {
     encrypt: encrypt,
     decrypt: decrypt,
-  } = require("../utils/encryptPassword")
-const mailController = require('../utils/mailController')
+} = require("../utils/encryptPassword")
+
 const delFile = require('../middleware/deleteFile')
 
-class profileController{
-    addUserInfor = async(req, res) => {
-        try{
-            const {name, studentID, phoneNum, birthday, lineID } = req.body
+class profileController {
+    addUserInfor = async (req, res) => {
+        try {
+            const { name, studentID, phoneNum, birthday, lineID, mail } = req.body
             const checkUserExist = await User.findOne({
                 where: {
                     [Op.or]: [
-                        {studentID: studentID},
-                        {phoneNum: phoneNum},
-                        {lineID: lineID}
+                        { studentID: studentID },
+                        { phoneNum: phoneNum },
+                        { lineID: lineID },
+                        { mail: mail }
                     ]
                 }
             })
             //確認資訊有無重複
             if (checkUserExist) {
+                delFile(`/${req.file.path}`)
                 return res.status('409').send(errorHandler.userAlreadyExist())
             }
             let infor = {
@@ -36,21 +38,22 @@ class profileController{
                 studentID: studentID,
                 phoneNum: phoneNum,
                 birthday: birthday,
-                lineID: lineID
+                lineID: lineID,
+                mail: mail,
+                img: req.file.path
             }
 
-            const addInfor = await User.update(infor,{
-                where : {username: req.user.payload.username}
+            const addInfor = await User.update(infor, {
+                where: { username: req.user.payload.username }
             })
 
             return res.status('200').send({
                 message: "Updated information sucessfully.",
                 state: addInfor
             })
-
         }
 
-        catch(error) {
+        catch (error) {
             return res.status('500').send({
                 message: error
             })
@@ -58,7 +61,7 @@ class profileController{
     }
 
     changePassword = async (req, res) => {
-        try{
+        try {
             const { oldPassword, newPassword } = req.body
             const user = await User.findByPk(req.user.payload.id)
 
@@ -68,61 +71,40 @@ class profileController{
                 return res.status('400').send(errorHandler.loginError())
             }
             //加鹽新密碼
-            let eNewPassword =  await encrypt(newPassword)
-            await User.update({ password: eNewPassword},
-                {where:{id: req.user.payload.id }
-            })
+            let encryptNewPassword = await encrypt(newPassword)
+            await User.update({ password: encryptNewPassword },
+                {
+                    where: { id: req.user.payload.id }
+                })
             return res.status('200').send({
-                message: 'Your password was updated sucessfully.'
+                message: 'Your password has been updated.'
             })
-            
+
         }
 
-        catch(error) {
+        catch (error) {
             return res.status('500').send({
                 message: error
             })
         }
     }
 
-    showProfile = async (req, res) =>{
-        try{
+    showProfile = async (req, res) => {
+        try {
             //獲取登入user相關訊息
             const user = await User.findOne({
-                where: {username :req.user.payload.username}
+                include: [
+                    { model: Fund }
+                ],
+                attributes: ['name', 'username', 'mail', 'studentID', 'phoneNum', 'birthday', 'lineID', 'balance'],
+                where: { username: req.user.payload.username }
             })
 
-            const allContent = await Fund.findAll({
-                attributes: ['type', 'content', 'sum', 'tag'],
-                where: { userId: user.id }
-            })
-
-            const transferLog = await Fund.findAll({
-                attributes: [ 'content', 'date', 'sum', 'transferFrom', 'transferTo' ],
-                where:{
-                    [Op.or]: [
-                        { transferFrom: user.name},
-                        { transferTo: user.name },
-                    ] }
-                
-            })
-            return res.status('200').send({
-                name: user.name,
-                username: user.username,
-                studentID: user.studentID,
-                mail: user.mail,
-                phoneNum: user.phoneNum,
-                birthday: user.birthday,
-                lineID: user.lineID,
-                payed: allContent,
-                transferLog,
-                balance: user.balance
-                
-            })
+            return res.status('200').json(user)
 
         }
 
-        catch(error){
+        catch (error) {
             return res.status('500').send({
                 message: error
             })

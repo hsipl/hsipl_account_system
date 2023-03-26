@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) =>{
         },
         mail:{
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
         },
         phoneNum: {
             type: DataTypes.STRING,
@@ -34,6 +34,12 @@ module.exports = (sequelize, DataTypes) =>{
         balance:{
             type:DataTypes.INTEGER,
             defaultValue:0
+        },
+        resetPasswordToken:{
+            type: DataTypes.STRING
+        },
+        resetPasswordExpires:{
+            type: DataTypes.DATE
         }
         
     },{

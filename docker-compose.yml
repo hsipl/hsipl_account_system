@@ -1,21 +1,19 @@
-version: "3"
+version: "3.5"
 services:
   db:
     image: mysql:8.0
-    container_name: mysql
+    container_name: db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: hsipl206
-      MYSQL_PASSWORD: hsipl206
-      MYSQL_DATABASE: hsipl
-      security_opt:
-        seccomp:unconfined
-      # volumes:
-      #   /var/lib/docker/volumes/myvolume/_data
+      MYSQL_HOST: ${DB_HOST}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DB}
     ports:
       - 3307:3306
     networks:
       - account_net
+    volumes:
+      - ./mysqlData:/var/lib/mysql
 
 
   backend:
@@ -25,8 +23,6 @@ services:
       MODE: dev
       PORT: 6969
 
-    links:
-      - db
     ports:
       - 6969:6969
     networks:

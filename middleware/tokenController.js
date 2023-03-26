@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const errorHandler = require("../middleware/errorHandler");
+const jwt = require("jsonwebtoken")
+const errorHandler = require("./errorHandler")
 const config = require('../config/auth.config')
 const db = require('../models/index')
 
@@ -10,22 +10,21 @@ class TokenController {
     const token = await jwt.sign(payload, config.secret, {
       expiresIn: "1d",
     })
-    console.log(payload)
     return token
   }
 
   async verifyToken(req, res, next) {
-    const token = req.headers.authorization;
-
     try {
+      const token = req.headers.authorization
+
       if(!token){
         return res.status('401').send(errorHandler.tokenError())
       }
       const rtoken = token.replace("Bearer ","")
-      //console.log(rtoken)
 
       const result = await jwt.verify(rtoken, config.secret)
       req.user = result
+
     } 
     catch (error) {
       console.log(error)

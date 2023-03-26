@@ -1,4 +1,4 @@
-const TokenController = require('../utils/tokenController')
+const TokenController = require('../middleware/tokenController')
 const imgUpload = require('../middleware/imgUpload')
 const educationController = require('../controllers/teacher/educationController')
 const researchController = require('../controllers/teacher/researchExperienceController')

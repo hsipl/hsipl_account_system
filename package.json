@@ -41,10 +41,13 @@
     "nodeman": "^1.1.2",
     "nodemon": "^2.0.19",
     "sequelize": "^6.15.0",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.4.1",
+    "swagger": "^0.7.5"
   },
   "devDependencies": {
     "jest": "^27.0.1",
-    "supertest": "^6.2.3"
+    "supertest": "^6.2.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.2"
   }
 }

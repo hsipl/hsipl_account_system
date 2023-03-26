@@ -8,6 +8,8 @@ const fs = require("fs")
 const nodemailer = require('nodemailer')
 const FileStreamRotator = require('file-stream-rotator')
 const errorHandler = require('./middleware/errorHandler')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./src/swagger.json')
 
 //require middleware
 const userRoute = require("./routes/userRoute")
@@ -50,6 +52,7 @@ app.use(bodyparser.json())
 app.use(express.urlencoded({
   extended: true
 }))
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 
 app.use("/api/user", userRoute)

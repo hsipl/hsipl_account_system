@@ -1,15 +1,16 @@
 const fundController = require('../controllers/fundController')
-const tokenController = require('../utils/tokenController')
+const tokenController = require('../middleware/tokenController')
 const router = require('express').Router()
 
-router.post("/add", tokenController.verifyToken , fundController.addItem)
-router.post('/fundTransfer', tokenController.verifyToken, fundController.fundTransfer)
+router.post("/", tokenController.verifyToken , fundController.addItem)
+router.post('/fund_transfer', tokenController.verifyToken, fundController.fundTransfer)
 router.get("/", fundController.getAllItem)
-router.post("/search", tokenController.verifyToken, fundController.searchItem)
-router.put("/:id", tokenController.verifyToken, fundController.update)
-router.delete("/:id", tokenController.verifyToken, fundController.delete)
+router.get("/all_user_detail", tokenController.verifyToken, fundController.getAllUserDetail)
+router.get("/search", tokenController.verifyToken, fundController.searchItem)
 router.get ("/option", tokenController.verifyToken, fundController.itemOptionSearch)
 router.get("/total", tokenController.verifyToken, fundController.getTotal)
+router.put("/:id", tokenController.verifyToken, fundController.update)
+router.delete("/:id", tokenController.verifyToken, fundController.delete)
 
 
 module.exports = router

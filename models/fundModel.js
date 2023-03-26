@@ -3,20 +3,28 @@ const Sequelize = require('sequelize')
 module.exports = (sequelize, DataTypes) =>{
     const Fund = sequelize.define('Fund', {
         type:{
-            type:DataTypes.STRING,
-            allowNull: true
+            type:Sequelize.ENUM('INCOME','EXPENDITURE', 'FUND_TRANSFER'),
+            allowNull: false,
+            validate: {
+                isIn: {
+                    args: [['INCOME', 'EXPENDITURE', 'FUND_TRANSFER']],
+                    message: "Must be INCOME, EXPENDITURE or FUND_TRANSFER "
+                  }
+            }
         },
         content:{
             type:DataTypes.STRING,
             allowNull: false
         },
-        payments:{
-            type:DataTypes.STRING,
-            allowNull: false
-        },
         tag:{
-            type:DataTypes.STRING,
-            allowNull: false
+            type:Sequelize.ENUM('DEPOSIT','ADVANCE_PAYMENTS', 'REMITTER', 'REMITTEE'),
+            allowNull: false,
+            validate: {
+                isIn: {
+                    args: [['DEPOSIT', 'ADVANCE_PAYMENTS', 'REMITTER', 'REMITTEE']],
+                    message: "Must be DEPOSIT, ADVANCE_PAYMENTS, REMITTER  or REMITTEE "
+                  }
+            }
         },
         price:{
             type:DataTypes.INTEGER,
@@ -31,7 +39,7 @@ module.exports = (sequelize, DataTypes) =>{
             allowNull: false,
             defaultValue:0
         },
-        payer:{
+        name:{
             type:DataTypes.STRING,
             allowNull:true
         },
@@ -48,23 +56,21 @@ module.exports = (sequelize, DataTypes) =>{
             type:DataTypes.STRING,
             allowNull: true
         },
-        transferFrom:{
-            type:DataTypes.STRING,
-            allowNull: true
-        },
-        transferTo:{
-            type:DataTypes.STRING,
-            allowNull: true
-        },
-   
+        reviewStatus:{
+            type:Sequelize.ENUM('UNDER_REVIEW','ACCEPTED', 'REJECTED'),
+            allowNull: true,
+            validate: {
+                isIn: {
+                    args: [['UNDER_REVIEW', 'ACCEPTED', 'REJECTED']],
+                    message: "Must be UNDER_REVIEW, ACCEPTED or REJECTED "
+                  }
+            }
+        }
+
     },{
         paranoid: true,
-       
     });
-
-
-
-
 
     return Fund;
 };
+
