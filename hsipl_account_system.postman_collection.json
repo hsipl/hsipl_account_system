@@ -1,0 +1,1017 @@
+{
+	"info": {
+		"_postman_id": "8e344094-6eac-425a-8393-aaa3e082ddc9",
+		"name": "hsipl_account_system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13258287"
+	},
+	"item": [
+		{
+			"name": "api/user",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "user",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/user/login/",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"user",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "陳士煜",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "user1",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "checkPassword",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "mail",
+									"value": "1yaya1yaya@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/user/signup",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"user",
+								"signup"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"disabled": true
+								},
+								{
+									"key": "checkPassowrd",
+									"value": "password",
+									"disabled": true
+								},
+								{
+									"key": "money",
+									"value": "0",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findUser",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjgwMDc5NTYzLCJleHAiOjE2ODAxNjU5NjN9.vQxwsPBNi6rzRn_thIK6qkS-oZ7D6P2Mfeg08hdUupI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/user/find?name=李昱杰",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"user",
+								"find"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "李昱杰"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjgwMDc5NTYzLCJleHAiOjE2ODAxNjU5NjN9.vQxwsPBNi6rzRn_thIK6qkS-oZ7D6P2Mfeg08hdUupI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "140.125.45.160:6969/api/user/1",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userOptionSearch",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoyfSwiaWF0IjoxNjgwMDc5ODUzLCJleHAiOjE2ODAxNjYyNTN9.ggOKNjcCt6dwrcnFHp5LuSPubqs-gjWaGRRRgxW5rbQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "140.125.45.160:6969/api/user/option?id=",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"user",
+								"option"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": ""
+								},
+								{
+									"key": "name",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "mail",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "phoneNum",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "studentID",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "lineID",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "balance",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgetPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "mail",
+									"value": "eugene605110@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/user/forget_password",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"user",
+								"forget_password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resetPassword",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "newPassword",
+									"value": "Password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/user/reset_password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwibWFpbCI6ImV1Z2VuZTYwNTExMEBnbWFpbC5jb20iLCJpYXQiOjE2ODAwODAwMjcsImV4cCI6MTY4MDE2NjQyN30.VMCoeR70I6DRB-qEKI4xO09q8bTEqt1DoQEPDi1QTEM",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"user",
+								"reset_password"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJ1c2VyIiwibWFpbCI6ImV1Z2VuZTYwNTExMEBnbWFpbC5jb20iLCJpYXQiOjE2ODAwODAwMjcsImV4cCI6MTY4MDE2NjQyN30.VMCoeR70I6DRB-qEKI4xO09q8bTEqt1DoQEPDi1QTEM"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "api/fund",
+			"item": [
+				{
+					"name": "addItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjc5NTkyNzA2LCJleHAiOjE2Nzk2NzkxMDZ9.tDLIteDk3NotU04AZrZDWdYQgxq7vppBcrvd0dCjkKc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type",
+									"value": "收支",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "螺絲起子",
+									"type": "text"
+								},
+								{
+									"key": "payments",
+									"value": "expenditure",
+									"type": "text"
+								},
+								{
+									"key": "tag",
+									"value": "advancePayments",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "60",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2023-03-24",
+									"type": "text"
+								},
+								{
+									"key": "payer",
+									"value": "李昱杰",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTotal",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoyfSwiaWF0IjoxNjgwMDgwMTMzLCJleHAiOjE2ODAxNjY1MzN9.4IqLEtq7nkJHpyJ3mcPeRug7Ih3UIzObRaCvZUirRP0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/total",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								"total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchItem",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoyfSwiaWF0IjoxNjgwMDgwMTMzLCJleHAiOjE2ODAxNjY1MzN9.4IqLEtq7nkJHpyJ3mcPeRug7Ih3UIzObRaCvZUirRP0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "content",
+									"value": "產學處經費",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/search?searchQuery=經費",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								"search"
+							],
+							"query": [
+								{
+									"key": "searchQuery",
+									"value": "經費"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoyfSwiaWF0IjoxNjgwMDgwNTIyLCJleHAiOjE2ODAxNjY5MjJ9.F1Kp1Zidgxh8n-ktRHL5z8HqwNmYgUc0EfnpVHoTBCc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type",
+									"value": "EXPENDITURE",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "水壺",
+									"type": "text"
+								},
+								{
+									"key": "tag",
+									"value": "ADVANCE_PAYMENTS",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "120",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "payer",
+									"value": "李昱杰",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/2",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoyfSwiaWF0IjoxNjgwMDgwNTIyLCJleHAiOjE2ODAxNjY5MjJ9.F1Kp1Zidgxh8n-ktRHL5z8HqwNmYgUc0EfnpVHoTBCc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/9",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "itemOptionSearch",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjc3NjUwNzk2LCJleHAiOjE2Nzc3MzcxOTZ9.q8FKUefl2iX3ZuGUUzHziabakclTNwf7owB1M_iu4AI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/option?price=&content=",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								"option"
+							],
+							"query": [
+								{
+									"key": "price",
+									"value": ""
+								},
+								{
+									"key": "content",
+									"value": ""
+								},
+								{
+									"key": "id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "purchaseDate",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "createdAt",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "updatedAt",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "recorderName",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "payer",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoyfSwiaWF0IjoxNjgwMDgwNTIyLCJleHAiOjE2ODAxNjY5MjJ9.F1Kp1Zidgxh8n-ktRHL5z8HqwNmYgUc0EfnpVHoTBCc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fundTranfer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjc5ODE3Nzg2LCJleHAiOjE2Nzk5MDQxODZ9.bCABjDo8WJy77FRYSUekZbshgMqtRY0tHmeiayFp5rc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "type",
+									"value": "FUND_TRANSFER",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "經費轉移",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2023-03-24",
+									"type": "text"
+								},
+								{
+									"key": "tag",
+									"value": "TRANSFER",
+									"type": "text"
+								},
+								{
+									"key": "fromName",
+									"value": "陳士煜",
+									"type": "text"
+								},
+								{
+									"key": "toName",
+									"value": "李昱杰",
+									"type": "text"
+								},
+								{
+									"key": "amount",
+									"value": "10",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/fund_transfer",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								"fund_transfer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "allUserDetail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjc5NTk0NTg0LCJleHAiOjE2Nzk2ODA5ODR9.eGggy2Vub7YJr_kRxe7uX7KsezEOpAgwTXe_W_-sCdI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "140.125.45.160:6969/api/fund/all_user_detail",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"fund",
+								"all_user_detail"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "api/profile",
+			"item": [
+				{
+					"name": "showprofile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjgwMTYzODg0LCJleHAiOjE2ODAyNTAyODR9.YzXjBx-zdyprKlT_5ublxl9JnNd3Du4fSbJJFnkPQlE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "140.125.45.160:6969/api/profile/",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addUserInfor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoxfSwiaWF0IjoxNjc5NTkzNzYzLCJleHAiOjE2Nzk2ODAxNjN9.t-EVOJ5L6PEm76OKLuzPBIjahgJ1zgbB76wltflGrBM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "img",
+									"type": "file",
+									"src": "/C:/Users/user/Desktop/images.jpg"
+								},
+								{
+									"key": "name",
+									"value": "李昱杰",
+									"type": "text"
+								},
+								{
+									"key": "studentID",
+									"value": "M1104444",
+									"type": "text"
+								},
+								{
+									"key": "phoneNum",
+									"value": "0937660277",
+									"type": "text"
+								},
+								{
+									"key": "birthday",
+									"value": "1998097",
+									"type": "text"
+								},
+								{
+									"key": "lineID",
+									"value": "45454655",
+									"type": "text"
+								},
+								{
+									"key": "mail",
+									"value": "eugene605110@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/profile",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changePassword",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoidXNlciIsImlkIjoyfSwiaWF0IjoxNjgwMDgwNTIyLCJleHAiOjE2ODAxNjY5MjJ9.F1Kp1Zidgxh8n-ktRHL5z8HqwNmYgUc0EfnpVHoTBCc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "oldPassword",
+									"value": "Password",
+									"type": "text"
+								},
+								{
+									"key": "newPassword",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "140.125.45.160:6969/api/profile/change_password",
+							"host": [
+								"140",
+								"125",
+								"45",
+								"160"
+							],
+							"port": "6969",
+							"path": [
+								"api",
+								"profile",
+								"change_password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
