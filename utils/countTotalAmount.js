@@ -6,7 +6,7 @@ const conutTotalAmout = async (name) => {
     const nameAllPaid = await Fund.findAll({ where: { name: name }})
   
     nameAllPaid.forEach((content) => {
-      if (content.tag === 'remitter') {
+      if (content.tag === 'REMITTER') {
         nameAllPaidSum -= content.sum
       } else {
         nameAllPaidSum += content.sum

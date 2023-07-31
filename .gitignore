@@ -10,3 +10,5 @@ mongodb_data
 *.gif
 *.jpg
 *.jpeg
+
+*.sock

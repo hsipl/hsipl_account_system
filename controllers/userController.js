@@ -27,14 +27,14 @@ class userController {
         try {
             const { name, username, password, mail } = req.body
             //確認ip位址(白名單為實驗室ip)
-            const whitelist = ['140.125.45.160']
-            const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            if (!whitelist.includes(ip)) {
-                return res.status('400').send(errorHandler.ipError())
-            }
+            // const whitelist = ['140.125.45.160']
+            // const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            // if (!whitelist.includes(ip)) {
+            //     return res.status('400').json(errorHandler.ipError())
+            // }
 
             if (!name || !username || !password || !mail) {
-                return res.status('400').send(errorHandler.contentEmpty())
+                return res.status('400').json(errorHandler.contentEmpty())
             }
 
             const checkUserExist = await User.findOne({
@@ -47,7 +47,7 @@ class userController {
                 }
             })
             if (checkUserExist) {
-                return res.status('409').send(errorHandler.userAlreadyExist())
+                return res.status('409').json(errorHandler.userAlreadyExist())
             }
 
             //密碼加鹽
@@ -74,12 +74,12 @@ class userController {
             }
             await User.create(infor)
 
-            return res.status('200').send({
+            return res.status('200').json({
                 message: `Created ${req.body.name} sucessfully.`
             })
         }
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -95,7 +95,7 @@ class userController {
                 }
             })
             if (!userExist) {
-                return res.status('400').send(errorHandler.loginError())
+                return res.status('400').json(errorHandler.loginError())
             }
 
             const id = userExist.id
@@ -106,12 +106,12 @@ class userController {
             }
 
             if (!username || !password) {
-                return res.status('400').send(errorHandler.contentEmpty());
+                return res.status('400').json(errorHandler.contentEmpty());
             }
             //確認密碼有無一致
             const checkPassword = await decrypt(password, userExist.password)
             if (!checkPassword) {
-                return res.status('400').send(errorHandler.loginError())
+                return res.status('400').json(errorHandler.loginError())
             }
 
             //將payload送去tokenController & 返回token 
@@ -119,13 +119,13 @@ class userController {
             res.cookie('token', token, { httpOnly: true })
 
 
-            return res.status('200').send({
+            return res.status('200').json({
                 message: `Login sucessfully! Welcome back ${userExist.name}.`,
                 accessToken: token
             })
         }
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -136,48 +136,23 @@ class userController {
         const { name } = req.query
         try {
             const user = await User.findOne({
+                include: [
+                    { model: Fund }
+                ],
+                attributes: ['name', 'mail', 'studentID', 'phoneNum', 'birthday', 'lineID', 'balance'],
                 where: {
                     name: name
                 }
             })
 
             if (!user) {
-                return res.status('404').send(errorHandler.dataNotFind())
+                return res.status('404').json(errorHandler.dataNotFind())
             }
-            //找尋該位user付款項目之'type', 'contnet', 'sum', 'tag'
-            const allContent = await Fund.findAll({
-                attributes: ['type', 'content', 'sum', 'tag'],
-                where: { userId: user.id }
-            })
-            //找尋該位user轉帳紀錄之'content', 'date', 'sum', 'transferFrom', 'transferTo'
-            const transferLog = await Fund.findAll({
-                attributes: ['content', 'date', 'sum', 'transferFrom', 'transferTo'],
-                where: {
-                    [Op.or]: [
-                        { transferFrom: user.name },
-                        { transferTo: user.name },
-                    ]
-                }
 
-            })
-
-            return res.status('200').send({
-                message: `Fetched ${user.name} sucessfully`,
-                detail: {
-                    name: user.name,
-                    studentID: user.studentID,
-                    mail: user.mail,
-                    phoneNum: user.phoneNum,
-                    birthday: user.birthday,
-                    lineID: user.lineID,
-                    payed: allContent,
-                    transferLog,
-                    balance: user.balance
-                }
-            })
+            return res.status('200').json(user)
         }
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -185,7 +160,6 @@ class userController {
 
     deleteUser = async (req, res) => {
         try {
-
             const user = await User.findOne({
                 where: { id: req.user.payload.id }
             })
@@ -197,12 +171,12 @@ class userController {
 
             await UserLog.create({ message: `${user.name} was deleted.` })
 
-            return res.status('200').send({
+            return res.status('200').json({
                 message: `Deleted ${user.name} Sucessfully!`
             })
         }
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -218,18 +192,18 @@ class userController {
                 const user = await User.findAll({
                     raw: true
                 })
-                return res.status('200').send({ data: user })
+                return res.status('200').json({ data: user })
             }
             const user = await User.findAll({
                 attributes: Object.keys(attributes),
                 raw: true
             })
-            return res.status('200').send({
+            return res.status('200').json({
                 data: user
             })
         }
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -241,7 +215,7 @@ class userController {
             //確認信箱有無正確
             const user = await User.findOne({ where: { mail: mail } })
             if (!user) {
-                return res.status('404').send(errorHandler.dataNotFind())
+                return res.status('404').json(errorHandler.dataNotFind())
             }
             //將使用者的id, username, mail 做成token
             const token = await TokenController.signToken({ id: user.id, username: user.username, mail: user.mail })
@@ -265,14 +239,14 @@ class userController {
 
             await transporter.sendMail(mailOption)
 
-            return res.status('200').send({
+            return res.status('200').json({
                 message: 'mail for reset password was sent to your mail, please check.',
                 token: token
             })
         }
 
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -284,13 +258,13 @@ class userController {
             //檢查queryString中的token是否存在於資料庫
             const verifyUser = await User.findOne({ where: { resetPasswordToken: token } })
             if (!verifyUser) {
-                return res.status('401').send(errorHandler.loginError())
+                return res.status('401').json(errorHandler.loginError())
             }
             const verifyToken = await jwt.verify(token, config.secret)
             const currentTime = Date.now() / 1000
             //檢查token是否過期
             if (verifyToken.exp < currentTime) {
-                return res.status('401').send(errorHandler.loginError())
+                return res.status('401').json(errorHandler.loginError())
             }
             const { newPassword } = req.body
             const eNewPassword = await encrypt(newPassword)
@@ -305,11 +279,11 @@ class userController {
                 text: 'Your password has been successfully reset, please login again.'
             }
             await transporter.sendMail(mailOption)
-            return res.status('200').send({
+            return res.status('200').json({
                 message: 'Your password was updated sucessfully.'
             })
         } catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }

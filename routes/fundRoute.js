@@ -4,7 +4,7 @@ const router = require('express').Router()
 
 router.post("/", tokenController.verifyToken , fundController.addItem)
 router.post('/fund_transfer', tokenController.verifyToken, fundController.fundTransfer)
-router.get("/", fundController.getAllItem)
+router.get("/", tokenController.verifyToken, fundController.getAllItem)
 router.get("/all_user_detail", tokenController.verifyToken, fundController.getAllUserDetail)
 router.get("/search", tokenController.verifyToken, fundController.searchItem)
 router.get ("/option", tokenController.verifyToken, fundController.itemOptionSearch)

@@ -31,7 +31,7 @@ class profileController {
             //確認資訊有無重複
             if (checkUserExist) {
                 delFile(`/${req.file.path}`)
-                return res.status('409').send(errorHandler.userAlreadyExist())
+                return res.status('409').json(errorHandler.userAlreadyExist())
             }
             let infor = {
                 name: name,
@@ -47,14 +47,14 @@ class profileController {
                 where: { username: req.user.payload.username }
             })
 
-            return res.status('200').send({
+            return res.status('200').json({
                 message: "Updated information sucessfully.",
                 state: addInfor
             })
         }
 
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -68,7 +68,7 @@ class profileController {
             //將user輸入之舊密碼與資料庫內密碼比對
             const checkOldPassword = await decrypt(oldPassword, user.password)
             if (!checkOldPassword) {
-                return res.status('400').send(errorHandler.loginError())
+                return res.status('400').json(errorHandler.loginError())
             }
             //加鹽新密碼
             let encryptNewPassword = await encrypt(newPassword)
@@ -76,14 +76,14 @@ class profileController {
                 {
                     where: { id: req.user.payload.id }
                 })
-            return res.status('200').send({
+            return res.status('200').json({
                 message: 'Your password has been updated.'
             })
 
         }
 
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
@@ -105,7 +105,7 @@ class profileController {
         }
 
         catch (error) {
-            return res.status('500').send({
+            return res.status('500').json({
                 message: error
             })
         }
