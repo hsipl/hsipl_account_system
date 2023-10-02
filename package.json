@@ -25,6 +25,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.3",
     "file-stream-rotator": "^0.5.7",
     "jest": "^27.0.1",
     "jsonwebtoken": "^8.5.1",
@@ -40,6 +41,10 @@
     "nodemailer": "^6.7.2",
     "nodeman": "^1.1.2",
     "nodemon": "^2.0.19",
+    "passport": "^0.6.0",
+    "passport-google-oauth": "^2.0.0",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-google-oauth20": "^2.0.0",
     "sequelize": "^6.15.0",
     "sequelize-cli": "^6.4.1",
     "swagger": "^0.7.5"

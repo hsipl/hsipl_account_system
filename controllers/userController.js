@@ -1,7 +1,6 @@
 /*
 實驗室網站帳戶管理
  */
-
 const db = require('../models')
 const User = db.User
 const Fund = db.Fund
@@ -19,10 +18,20 @@ const mailConfig = require('../config/mail.config')
 const jwt = require("jsonwebtoken")
 const config = require('../config/auth.config')
 
-
-
-
 class userController {
+    protected = async (req, res) => {
+        try {
+            res.send('123456')
+
+        }
+        catch (error) {
+            return res.status('500').json({
+                message: error
+            })
+        }
+
+    }
+
     createUser = async (req, res) => {
         try {
             const { name, username, password, mail } = req.body
@@ -288,6 +297,7 @@ class userController {
             })
         }
     }
+
 
 
 

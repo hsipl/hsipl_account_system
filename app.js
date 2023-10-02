@@ -1,8 +1,11 @@
 //require package
-const express = require("express");
+require('dotenv').config()
+const express = require("express")
 const bodyparser = require("body-parser")
 const morgan = require("morgan")
 const cors = require("cors")
+const passport = require('passport')
+const session = require('express-session')
 const path = require("path")
 const fs = require("fs")
 const nodemailer = require('nodemailer')
@@ -11,16 +14,22 @@ const errorHandler = require('./middleware/errorHandler')
 const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./src/swagger.json')
 
+
 //require middleware
 const userRoute = require("./routes/userRoute")
 const profileRoute = require('./routes/userRoute')
 const fundRoute = require("./routes/fundRoute")
 const labRoute = require("./routes/labRoute")
 const teacherRoute = require('./routes/teacherRoute')
+const authRoute = require('./routes/authRoute')
+const publicRoute = require('./routes/publicRoute')
+require ('./config/passport')(passport)
 
 
 const app = express();
-
+app.use(session({secret: 'cats'}))
+app.use(passport.initialize())
+app.use(passport.session())
 //loggerHandler
 
 const logDirectory = path.join(__dirname, 'logger')
@@ -32,6 +41,7 @@ var accessLogStream = FileStreamRotator.getStream({
   verbose: false
 })
 
+//處理跨域問題
 const corsOptions = {
   origin:[
     "http://localhost",
@@ -44,6 +54,7 @@ app.use( (req,res, next)=>{
   res.header('Access-Control-Allow-Origin', "*");
   next();
 })
+
 app.use(cors(corsOptions))
 app.use(express.static(__dirname))
 app.use(morgan("combined",{stream: accessLogStream}))
@@ -52,14 +63,16 @@ app.use(bodyparser.json())
 app.use(express.urlencoded({
   extended: true
 }))
+
+//路由設定
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-
-
 app.use("/api/user", userRoute)
 app.use("/api/profile", profileRoute)
 app.use("/api/fund", fundRoute)
 app.use("/api/lab", labRoute)
 app.use("/api/lab", teacherRoute)
+app.use('/auth', authRoute)
+app.use(publicRoute)
 
 app.use((req, res) =>{
   return res.status('404').send({
