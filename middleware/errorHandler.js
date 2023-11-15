@@ -1,56 +1,79 @@
 class errorHandler {
-  infoErr() {
+  contentEmpty() {
     return {
       statusCode: 400,
-      msg: "your info is wrong.",
+      message: "Your contents can not empty."
+    }
+  }
+  passwordNotMatch() {
+    return {
+      statusCode: 400,
+      message: "Your password does not match."
+    }
+  }
+
+  balanceNotEnough() {
+    return {
+      statusCode: 400,
+      message: "Your balance does not enough."
+    }
+  }
+
+  loginError() {
+    return {
+      statusCode: 400,
+      message: "Username or password is wrong.",
     };
   }
-  userAlreadyExist() {
+
+  payerError(){
     return {
-      statusCode: 409,
-      msg: "user already exist.",
+      statusCode:400,
+      message: "Payer profile does not exist."
+    }
+  }
+  ipError(){
+    return{
+      statusCode:401,
+      message: "Authentication failed."
+    }
+  }
+
+  tokenError() {
+    return {
+      statusCode: 401,
+      message: "Access denied,please login again.",
     };
   }
   userNotExist() {
     return {
       statusCode: 404,
-      msg: "user not exist.",
-    };
+      message: "User does not exist.",
+    }
+    
   }
   dataNotFind(){
     return {
       statusCode: 404,
-      msg: "data not find.",
+      message: "Data not find.",
     };
   }
-  loginError() {
+  balanceNotZero() {
     return {
-      statusCode: 400,
-      msg: "username or password is wrong.",
-    };
-  }
-  tokenError() {
-    return {
-      statusCode: 401,
-      msg: "token wrong,please login again.",
-    };
-  }
-  accessError(){
-    return {
-      statusCode:400,
-      msg:"access error."
+      statusCode: 409,
+      message: "Please transfer your balance before you deleted the account.."
     }
   }
-  ipError(){
-    return{
-      statusCode:400,
-      msg:"Authentication failed."
+  userAlreadyExist() {
+    return {
+      statusCode: 409,
+      message: "User already exist."
     }
   }
-  payerError(){
+  serverError(){
     return {
-      statusCode:400,
-      msg:"payer profile does not exist."
+      statusCode: 500,
+      message: "server has some problem, please wait."
     }
   }
 }

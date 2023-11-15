@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt")
-const dotenv = require("dotenv").config()
 
 const encrypt = async(password) => {
     const salt = await bcrypt.genSalt(10)
