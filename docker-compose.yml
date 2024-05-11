@@ -1,5 +1,17 @@
 version: "3.5"
 services:
+  backend:
+    image: node:14
+    container_name: hsipl_account_system_backend
+    working_dir: /hsipl_account_system
+    ports:
+      - "8000:3000"
+    environment:
+      MODE: dev
+    volumes:
+      - .:/hsipl_account_system
+    command: sh -c "npm install && npm run dev"
+
   db:
     image: mysql:8.0
     container_name: db
@@ -9,32 +21,60 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DB}
     ports:
-      - 3307:3306
-    networks:
-      - account_net
+      - "3307:3306"
     volumes:
       - ./mysqlData:/var/lib/mysql
 
-
-  backend:
-    build: .
+  redis:
+    image: redis:latest
+    container_name: redis
     restart: always
-    environment:
-      MODE: dev
-      PORT: 6969
-
     ports:
-      - 6969:6969
-    networks:
-      - account_net
-    volumes:
-      - /hsipl_account_system
-      
-    command: sh -c "npm install && npm run dev"
+      - "6379:6379"
 
-volumes: 
-  backend_data:
 
-networks:
-  account_net:
+# version: "3.5"
+# services:
+#   db:
+#     image: mysql:8.0
+#     container_name: db
+#     restart: always
+#     environment:
+#       MYSQL_HOST: ${DB_HOST}
+#       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+#       MYSQL_DATABASE: ${DB_DB}
+#     ports:
+#       - 3307:3306
+#     networks:
+#       - account_net
+#     volumes:
+#       - ./mysqlData:/var/lib/mysql
 
+#   backend:
+#     build: .
+#     restart: always
+#     environment:
+#       MODE: dev
+#       PORT: 6969
+#     ports:
+#       - 6969:6969
+#     networks:
+#       - account_net
+#     volumes:
+#       - /hsipl_account_system
+#     command: sh -c "npm install && npm run dev"
+
+#   redis:
+#     image: redis:latest
+#     container_name: redis
+#     restart: always
+#     ports:
+#       - 6379:6379
+#     networks:
+#       - account_net
+
+# volumes: 
+#   backend_data:
+
+# networks:
+#   account_net:

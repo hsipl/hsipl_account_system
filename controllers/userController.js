@@ -17,11 +17,13 @@ const delFile = require('../middleware/deleteFile')
 const mailConfig = require('../config/mail.config')
 const jwt = require("jsonwebtoken")
 const config = require('../config/auth.config')
+const redis = require('redis')
+
 
 class userController {
     protected = async (req, res) => {
         try {
-            res.send('123456')
+            res.send('this is the protected page.')
 
         }
         catch (error) {
@@ -61,6 +63,7 @@ class userController {
 
             //密碼加鹽
             const encryptPassword = await encrypt(password)
+            //信箱認證
             // const transporter = nodemailer.createTransport(mailConfig)
             // let mailOption = {
             //     from: 'yuntechhsipl@gmail.com',
@@ -96,49 +99,69 @@ class userController {
 
     login = async (req, res) => {
         try {
-            const { username, password } = req.body
-
-            const userExist = await User.findOne({
-                where: {
-                    username: username
-                }
+            const redisClient = redis.createClient()
+            redisClient.connect()
+            redisClient.on('connect', () => {
+            console.log('Connected to Redis server sucessfully!');
             })
-            if (!userExist) {
-                return res.status('400').json(errorHandler.loginError())
-            }
-
-            const id = userExist.id
-            //token由user的id & username 組成
-            const payload = {
-                username,
-                id
-            }
-
-            if (!username || !password) {
-                return res.status('400').json(errorHandler.contentEmpty());
-            }
-            //確認密碼有無一致
-            const checkPassword = await decrypt(password, userExist.password)
-            if (!checkPassword) {
-                return res.status('400').json(errorHandler.loginError())
-            }
-
-            //將payload送去tokenController & 返回token 
-            const token = await TokenController.signToken({ payload })
-            res.cookie('token', token, { httpOnly: true })
-
-
-            return res.status('200').json({
-                message: `Login sucessfully! Welcome back ${userExist.name}.`,
-                accessToken: token
+            redisClient.on('error', (err) => {
+            console.error('Redis server error:', err);
             })
+          const { username, password } = req.body;
+      
+          const userExist = await User.findOne({
+            where: {
+              username: username
+            }
+          });
+      
+          if (!userExist) {
+            return res.status(400).json(errorHandler.loginError());
+          }
+      
+          const id = userExist.id;
+          const payload = {
+            username,
+            id
+          };
+      
+          if (!username || !password) {
+            return res.status(400).json(errorHandler.contentEmpty());
+          }
+      
+          const checkPassword = await decrypt(password, userExist.password);
+      
+          if (!checkPassword) {
+            return res.status(400).json(errorHandler.loginError());
+          }
+      
+          // JWT 簽署
+          const token = await TokenController.signToken({payload});
+      
+          // 創建 session
+          const sessionData = {
+            userId: id,
+            username: username,
+            role: 'user' // 假設有預設角色為 'user'
+          };
+      
+          // 將 session 存儲到 Redis
+          redisClient.set(`session:${id}`, JSON.stringify(sessionData));
+      
+          res.cookie('token', token);
+      
+          return res.status(200).json({
+            message: `Login successfully! Welcome back ${userExist.name}.`,
+            accessToken: token
+          });
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({
+            message: error
+          });
         }
-        catch (error) {
-            return res.status('500').json({
-                message: error
-            })
-        }
-    }
+      }
+      
 
 
     findUser = async (req, res) => {

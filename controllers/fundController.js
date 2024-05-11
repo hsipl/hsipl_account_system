@@ -8,7 +8,7 @@ const Fund = db.Fund
 const UserLog = db.UserLog
 const FundTransferLog = db.FundTransferLog
 const errorHandler = require('../middleware/errorHandler')
-const { conutTotalAmout: conutTotalAmout } = require('../utils/countTotalAmount')
+const { conutTotalAmount: conutTotalAmount } = require('../utils/countTotalAmount')
 
 
 class fundController {
@@ -55,7 +55,7 @@ class fundController {
 
 
             //新增物品後更新User內payer的總額
-            const payerAllPayedSum = await conutTotalAmout(payer)
+            const payerAllPayedSum = await conutTotalAmount(payer)
 
             await User.update({ balance: payerAllPayedSum }, { where: { name: payer } })
             //寫入UserLog
@@ -78,10 +78,11 @@ class fundController {
     fundTransfer = async (req, res) => {
         try{
         const { type, content, date, fromName, toName, amount } = req.body
+        //獲取匯款人相關訊息
         const fromNameExist = await User.findOne({
             where: { name: fromName }
         })
-
+        //獲取被轉帳人相關訊息
         const toNameExist = await User.findOne({
             where: { name: toName }
         })
@@ -141,11 +142,11 @@ class fundController {
         })
 
         //更新轉帳方餘額
-        const fromNameAllPayedSum = await conutTotalAmout(fromName)
+        const fromNameAllPayedSum = await conutTotalAmount(fromName)
         await User.update({ balance: fromNameAllPayedSum }, { where: { name: fromName } })
 
         //更新收款方餘額
-        const toNameAllPayedSum = await conutTotalAmout(toName)
+        const toNameAllPayedSum = await conutTotalAmount(toName)
         await User.update({ balance: toNameAllPayedSum }, { where: { name: toName } })
 
         return res.status('200').json({
@@ -263,12 +264,12 @@ class fundController {
             })
             //若更改付款人，則更新原付款人之餘額
             if (originalPayer.name !== payer) {
-                const OriginalPayerAllPayedSum = await conutTotalAmout(originalPayer.name)
+                const OriginalPayerAllPayedSum = await conutTotalAmount(originalPayer.name)
                 await User.update({ balance: OriginalPayerAllPayedSum }, { where: { name: originalPayer.name } })
             }
 
             //更新物品後重新計算新付款人之餘額
-            const payerAllPayedSum = await conutTotalAmout(payer)
+            const payerAllPayedSum = await conutTotalAmount(payer)
             await User.update({ balance: payerAllPayedSum }, { where: { name: payer } })
 
             await UserLog.create({

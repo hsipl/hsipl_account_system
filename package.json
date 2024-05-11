@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
-    "dev": "nodemon server.js",
+    "dev": "concurrently \"nodemon server.js\" \"redis-server\"",
     "test-fund": "jest fund.test.js "
   },
   "keywords": [
@@ -19,7 +19,7 @@
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.10",
     "axios": "^0.21.1",
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.19.0",
     "chai": "^4.3.6",
     "cors": "^2.8.5",
@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.3",
     "file-stream-rotator": "^0.5.7",
+    "ioredis": "^5.3.2",
     "jest": "^27.0.1",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^10.0.0",
@@ -45,11 +46,14 @@
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-google-oauth20": "^2.0.0",
+    "path": "^0.12.7",
+    "redis": "^4.6.13",
     "sequelize": "^6.15.0",
     "sequelize-cli": "^6.4.1",
     "swagger": "^0.7.5"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "jest": "^27.0.1",
     "supertest": "^6.2.3",
     "swagger-jsdoc": "^6.2.8",

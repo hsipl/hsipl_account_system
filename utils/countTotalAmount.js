@@ -1,7 +1,7 @@
 const db = require('../models/index')
 const Fund = db.Fund
 
-const conutTotalAmout = async (name) => {
+const conutTotalAmount = async (name) => {
     let nameAllPaidSum = 0
     const nameAllPaid = await Fund.findAll({ where: { name: name }})
   
@@ -16,4 +16,4 @@ const conutTotalAmout = async (name) => {
     return nameAllPaidSum
   }
 
-module.exports = { conutTotalAmout }
+module.exports = { conutTotalAmount }
