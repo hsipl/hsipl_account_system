@@ -11,7 +11,7 @@ const {
     encrypt: encrypt,
     decrypt: decrypt,
 } = require("../utils/encryptPassword")
-
+const { conutTotalAmount: conutTotalAmount } = require('../utils/countTotalAmount')
 const delFile = require('../middleware/deleteFile')
 
 class profileController {
@@ -89,28 +89,32 @@ class profileController {
         }
     }
 
-    showProfile = async (req, res) => {
-        try {
-            //獲取登入user相關訊息
-            const user = await User.findOne({
-                include: [
-                    { model: Fund }
-                ],
-                attributes: ['name', 'username', 'mail', 'studentID', 'phoneNum', 'birthday', 'lineID', 'balance'],
-                where: { username: req.user.payload.username }
-            })
+showProfile = async (req, res) => {
+    try {
+        // 獲取登入 user 相關訊息
+        const user = await User.findOne({
+            include: [
+                { model: Fund }
+            ],
+            attributes: ['name', 'username', 'mail', 'studentID', 'phoneNum', 'birthday', 'lineID', 'balance'],
+            where: { username: req.user.payload.username }
+        });
 
-            return res.status('200').json(user)
+        // 計算更新後的餘額
+        const updatedBalance = await conutTotalAmount(user.name);
 
-        }
-
-        catch (error) {
-            return res.status('500').json({
-                message: error
-            })
-        }
-
+        // 更新用戶的餘額
+        await User.update({ balance: updatedBalance }, { where: { name: user.name } });
+        user.balance = updatedBalance
+        // 將更新後的用戶信息返回
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(500).json({
+            message: error
+        });
     }
+}
+
 
 
 }

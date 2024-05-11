@@ -13,7 +13,8 @@ const FileStreamRotator = require('file-stream-rotator')
 const errorHandler = require('./middleware/errorHandler')
 const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./src/swagger.json')
-
+const redis = require('redis')
+const homepagePath = path.join(__dirname, "views", "homepage.html")
 
 //require middleware
 const userRoute = require("./routes/userRoute")
@@ -25,9 +26,23 @@ const authRoute = require('./routes/authRoute')
 const publicRoute = require('./routes/publicRoute')
 require ('./config/passport')(passport)
 
-
 const app = express();
-app.use(session({secret: 'cats'}))
+
+// 建立redis連線
+// const redisClient = redis.createClient()
+// redisClient.connect()
+// redisClient.on('connect', () => {
+//   console.log('Connected to Redis server sucessfully!');
+// });
+// redisClient.on('error', (err) => {
+//   console.error('Redis server error:', err);
+// });
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  signed: true
+}
+))
 app.use(passport.initialize())
 app.use(passport.session())
 //loggerHandler
@@ -74,6 +89,10 @@ app.use("/api/lab", teacherRoute)
 app.use('/auth', authRoute)
 app.use(publicRoute)
 
+// app.get("/login", (req, res) => {
+//   res.sendFile(homepagePath);
+// });
+
 app.use((req, res) =>{
   return res.status('404').send({
     message: "Page not found."
@@ -85,8 +104,5 @@ app.use((req, res) =>{
     message: "Code have some wrong,plz wait a minute."
   })
 })
-
-
-
-
-module.exports = app;
+//console.log(redisClient,"#####")
+module.exports = app

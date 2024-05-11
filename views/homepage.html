@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雲科大高光譜實驗室記帳系統</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: auto;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .google-icon {
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg');
+            background-size: cover;
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">雲科大高光譜實驗室記帳系統</div>
+        <div class="form-container">
+            <form action="/login" method="post">
+                <input type="text" name="username" placeholder="帳號">
+                <input type="password" name="password" placeholder="密碼">
+                <input type="submit" value="登入">
+            </form>
+            <div>
+                <a href="/signup">註冊會員</a> |
+                <a href="/forgot-password">忘記密碼</a> |
+                <a href="/auth/google"><span class="google-icon"></span>Google 登入</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

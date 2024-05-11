@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雲科大高光譜實驗室記帳系統</title>
+</head>
+<body>
+  <h1>雲科大高光譜實驗室記帳系統</h1>
+  <form id="signupForm">
+    <input type="text" name="name" placeholder="姓名" required>
+    <input type="text" name="username" placeholder="帳號" required>
+    <input type="password" name="password" placeholder="密碼" required>
+    <input type="email" name="mail" placeholder="電子信箱" required>
+    <button type="submit">註冊會員</button>
+  </form>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = {
+        name: e.target.name.value,
+        username: e.target.username.value,
+        password: e.target.password.value,
+        mail: e.target.mail.value
+      };
+      
+      try {
+        const response = await fetch('/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

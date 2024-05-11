@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken")
 const errorHandler = require("./errorHandler")
 const config = require('../config/auth.config')
 const db = require('../models/index')
+const Redis = require('ioredis')
+const redis = new Redis()
 
 class TokenController {
   
@@ -15,26 +17,28 @@ class TokenController {
 
   async verifyToken(req, res, next) {
     try {
-      const token = req.headers.authorization
+        const token = req.headers.authorization;
 
-      if(!token){
-        return res.status('401').send(errorHandler.tokenError())
-      }
-      const rtoken = token.replace("Bearer ","")
+        if (!token) {
+            return res.status(401).send(errorHandler.tokenError());
+        }
 
-      const result = await jwt.verify(rtoken, config.secret)
-      req.user = result
+        const rtoken = token.replace("Bearer ", "");
+        const result = await jwt.verify(rtoken, config.secret);
+        
+        // check token expire
+        if (result.expired) {
+            return res.status(401).send(errorHandler.tokenError());
+        }
 
-    } 
-    catch (error) {
-      console.log(error)
-      return res.status('401').send(errorHandler.tokenError())
+        req.user = result;
+
+        return next();
+    } catch (error) {
+        console.error(error);
+        return res.status(401).send(errorHandler.tokenError());
     }
-    
-    return next()
-  } 
-
-
+}
 
 
 }
