@@ -258,7 +258,7 @@ class userController {
                 { resetPasswordToken: token, resetPasswordExpires: (verifyToken.exp) * 1000 },
                 { where: { id: user.id } })
             //定義給使用者重設密碼的連結
-            const resetPasswordLink = `Click this <a href="http://140.125.45.160:6969/api/user/resetPassword?token=${token}">link</a> to reset password.`
+            const resetPasswordLink = `Click this <a href="http://localhost:3000/api/user/resetPassword?token=${token}">link</a> to reset password.`
             const transporter = nodemailer.createTransport(mailConfig)
 
             //信件設定
