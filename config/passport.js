@@ -2,7 +2,7 @@ require('dotenv').config()
 const db = require('../models/index')
 const User = db.User
 const passport = require('passport')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const GoogleStrategy = require('passport-google-oauth2').Strategy
 const jwt = require('jsonwebtoken')
 const TokenController = require('../middleware/tokenController')

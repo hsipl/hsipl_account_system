@@ -1,11 +1,11 @@
 version: "3.5"
 services:
   backend:
-    image: node:14
+    image: hsipl_account_system-backend
     container_name: hsipl_account_system_backend
     working_dir: /hsipl_account_system
     ports:
-      - "8000:3000"
+      - "3000:3000"
     environment:
       MODE: dev
     volumes:
