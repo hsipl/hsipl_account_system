@@ -2,6 +2,8 @@ node_modules
 .env
 mongodbdata
 mongodb_data
+mysqlData
+src
 ./logger
 *.log
 .env
@@ -10,5 +12,4 @@ mongodb_data
 *.gif
 *.jpg
 *.jpeg
-
 *.sock
