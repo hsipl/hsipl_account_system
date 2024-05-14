@@ -30,13 +30,13 @@ const app = express();
 
 // 建立redis連線
 // const redisClient = redis.createClient()
-// redisClient.connect()
-// redisClient.on('connect', () => {
-//   console.log('Connected to Redis server sucessfully!');
-// });
 // redisClient.on('error', (err) => {
 //   console.error('Redis server error:', err);
 // });
+// redisClient.on('connect', () => {
+//   console.log('Connected to Redis server sucessfully!');
+// });
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET,

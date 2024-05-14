@@ -48,9 +48,11 @@
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
     "redis": "^4.6.13",
+    "redis-server": "^1.2.2",
     "sequelize": "^6.15.0",
     "sequelize-cli": "^6.4.1",
-    "swagger": "^0.7.5"
+    "swagger": "^0.7.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
