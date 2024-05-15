@@ -18,7 +18,7 @@ const homepagePath = path.join(__dirname, "views", "homepage.html")
 
 //require middleware
 const userRoute = require("./routes/userRoute")
-const profileRoute = require('./routes/userRoute')
+const profileRoute = require('./routes/profileRoute')
 const fundRoute = require("./routes/fundRoute")
 const labRoute = require("./routes/labRoute")
 const teacherRoute = require('./routes/teacherRoute')

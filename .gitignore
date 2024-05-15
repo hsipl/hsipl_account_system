@@ -2,6 +2,7 @@ node_modules
 .env
 mongodbdata
 mongodb_data
+mysqlData
 ./logger
 *.log
 .env
