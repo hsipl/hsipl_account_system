@@ -103,13 +103,11 @@ class userController {
         /*登入邏輯
             建立redis連線 -> 確認帳號密碼 -> 根據使用者資訊生成jwt & sessionID return 給 client -> sessionData儲存用戶登入狀態並設定時效 -> 將sessionData 存至 redis    
          */
-        //try {
+        try {
             // 創建redisClient
             const redisClient = redis.createClient({
                 url: 'redis://127.0.0.1:6379',
-                no_ready_check: true,
-                legacyMode: true,
-                PORT: 6379
+                no_ready_check: true
             })
             await redisClient.connect()
             redisClient.on('error', (err) => {
@@ -139,52 +137,47 @@ class userController {
             return res.status(400).json(errorHandler.loginError());
           }
           const jsonWebToken = await TokenController.signToken({payload})
-
-          /*
-          處理麻煩的sessionID & redis部分
-          */
-          //確認該位user是否已擁有sessionId
-          const sessionIdKey = userId
-          const redisSessionIdExist = await redisClient.get(String(sessionId))
-          console.log(redisSessionIdExist,'@@@@@')
+          const sessionIdKey = `userId:${userId}` //創建sessionId 映射 userId
+          const redisSessionIdExist = await redisClient.GET(sessionIdKey) //由sessionIdKey 查詢user 是否存在
           let sessionId
-          if (!redisSessionIdExist) {
-            // 如不存在則生成新的 sessionID
-            sessionId = generateSessionId()
+          if (!redisSessionIdExist) { // 如user不存在則生成新的 sessionID
+            sessionId = String(generateSessionId())
             // 創建 sessionData 儲存用戶登入狀態
             const sessionData = {
                 userId: userId,
                 loggedIn: true // 用户的登入狀態
             }
-            await redisClient.set(sessionId, JSON.stringify(sessionData), 'EX', 3600);
-            await redisClient.set(sessionIdKey, sessionId, 'EX', 3600);
+            await redisClient.SET(sessionId, JSON.stringify(sessionData), 'EX', 3600)
+            await redisClient.SET(sessionIdKey, sessionId, 'EX', 3600)
             console.log(`Generated new sessionId: ${sessionId}`)
         }
         else{
+            //若user已存在
             sessionId = redisSessionIdExist
             const data = await redisClient.get(String(sessionId));
                 if (data) {
                     const updatedSessionData = JSON.parse(data);
                     updatedSessionData.loggedIn = true; // 更新用户登录状态为 true
                     await redisClient.set(sessionId, JSON.stringify(updatedSessionData), 'EX', 3600); // 更新 sessionData
+                    console.log(`refeshed the sessionId: ${sessionId}`)
                 } else {
                     console.error(`Failed to find session data for sessionId: ${sessionId}`);
                 }
-            
         }
             res.cookie('sessionId', sessionId)
-            res.cookie('jsonWebToken', jsonWebToken);
+            res.cookie('jsonWebToken', jsonWebToken)
             return res.status(200).json({
             message: `Login successfully! Welcome back ${userExist.name}.`,
             accessToken: jsonWebToken,
             sessionId: sessionId
           })
-        // } catch (error) {
-        //   console.error(error);
-        //   return res.status(500).json({
-        //     message: error
-        //   });
-        // }
+     
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({
+            message: error
+          });
+        }
       }
       
 
@@ -350,7 +343,4 @@ class userController {
 
 
 }
-
-
 module.exports = new userController()
-
