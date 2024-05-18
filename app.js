@@ -2,6 +2,7 @@
 require('dotenv').config()
 const express = require("express")
 const bodyparser = require("body-parser")
+const cookieParser = require('cookie-parser')
 const morgan = require("morgan")
 const cors = require("cors")
 const passport = require('passport')
@@ -75,6 +76,7 @@ app.use(express.static(__dirname))
 app.use(morgan("combined",{stream: accessLogStream}))
 app.use(express.json())
 app.use(bodyparser.json())
+app.use(cookieParser())
 app.use(express.urlencoded({
   extended: true
 }))

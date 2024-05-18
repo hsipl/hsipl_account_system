@@ -106,8 +106,7 @@ class userController {
         try {
             // 創建redisClient
             const redisClient = redis.createClient({
-                url: 'redis://127.0.0.1:6379',
-                no_ready_check: true
+                url: 'redis://127.0.0.1:6379'
             })
             await redisClient.connect()
             redisClient.on('error', (err) => {
@@ -147,8 +146,10 @@ class userController {
                 userId: userId,
                 loggedIn: true // 用户的登入狀態
             }
-            await redisClient.SET(sessionId, JSON.stringify(sessionData), 'EX', 3600)
-            await redisClient.SET(sessionIdKey, sessionId, 'EX', 3600)
+            await redisClient.set(sessionId, JSON.stringify(sessionData))
+            await redisClient.expire(sessionId, '3600')
+            await redisClient.set(sessionIdKey, sessionId, 'EX','3600')
+            await redisClient.expire(sessionIdKey, '3600')
             console.log(`Generated new sessionId: ${sessionId}`)
         }
         else{
