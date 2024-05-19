@@ -22,7 +22,8 @@ module.exports = ((passport) => {
 // 處理oauth登入後邏輯
 const authenticateWithGoogle = async (req, res, accessToken, refreshToken, profile, done) => {
   try {
-    const { email, name } = profile._json;
+    const { email, name } = profile._json
+    console.log(profile._json)
     const mail = email;
   
     // 查找用户是否已註册

@@ -30,14 +30,16 @@ require ('./config/passport')(passport)
 const app = express();
 
 // 建立redis連線
-// const redisClient = redis.createClient()
+// const redisClient = redis.createClient({
+//   url: 'redis://127.0.0.1:6379'
+// })
+//redisClient.connect()
 // redisClient.on('error', (err) => {
 //   console.error('Redis server error:', err);
-// });
+// })
 // redisClient.on('connect', () => {
-//   console.log('Connected to Redis server sucessfully!');
-// });
-
+//   console.log('Connected to Redis server successfully!');
+// })
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -47,7 +49,6 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 //loggerHandler
-
 const logDirectory = path.join(__dirname, 'logger')
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
 var accessLogStream = FileStreamRotator.getStream({
@@ -77,9 +78,7 @@ app.use(morgan("combined",{stream: accessLogStream}))
 app.use(express.json())
 app.use(bodyparser.json())
 app.use(cookieParser())
-app.use(express.urlencoded({
-  extended: true
-}))
+app.use(express.urlencoded({extended: true}))
 
 //路由設定
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))

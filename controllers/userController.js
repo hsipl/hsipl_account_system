@@ -20,8 +20,6 @@ const config = require('../config/auth.config')
 const redis = require('redis')
 const { generateSessionId } = require('../utils/sessionUtils');
 
-
-
 class userController {
     protected = async (req, res) => {
         try {
@@ -35,7 +33,6 @@ class userController {
         }
 
     }
-
     createUser = async (req, res) => {
         try {
             const { name, username, password, mail } = req.body
@@ -158,11 +155,11 @@ class userController {
             const data = await redisClient.get(String(sessionId));
                 if (data) {
                     const updatedSessionData = JSON.parse(data);
-                    updatedSessionData.loggedIn = true; // 更新用户登录状态为 true
-                    await redisClient.set(sessionId, JSON.stringify(updatedSessionData), 'EX', 3600); // 更新 sessionData
-                    console.log(`refeshed the sessionId: ${sessionId}`)
+                    await redisClient.expire(sessionId, '3600')
+                    await redisClient.expire(sessionIdKey, '3600')
+                    console.log(`Refeshed the sessionId: ${sessionId}`)
                 } else {
-                    console.error(`Failed to find session data for sessionId: ${sessionId}`);
+                    console.error(`Failed to refresh the session data for sessionId: ${sessionId}`);
                 }
         }
             res.cookie('sessionId', sessionId)

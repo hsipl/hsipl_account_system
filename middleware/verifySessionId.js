@@ -17,6 +17,9 @@ class VerifySessionId  {
                 console.log('Connected to Redis server successfully!');
             })
             const sessionId = req.cookies.sessionId
+            if (!sessionId) {
+                return res.status(401).send(errorHandler.tokenError());
+            }
             const sessionData = await redisClient.get(String(sessionId))
             const parseSessionData = JSON.parse(sessionData)
             //console.log(sessionId,'$$$')
