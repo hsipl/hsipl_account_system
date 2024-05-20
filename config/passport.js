@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs')
 const GoogleStrategy = require('passport-google-oauth2').Strategy
 const jwt = require('jsonwebtoken')
 const TokenController = require('../middleware/tokenController')
+const SessionIdController = require('../middleware/sessionIdController')
 
 module.exports = ((passport) => {
   passport.use(new GoogleStrategy({
@@ -23,54 +24,34 @@ module.exports = ((passport) => {
 const authenticateWithGoogle = async (req, res, accessToken, refreshToken, profile, done) => {
   try {
     const { email, name } = profile._json
-    console.log(profile._json)
-    const mail = email;
-  
+    const mail = email
+    const payload = {name, mail}
+    const jsonWebToken = await TokenController.signToken({payload})
     // 查找用户是否已註册
-    let user = await User.findOne({ where: { mail: mail } });
-  
-    if (user) {
-      const payload = {
-        name,
-        mail
-    }
-      const token = await TokenController.signToken({payload})
-      res.cookie('token', token, {httpOnly: true})
-      // 如果用户已存在，完成身份驗證
+    const checkUserExist = await User.findOne({ where: { mail: mail } })
+    // 若不存在則創建新用戶
+    if (!checkUserExist) {
+      const createUserForOauth = await User.create({name, mail})
+      console.log('createUserForOauth',createUserForOauth)
+      if (!createUserForOauth){
+        return done(new Error('Failed to create user'), null);
+      }}
+      //獲取已建立的user資訊
+      const getUserInfor = await User.findOne({ where: { mail: mail } })
+      const sessionId = await SessionIdController.gernerateSessionId(getUserInfor.id)
+      res.cookie('sessionId', sessionId, {httpOnly: true})
+      res.cookie('jsonWebToken', jsonWebToken, {httpOnly: true})
       console.log({
-        "message": "'User already exists, login successfully'",
-        "token": token 
+        "message": `Use Google to login, welcome ${name}!`,
+        "jsonWebToken": jsonWebToken,
+        "sessionId": sessionId
       })
-      return done(null, user)
-    }
-  
-    // 如果用户不存在，创建一個隨機用戶儲存使用者資料
-    user = await User.create({
-      name,
-      mail,
-    })
-
-    const payload = {
-      name,
-      mail
-  }
-    const token = await TokenController.signToken({payload})
-    res.cookie('token', token, {httpOnly: true})
-  
-    // 完成身份驗證
-    console.log({
-      "message": "'User already exists, login successfully'",
-      "token": token 
-    })
-    done(null, user);
+    return done(null, checkUserExist)
   } catch (err) {
-
     console.error(err);
     return done(err, null);
   }
-  
-  }
-
+}
 passport.serializeUser((user, done) => {
   done(null, user)
 })

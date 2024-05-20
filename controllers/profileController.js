@@ -25,7 +25,7 @@ class profileController {
                 lineID: lineID,
                 mail: mail
             }
-            await User.update(infor, {where: { username: req.user.payload.username }})
+            await User.update(infor, {where: { name: req.user.payload.name }})
             return res.status('200').json({ message: "Updated information sucessfully." })
     }catch (error) {
             return res.status('500').json({message: error})}
@@ -33,7 +33,7 @@ class profileController {
 
     uploadAvatar = async(req, res) => {
         try{
-            await User.update({img: req.file.path}, {where: { username: req.user.payload.username }})
+            await User.update({img: req.file.path}, {where: { name: req.user.payload.name }})
             return res.status('200').json({
                 message: "Uploaded avatar sucessfully.",
             })
@@ -41,9 +41,11 @@ class profileController {
     }
 
     changePassword = async (req, res) => {
-        try {
+        //try {
             const { oldPassword, newPassword } = req.body
-            const user = await User.findByPk(req.user.payload.id)
+            const user = await User.findOne({
+                where: { name: req.user.payload.name }
+            })
             //將user輸入之舊密碼與資料庫內密碼比對
             const checkOldPassword = await decrypt(oldPassword, user.password)
             if (!checkOldPassword) {
@@ -51,9 +53,9 @@ class profileController {
             }
             //加鹽新密碼
             let encryptNewPassword = await encrypt(newPassword)
-            await User.update({ password: encryptNewPassword },{where: { id: req.user.payload.id }})
+            await User.update({ password: encryptNewPassword },{where: { id: user.id }})
             return res.status('200').json({message: 'Your password has been updated.'})
-        }catch (error) {return res.status('500').json({ message: error})}
+        //}catch (error) {return res.status('500').json({ message: error})}
     }
 
 showProfile = async (req, res) => {
@@ -62,7 +64,7 @@ showProfile = async (req, res) => {
         const user = await User.findOne({
             include: [{ model: Fund }],
             attributes: ['name', 'username', 'mail', 'studentID', 'phoneNum', 'birthday', 'lineID', 'balance'],
-            where: { username: req.user.payload.username }
+            where: { name: req.user.payload.name }
         })
         // 計算更新後的餘額
         const updatedBalance = await conutTotalAmount(user.name)
