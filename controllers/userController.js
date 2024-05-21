@@ -100,18 +100,6 @@ class userController {
             建立redis連線 -> 確認帳號密碼 -> 根據使用者資訊生成jwt & sessionID return 給 client -> sessionData儲存用戶登入狀態並設定時效 -> 將sessionData 存至 redis    
          */
         try {
-            // 創建redisClient
-            const redisClient = redis.createClient({
-                url: 'redis://127.0.0.1:6379'
-            })
-            await redisClient.connect()
-            redisClient.on('error', (err) => {
-                console.error('Redis server error:', err);
-            })
-            redisClient.on('connect', () => {
-                console.log('Connected to Redis server successfully!');
-            })
-
           const { username, password } = req.body
           const userExist = await User.findOne({
             where: {username: username}

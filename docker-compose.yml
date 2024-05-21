@@ -1,16 +1,21 @@
 version: "3.5"
 services:
   backend:
-    image: hsipl_account_system-backend
+    image: hsipl_account_system:v1.1
     container_name: hsipl_account_system_backend
     working_dir: /hsipl_account_system
     ports:
       - "3000:3000"
     environment:
       MODE: dev
+      REDIS_URL: redis://redis:6379 #內部的docker服務port
     volumes:
       - .:/hsipl_account_system
+    depends_on:
+      - redis  # 確保 redis 服務先啟動
     command: sh -c "npm install && npm run dev"
+    networks:
+      - my_network
 
   db:
     image: mysql:8.0
@@ -24,6 +29,8 @@ services:
       - "3307:3306"
     volumes:
       - ./mysqlData:/var/lib/mysql
+    networks:
+      - my_network
 
   redis:
     image: redis:latest
@@ -31,50 +38,12 @@ services:
     restart: always
     ports:
       - "6378:6379"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - my_network
 
-
-# version: "3.5"
-# services:
-#   db:
-#     image: mysql:8.0
-#     container_name: db
-#     restart: always
-#     environment:
-#       MYSQL_HOST: ${DB_HOST}
-#       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-#       MYSQL_DATABASE: ${DB_DB}
-#     ports:
-#       - 3307:3306
-#     networks:
-#       - account_net
-#     volumes:
-#       - ./mysqlData:/var/lib/mysql
-
-#   backend:
-#     build: .
-#     restart: always
-#     environment:
-#       MODE: dev
-#       PORT: 6969
-#     ports:
-#       - 6969:6969
-#     networks:
-#       - account_net
-#     volumes:
-#       - /hsipl_account_system
-#     command: sh -c "npm install && npm run dev"
-
-#   redis:
-#     image: redis:latest
-#     container_name: redis
-#     restart: always
-#     ports:
-#       - 6379:6379
-#     networks:
-#       - account_net
-
-# volumes: 
-#   backend_data:
-
-# networks:
-#   account_net:
+networks:
+  my_network:
+    driver: bridge

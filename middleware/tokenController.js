@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken")
 const errorHandler = require("./errorHandler")
 const config = require('../config/auth.config')
 const db = require('../models/index')
-const Redis = require('ioredis')
-const redis = new Redis()
 
 class TokenController {
   

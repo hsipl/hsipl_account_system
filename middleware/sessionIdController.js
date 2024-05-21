@@ -1,21 +1,11 @@
 const errorHandler = require("./errorHandler")
-const redis = require('redis')
 const { generateSessionId } = require('../utils/sessionUtils')
+const connectRedis = require('../config/redisClient.config')
 class SessionIdController  {
-
     async gernerateSessionId(userId){
         try{
-            // 創建redisClient
-            const redisClient = redis.createClient({
-                url: 'redis://127.0.0.1:6379'
-            })
-            await redisClient.connect()
-            redisClient.on('error', (err) => {
-                console.error('Redis server error:', err);
-            })
-            redisClient.on('connect', () => {
-                console.log('Connected to Redis server successfully!');
-            })
+            console.log(connectRedis)  
+            const redisClient = await connectRedis()
             const sessionIdKey = `userId:${userId}` //創建sessionId 映射 userId
             const redisSessionIdExist = await redisClient.GET(sessionIdKey) //由sessionIdKey 查詢user 是否存在
             let sessionId
@@ -53,18 +43,7 @@ class SessionIdController  {
     }
     async verifySessionId (req, res, next){
         try{
-            // 創建redisClient
-            const redisClient = redis.createClient({
-                url: 'redis://127.0.0.1:6379',
-                no_ready_check: true
-            })
-            await redisClient.connect()
-            redisClient.on('error', (err) => {
-                console.error('Redis server error:', err);
-            })
-            redisClient.on('connect', () => {
-                console.log('Connected to Redis server successfully!');
-            })
+            const redisClient = await connectRedis()
             const sessionId = req.cookies.sessionId
             if (!sessionId) {
                 return res.status(401).send(errorHandler.tokenError());
