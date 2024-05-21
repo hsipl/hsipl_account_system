@@ -1,0 +1,87 @@
+.
+├── Dockerfile
+├── app.js
+├── config
+│   ├── auth.config.js
+│   ├── db.config.js
+│   ├── mail.config.js
+│   └── passport.js
+├── controllers
+│   ├── fundController.js
+│   ├── lab
+│   │   ├── awardsController.js.js
+│   │   ├── equipmentController.js
+│   │   ├── eventImgController.js
+│   │   ├── membersController.js
+│   │   ├── newsController.js
+│   │   ├── postersController.js
+│   │   ├── projectsController.js
+│   │   └── researchController.js
+│   ├── profileController.js
+│   ├── publicController.js
+│   ├── teacher
+│   │   ├── articlesController.js
+│   │   ├── conferenceController.js
+│   │   ├── educationController.js
+│   │   ├── researchExperienceController.js
+│   │   ├── serviceController.js
+│   │   ├── talksController.js
+│   │   └── teacherAwardsController.js
+│   └── userController.js
+├── docker-compose.yml
+├── document.txt
+├── dump.rdb
+├── hsipl_account_system.postman_collection.json
+├── middleware
+│   ├── deleteFile.js
+│   ├── errorHandler.js
+│   ├── imageUpload.js
+│   ├── imgUpload.js
+│   └── tokenController.js
+├── models
+│   ├── fundModel.js
+│   ├── fundTransferLogModel.js
+│   ├── index.js
+│   ├── lab
+│   │   ├── awardsModel.js
+│   │   ├── equipmentModel.js
+│   │   ├── eventImgModel.js
+│   │   ├── membersModel.js
+│   │   ├── newsModel.js
+│   │   ├── postersModel.js
+│   │   ├── projectsModel.js
+│   │   └── researchModel.js
+│   ├── teacher
+│   │   ├── articleModel.js
+│   │   ├── conferenceModel.js
+│   │   ├── educationModel.js
+│   │   ├── researchExperienceModel.js
+│   │   ├── serviceModel.js
+│   │   ├── talksModel.js
+│   │   └── teacherAwardsModel.js
+│   ├── userLogModel.js
+│   └── userModel.js
+├── package-lock.json
+├── package.json
+├── redis.conf
+├── routes
+│   ├── authRoute.js
+│   ├── fundRoute.js
+│   ├── labRoute.js
+│   ├── profileRoute.js
+│   ├── publicRoute.js
+│   ├── teacherRoute.js
+│   └── userRoute.js
+├── server.js
+├── structure.txt
+├── swagger.yml
+├── utils
+│   ├── countTotalAmount.js
+│   ├── encryptPassword.js
+│   └── sessionUtils.js
+├── views
+│   ├── homepage.html
+│   └── signUp.html
+└── yarn.lock
+
+12 directories, 73 files

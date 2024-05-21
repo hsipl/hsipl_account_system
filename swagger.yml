@@ -1,0 +1,417 @@
+openapi: 3.0.0
+info:
+  title: hsipl_account_system
+  version: "1.0"
+servers:
+  - url: http://localhost:3000
+components:
+  securitySchemes:
+    JWTAuth:   
+      type: apiKey
+      in: header
+      name: Authorization
+paths:
+  /api/user/login/:
+    post:
+      summary: Login
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: user
+                password:
+                  type: string
+                  example: password
+      responses:
+        '200':
+          description: Successful login
+  /api/user/signup:
+    post:
+      summary: CreateUser
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 郭子賢
+                username:
+                  type: string
+                  example: user2
+                password:
+                  type: string
+                  example: password
+                checkPassword:
+                  type: string
+                  example: password
+                mail:
+                  type: string
+                  example: mrkuo@gmail.com
+      responses:
+        '200':
+          description: User created successfully
+  /api/user/find:
+    get:
+      summary: FindUser
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          example: 李昱杰
+      responses:
+        '200':
+          description: User found
+ 
+  /api/user/{userId}:
+    delete:
+      summary: DeleteUser
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User deleted successfully
+  /api/user/option:
+    get:
+      summary: UserOptionSearch
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: username
+          schema:
+            type: string
+        - in: query
+          name: mail
+          schema:
+            type: string
+        - in: query
+          name: phoneNum
+          schema:
+            type: string
+        - in: query
+          name: studentID
+          schema:
+            type: string
+        - in: query
+          name: lineID
+          schema:
+            type: string
+        - in: query
+          name: balance
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User options retrieved successfully
+  /api/user/forget_password:
+    post:
+      summary: ForgetPassword
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                mail:
+                  type: string
+                  example: eugene605110@gmail.com
+      responses:
+        '200':
+          description: Password reset email sent successfully
+  /api/user/reset_password:
+    put:
+      summary: ResetPassword
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  example: Password
+      responses:
+        '200':
+          description: Password reset successfully
+  /api/fund/:
+    post:
+      summary: AddItem
+      security:
+        - JWTAuth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: INCOME
+                content:
+                  type: string
+                  example: 產學處經費
+                tag:
+                  type: string
+                  example: DEPOSIT
+                price:
+                  type: string
+                  example: "10000"
+                quantity:
+                  type: string
+                  example: "1"
+                date:
+                  type: string
+                  example: "2023-04-01"
+                payer:
+                  type: string
+                  example: 李昱杰
+      responses:
+        '200':
+          description: Item added successfully
+  /api/fund/total:
+    get:
+      summary: GetTotal
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Total retrieved successfully
+  /api/fund/search:
+    get:
+      summary: SearchItem
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: query
+          name: searchQuery
+          schema:
+            type: string
+          example: 水壺
+      responses:
+        '200':
+          description: Items found
+  /api/fund/{fundId}:
+    put:
+      summary: UpdateItem
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: fundId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: EXPENDITURE
+                content:
+                  type: string
+                  example: 水壺
+                tag:
+                  type: string
+                  example: ADVANCE_PAYMENTS
+                price:
+                  type: string
+                  example: "120"
+                quantity:
+                  type: string
+                  example: "7"
+                payer:
+                  type: string
+                  example: 李昱杰
+      responses:
+        '200':
+          description: Item updated successfully
+    delete:
+      summary: DeleteItem
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: fundId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Item deleted successfully
+  /api/fund/fund_transfer:
+    post:
+      summary: Fund Transfer
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: FUND_TRANSFER
+                content:
+                  type: string
+                  example: 經費轉移
+                date:
+                  type: string
+                  example: '2023-03-24'
+                tag:
+                  type: string
+                  example: TRANSFER
+                fromName:
+                  type: string
+                  example: 陳士煜
+                toName:
+                  type: string
+                  example: 李昱杰
+                amount:
+                  type: string
+                  example: '10'
+      responses:
+        '200':
+          description: Transfer successful
+  /api/fund/all_user_detail:
+    get:
+      summary: Get All User Detail      
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: OK
+  /api/fund/option:
+    get:
+      summary: ItemOptionSearch
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: query
+          name: price
+          schema:
+            type: string
+        - in: query
+          name: content
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item options retrieved successfully
+  
+  /api/fund:
+    get:
+      summary: GetAllItem
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All items retrieved successfully
+  /api/profile:
+    get:
+      summary: Show Profile
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Add User Information
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                img:
+                  type: string
+                  format: binary
+                name:
+                  type: string
+                  example: 李昱杰
+                studentID:
+                  type: string
+                  example: M1104444
+                phoneNum:
+                  type: string
+                  example: '0937660277'
+                birthday:
+                  type: string
+                  example: '1998097'
+                lineID:
+                  type: string
+                  example: '45454655'
+                mail:
+                  type: string
+                  example: eugene605110@gmail.com
+      responses:
+        '200':
+          description: OK
+  /api/profile/changePassword:
+    put:
+      summary: Change Password
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  example: Password
+                newPassword:
+                  type: string
+                  example: password
+      responses:
+        '200':
+          description: OK
