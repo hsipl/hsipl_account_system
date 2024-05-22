@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: hsipl_account_system
-  version: "1.0"
+  version: "1.1"
 servers:
   - url: http://localhost:3000
 components:
@@ -10,6 +10,10 @@ components:
       type: apiKey
       in: header
       name: Authorization
+    SessionIdAuth:
+      type: apiKey
+      in: cookie
+      name: sessionId
 paths:
   /api/user/login/:
     post:
@@ -29,6 +33,11 @@ paths:
       responses:
         '200':
           description: Successful login
+          headers:
+            Set-Cookie:
+              schema: 
+                type: string
+                example: sessionId=b5bc7811-0bdc-4e2f-a3af-ba40c21305bc; Path=/; HttpOnly
   /api/user/signup:
     post:
       summary: CreateUser
@@ -61,6 +70,7 @@ paths:
       summary: FindUser
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       parameters:
         - in: query
           name: name
@@ -76,6 +86,8 @@ paths:
       summary: DeleteUser
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
+        
       parameters:
         - in: path
           name: userId
@@ -91,6 +103,7 @@ paths:
       summary: UserOptionSearch
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       parameters:
         - in: query
           name: id
@@ -127,7 +140,7 @@ paths:
       responses:
         '200':
           description: User options retrieved successfully
-  /api/user/forget_password:
+  /api/user/forgetPassword:
     post:
       summary: ForgetPassword
       requestBody:
@@ -142,7 +155,7 @@ paths:
       responses:
         '200':
           description: Password reset email sent successfully
-  /api/user/reset_password:
+  /api/user/resetPassword:
     put:
       summary: ResetPassword
       parameters:
@@ -167,6 +180,7 @@ paths:
       summary: AddItem
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -197,9 +211,9 @@ paths:
       responses:
         '200':
           description: Item added successfully
-  /api/fund/total:
+  /api/fund/getLabTotalAmount:
     get:
-      summary: GetTotal
+      summary: getLabTotalAmount
       security:
         - JWTAuth: []
       responses:
@@ -210,6 +224,7 @@ paths:
       summary: SearchItem
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       parameters:
         - in: query
           name: searchQuery
@@ -224,6 +239,7 @@ paths:
       summary: UpdateItem
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       parameters:
         - in: path
           name: fundId
@@ -262,6 +278,7 @@ paths:
       summary: DeleteItem
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       parameters:
         - in: path
           name: fundId
@@ -272,11 +289,12 @@ paths:
       responses:
         '200':
           description: Item deleted successfully
-  /api/fund/fund_transfer:
+  /api/fund/fundTransfer:
     post:
       summary: Fund Transfer
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       requestBody:
         required: true
         content:
@@ -308,11 +326,12 @@ paths:
       responses:
         '200':
           description: Transfer successful
-  /api/fund/all_user_detail:
+  /api/fund/allUserDetail:
     get:
       summary: Get All User Detail      
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       responses:
         '200':
           description: OK
@@ -321,6 +340,7 @@ paths:
       summary: ItemOptionSearch
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       parameters:
         - in: query
           name: price
@@ -339,6 +359,7 @@ paths:
       summary: GetAllItem
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       parameters:
         - in: query
           name: dateFrom
@@ -356,6 +377,7 @@ paths:
       summary: Show Profile
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       responses:
         '200':
           description: OK
@@ -370,9 +392,6 @@ paths:
             schema:
               type: object
               properties:
-                img:
-                  type: string
-                  format: binary
                 name:
                   type: string
                   example: 李昱杰
@@ -399,6 +418,7 @@ paths:
       summary: Change Password
       security:
         - JWTAuth: []
+        - SessionIdAuth: []
       requestBody:
         required: true
         content:
@@ -412,6 +432,25 @@ paths:
                 newPassword:
                   type: string
                   example: password
+      responses:
+        '200':
+          description: OK
+  /api/profile/:uploadType:
+    put:
+      summary: Upload avatar
+      security:
+        - JWTAuth: []
+        - SessionIdAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                img:
+                  type: string
+                  format: binary
       responses:
         '200':
           description: OK
