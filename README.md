@@ -1,39 +1,98 @@
-# HSIPL_account_system v1.0.0
+# HSIPL Account System v1.0.0
 
 ![Express Version](https://img.shields.io/badge/Express-4.17.1-green.svg)
 ![Redis Version](https://img.shields.io/badge/Redis-%5E4.6.13-red.svg)
 ![Sequelize Version](https://img.shields.io/badge/Sequelize-%5E6.15.0-yellow.svg)
 ![Docker Version](https://img.shields.io/badge/Docker-24.0.2-blue.svg)
 
+## Description
 
+This account system is for the Lab HSIPL at NYUST. It assists lab members with member login, recording expenses, and fund transfers.
 
-## 專案說明
+## Data Structure
 
-此專案為雲科大高光譜實驗室的記賬網站，可幫助實驗室成員紀錄支出,經費轉移等操作。
+```plaintext
+.
+├── Dockerfile
+├── app.js
+├── config
+│   ├── auth.config.js
+│   ├── db.config.js
+│   ├── mail.config.js
+│   ├── googleAuth.config.js
+│   └── redisClient.config.js
+├── controllers
+│   ├── fundController.js
+│   ├── profileController.js
+│   ├── publicController.js
+│   └── userController.js
+├── docker-compose.yml
+├── document.txt
+├── dump.rdb
+├── hsipl_account_system.postman_collection.json
+├── middleware
+│   ├── fileDelete.js
+│   ├── errorHandler.js
+│   ├── fileUpload.js
+│   ├── sessionIdController.js
+│   └── tokenController.js
+├── models
+│   ├── fundModel.js
+│   ├── fundTransferLogModel.js
+│   ├── index.js
+│   ├── permissionModel.js
+│   ├── roleModel.js
+│   ├── rolePermissionModel.js
+│   ├── userLogModel.js
+│   ├── userModel.js
+│   └── userRoleModel.js
+├── package-lock.json
+├── package.json
+├── redis.conf
+├── routes
+│   ├── authRoute.js
+│   ├── fundRoute.js
+│   ├── labRoute.js
+│   ├── profileRoute.js
+│   ├── publicRoute.js
+│   ├── teacherRoute.js
+│   └── userRoute.js
+├── server.js
+├── structure.txt
+├── swagger.yml
+├── utils
+│   ├── countTotalAmount.js
+│   ├── encryptPassword.js
+│   └── sessionUtils.js
+└── yarn.lock
+```
 
-## 安裝與使用
+## Installing & using
 
-### .env 說明
+### .env settings
 
-#### 相關金鑰
+#### Keys
 
-- `SECRET`: JWT金鑰
-- `SESSION_SECRET`: session金鑰
+- `JWT_SECRET`: 
+- `SESSION_SECRET`: 
 
-#### nodemailer 設定
+#### Nodemailer 
 
 - `MAIL_USER`
 - `MAIL_PASSWORD`
 
-#### sequelize 連線設定
+#### Sequelize connection 
 
 - `DB_HOST`
 - `DB_USER`
 - `DB_PASSWORD`
 - `DB_DB`
 
-#### Google Oauth 設定
+#### Redis connection 
+- `REDIS_HOST`
+- `REDIS_PORT`
 
+#### Google Oauth 
 - `GOOGLE_OAUTH_CLIENT_ID`
 - `GOOGLE_OAUTH_CLIENT_SECRECT`
 - `GOOGLE_OAUTH_CALLBACK`
