@@ -67,9 +67,9 @@ This account system is for the Lab HSIPL at NYUST. It assists lab members with m
 └── yarn.lock
 ```
 
-## Installing & using
+## Installing & Usage
 
-### .env settings
+### .env Settings
 
 #### Keys
 
@@ -81,14 +81,14 @@ This account system is for the Lab HSIPL at NYUST. It assists lab members with m
 - `MAIL_USER`
 - `MAIL_PASSWORD`
 
-#### Sequelize connection 
+#### Sequelize Connection 
 
 - `DB_HOST`
 - `DB_USER`
 - `DB_PASSWORD`
 - `DB_DB`
 
-#### Redis connection 
+#### Redis Connection 
 - `REDIS_HOST`
 - `REDIS_PORT`
 
@@ -97,16 +97,16 @@ This account system is for the Lab HSIPL at NYUST. It assists lab members with m
 - `GOOGLE_OAUTH_CLIENT_SECRECT`
 - `GOOGLE_OAUTH_CALLBACK`
 
-### 下載專案
+### Download the Project
 
 ```git clone https://github.com/Jie0906/HSIPL_algorithm.git```
 
-### 安裝相關套件
+### Install Dependencies
 
 ```npm install```
 
 
-### 在本地開啟服務
+### Run on Localhost
 
 ```npm run dev```
 
