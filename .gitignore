@@ -3,6 +3,7 @@ node_modules
 mongodbdata
 mongodb_data
 mysqlData
+coverage
 ./logger
 *.log
 .env
