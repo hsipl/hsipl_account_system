@@ -1,47 +1,51 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: Node.js CI/CD
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [ 14.x, 15.x]
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Run Test(Jest)
-        env:
-          JWTSECRET : ${{secrets.JWTSECRET}}
-          GENSALT : ${{secrets.GENSALT}}
-          NODE_ENV : ${{secrets.NODE_ENV}}
-        run: |
-          npm ci
-          npm run build --if-present
-          npm test
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: eugene605110/hsipl_account_system:v1.1
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    needs: build-and-push
     steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            cd ~/Server/hsipl_account_system
-            git pull
-            docker-compose restart
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Pull and run Docker image
+        run: |
+          docker pull eugene605110/hsipl_account_system:v1.1
+          docker-compose down
+          docker-compose up -d
+
