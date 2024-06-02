@@ -30,7 +30,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: eugene605110/hsipl_account_system:v1.1
+          tags: yuntechhsipl/hsipl_account_system:v1.1
 
   deploy:
     name: Deploy
@@ -45,7 +45,7 @@ jobs:
 
       - name: Pull and run Docker image
         run: |
-          docker pull eugene605110/hsipl_account_system:v1.1
+          docker pull yuntechhsipl/hsipl_account_system:v1.1
           docker-compose down
           docker-compose up -d
         working-directory: ./
