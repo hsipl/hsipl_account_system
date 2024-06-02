@@ -48,4 +48,5 @@ jobs:
           docker pull eugene605110/hsipl_account_system:v1.1
           docker-compose down
           docker-compose up -d
+        working-directory: ./
 
