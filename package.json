@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "dev": "concurrently \"nodemon server.js\" \"redis-server\""
   },
   "keywords": [
     "node.js",
@@ -12,7 +13,7 @@
     "one-to-many",
     "association"
   ],
-  "author": "Gary Hsu",
+  "author": "YJ",
   "license": "ISC",
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.10",
