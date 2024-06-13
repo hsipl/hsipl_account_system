@@ -1,6 +1,5 @@
-const  app = require('./app');
+const app = require('./app');
 const db = require('./models/index')
-
 //{force:true}
 db.sequelize.sync().then(() =>{
     console.log("DB is connecting.")

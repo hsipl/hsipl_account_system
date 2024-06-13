@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit",
-    "dev": "concurrently \"nodemon server.js\" \"redis-server\"",
-    "test-fund": "jest fund.test.js "
+    "test": "jest --coverage",
+    "dev": "concurrently \"nodemon server.js\" \"redis-server\""
   },
   "keywords": [
     "node.js",
@@ -14,7 +13,7 @@
     "one-to-many",
     "association"
   ],
-  "author": "Gary Hsu",
+  "author": "YJ",
   "license": "ISC",
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.10",
@@ -22,13 +21,12 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "chai": "^4.3.6",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.3",
     "file-stream-rotator": "^0.5.7",
-    "ioredis": "^5.3.2",
-    "jest": "^27.0.1",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^10.0.0",
     "moment-timezone": "^0.5.34",
@@ -47,14 +45,16 @@
     "passport-google-oauth2": "^0.2.0",
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
-    "redis": "^4.6.13",
+    "redis": "^4.6.14",
+    "redis-server": "^1.2.2",
     "sequelize": "^6.15.0",
     "sequelize-cli": "^6.4.1",
-    "swagger": "^0.7.5"
+    "swagger": "^0.7.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "jest": "^27.0.1",
+    "jest": "^29.7.0",
     "supertest": "^6.2.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2"

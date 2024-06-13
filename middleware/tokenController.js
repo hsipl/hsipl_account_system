@@ -2,15 +2,13 @@ const jwt = require("jsonwebtoken")
 const errorHandler = require("./errorHandler")
 const config = require('../config/auth.config')
 const db = require('../models/index')
-const Redis = require('ioredis')
-const redis = new Redis()
 
 class TokenController {
   
   async signToken(payload) {
    
     const token = await jwt.sign(payload, config.secret, {
-      expiresIn: "1d",
+      expiresIn: "1h",
     })
     return token
   }
@@ -30,7 +28,6 @@ class TokenController {
         if (result.expired) {
             return res.status(401).send(errorHandler.tokenError());
         }
-
         req.user = result;
 
         return next();
@@ -39,8 +36,6 @@ class TokenController {
         return res.status(401).send(errorHandler.tokenError());
     }
 }
-
-
 }
 
 module.exports = new TokenController()

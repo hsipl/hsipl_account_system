@@ -1,16 +1,17 @@
 const fundController = require('../controllers/fundController')
 const tokenController = require('../middleware/tokenController')
+const sessionIdController = require('../middleware/sessionIdController')
 const router = require('express').Router()
 
-router.post("/", tokenController.verifyToken , fundController.addItem)
-router.post('/fund_transfer', tokenController.verifyToken, fundController.fundTransfer)
-router.get("/", tokenController.verifyToken, fundController.getAllItem)
-router.get("/all_user_detail", tokenController.verifyToken, fundController.getAllUserDetail)
-router.get("/search", tokenController.verifyToken, fundController.searchItem)
-router.get ("/option", tokenController.verifyToken, fundController.itemOptionSearch)
-router.get("/total", tokenController.verifyToken, fundController.getTotal)
-router.put("/:id", tokenController.verifyToken, fundController.update)
-router.delete("/:id", tokenController.verifyToken, fundController.delete)
+router.post("/", tokenController.verifyToken , sessionIdController.verifySessionId,fundController.addItem)
+router.post('/fundTransfer', tokenController.verifyToken, sessionIdController.verifySessionId,fundController.fundTransfer)
+router.get("/", tokenController.verifyToken, sessionIdController.verifySessionId,fundController.getAllItem)
+router.get("/allUserDetail", tokenController.verifyToken, sessionIdController.verifySessionId,fundController.getAllUserDetail)
+router.get("/search", tokenController.verifyToken, sessionIdController.verifySessionId,fundController.searchItem)
+router.get ("/option", tokenController.verifyToken, sessionIdController.verifySessionId,fundController.itemOptionSearch)
+router.get("/getLabTotalAmount", tokenController.verifyToken, sessionIdController.verifySessionId,fundController.getLabTotalAmount)
+router.put("/:id", tokenController.verifyToken, sessionIdController.verifySessionId,fundController.updateItem)
+router.delete("/:id", tokenController.verifyToken, sessionIdController.verifySessionId,fundController.deleteItem)
 
 
 module.exports = router

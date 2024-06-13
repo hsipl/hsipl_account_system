@@ -5,8 +5,8 @@ const sequelize = new Sequelize(process.env.DB_DB, process.env.DB_USER, process.
     host: process.env.DB_HOST,
     dialect: 'mysql',
     port: 3306,
-    timezone: '+08:00'
-
+    timezone: '+08:00',
+    logging: false,
 });
 
 
@@ -34,28 +34,21 @@ db.TeacherAwards = require("./teacher/teacherAwardsModel")(sequelize, Sequelize)
 db.Service = require("./teacher/serviceModel")(sequelize, Sequelize);
 db.UserLog = require("./userLogModel")(sequelize, Sequelize);
 db.FundTransferLog = require("./fundTransferLogModel")(sequelize, Sequelize);
+db.Role = require("./roleModel")(sequelize, Sequelize);
+db.Permission = require("./permissionModel")(sequelize, Sequelize);
+db.UserRole = require("./userRoleModel")(sequelize, Sequelize);
+db.RolePermission = require("./rolePermissionModel")(sequelize, Sequelize);
 
-db.User.hasMany(db.Fund,{
-    foreignKey: 'userId'
-})
-db.Fund.belongsTo(db.User,{
-    foreignKey: 'userId'
-})
-
-
-db.FundTransferLog.hasMany(db.Fund,{
-    foreignKey: 'transferId'
-})
-db.Fund.belongsTo(db.FundTransferLog,{
-    foreignKey: 'transferId'
-})
-
-db.User.hasMany(db.UserLog,{
-    foreignKey: 'userId'
-})
-db.UserLog.belongsTo(db.User,{
-    foreignKey: 'userId'
-})
-
+//定義關聯
+db.User.hasMany(db.Fund,{foreignKey: 'userId'})
+db.Fund.belongsTo(db.User,{foreignKey: 'userId'})
+db.FundTransferLog.hasMany(db.Fund,{foreignKey: 'transferId'})
+db.Fund.belongsTo(db.FundTransferLog,{foreignKey: 'transferId'})
+db.User.hasMany(db.UserLog,{foreignKey: 'userId'})
+db.UserLog.belongsTo(db.User,{foreignKey: 'userId'})
+db.User.belongsToMany(db.Role, {through: db.UserRole, foreignKey: 'userId'})
+db.Role.belongsToMany(db.User, {through: db.UserRole, foreignKey: 'roleId'})
+db.Role.belongsToMany(db.Permission,{through: db.RolePermission, foreignKey:'roleId'})
+db.Permission.belongsToMany(db.Role,{through: db.RolePermission, foreignKey:'permissonId'})
 
 module.exports = db;

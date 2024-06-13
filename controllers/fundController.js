@@ -23,7 +23,7 @@ class fundController {
             })
             //獲取紀錄者相關訊息
             const recorderName = await User.findOne({
-                where: { username: req.user.payload.username }
+                where: { name: req.user.payload.name }
             })
 
             if (!payerName) {
@@ -60,7 +60,7 @@ class fundController {
             await User.update({ balance: payerAllPayedSum }, { where: { name: payer } })
             //寫入UserLog
             await UserLog.create({
-                message: `${recorderName.name} added ${payer} ${tag} ${Math.abs(sum)}.`,
+                message: `${recorderName} added ${payer} ${tag} ${Math.abs(sum)}.`,
                 userId: payerName.id
             })
 
@@ -68,8 +68,7 @@ class fundController {
                 state: "Sucess!",
                 detail: data
             })
-        }
-        catch (error) {
+        }catch (error) {
             return res.status('500').json({
                 message: error
             })
@@ -89,7 +88,7 @@ class fundController {
 
         //獲取紀錄者相關訊息
         const recorderName = await User.findOne({
-            where: { username: req.user.payload.username }
+            where: { name: req.user.payload.name }
         })
         //確認轉帳方 & 收款方皆存在於資料庫內
         if (!fromNameExist || !toNameExist) {
@@ -213,7 +212,7 @@ class fundController {
         }
     }
     //經費轉移紀錄不可更新
-    update = async (req, res) => {
+    updateItem = async (req, res) => {
         try {
             let sum = 0
             const { type, content, tag, price, quantity, date, payer } = req.body
@@ -229,7 +228,7 @@ class fundController {
             })
             //獲取登入user用於recorderName
             const recorderName = await User.findOne({
-                where: { username: req.user.payload.username }
+                where: { name: req.user.payload.name }
             })
             if (!itemExist || !payerExist) {
                 return res.status('404').json(errorHandler.dataNotFind())
@@ -288,10 +287,10 @@ class fundController {
     }
 
     //經費轉移紀錄無法刪除
-    delete = async (req, res) => {
+    deleteItem = async (req, res) => {
         try {
             const user = await User.findOne({
-                where: { id: req.user.payload.id }
+                where: { name: req.user.payload.name }
             })
             //確認欲刪除項目存在
             const deletedItem = await Fund.findOne({
@@ -311,7 +310,6 @@ class fundController {
                 where: { id: req.params.id }
 
             })
-            //若刪除項目為轉帳紀錄 則更新該筆紀錄之付款方及受款方之餘額
             await UserLog.create({
                 message: `${user.name} deleted ${deletedItem.content} successfully.`,
                 userId: user.id
@@ -320,7 +318,6 @@ class fundController {
             return res.status('200').json({
                 state: 'Success!'
             })
-
         }
         catch (error) {
             return res.status('500').json(error)
@@ -358,7 +355,7 @@ class fundController {
 
 
     //計算實驗室總經費
-    getTotal = async (req, res) => {
+    getLabTotalAmount = async (req, res) => {
         try {
             const totalAmount = await Fund.sum('sum', {
                 where: { type: { [Op.or]: ['EXPENDITURE', 'INCOME'] } }
