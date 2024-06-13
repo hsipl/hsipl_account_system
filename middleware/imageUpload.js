@@ -1,62 +1,50 @@
-const multer = require('multer')
-const path = require('path')
+const multer = require('multer');
+const path = require('path');
 
-const storage = multer.diskStorage({
-    //檔案儲存位置
-    destination: (req, file, cb) =>{
-        let urlIndex = null
-        const url = req.originalUrl.split('/')
-        if (req.originalUrl.includes('lab')){
-            urlIndex = url[3]
-        }
-        else {
-            urlIndex = url[2]
-        }
-        cb(null, `src/image/${urlIndex}`)
-    },
-    //生成檔名
-    filename:(req, file, cb) =>{
-        cb(null, Date.now() + path.extname(file.originalname))
-    },
-    //檔案大小限制
-    limits:{fieldSize: '1000000'},
-    //規範檔案格式
-    fileFilter: (req, file, cb) => {
-        const fileTypes = /jpeg|jpg|png|gif|PNG|JPG|mp4/;
-        const mimetype = fileTypes.test(file.mimetype);
-        const extname = fileTypes.test(path.extname(file.originalname));
-        if(mimetype && extname) {
-            cb(null, true)
-        }
-        else{
-            cb("Please upload only image.", false)
+// 文件傳middleware
+class UploadMiddleware {
+    constructor() {
+        this.storage = multer.diskStorage({
+            destination: this.destination.bind(this),
+            filename: this.filename.bind(this)
+        });
+        this.upload = multer({ storage: this.storage }).single('file');
+    }
+
+    async destination(req, file, cb) {
+        try {
+            const routeType = req.routeType; // 獲取路由類型
+            const uploadType = req.params.uploadType; // 獲取上傳檔案類型
+            const uploadPath = path.join(__dirname, 'uploads', routeType, uploadType);
+            await fs.mkdir(uploadPath, { recursive: true });
+            cb(null, uploadPath);
+        } catch (error) {
+            cb(error);
         }
     }
-  });
-  
-  const upload = multer({ storage }).single('img');
-  
-  class imageUploadController {
-      async uploadFile(req, res, next){
-          try{
-              await upload(req, res, (err) => {
+
+    async filename(req, file, cb) {
+        try {
+            cb(null, Date.now() + path.extname(file.originalname));
+        } catch (error) {
+            cb(error);
+        }
+    }
+
+    async uploadFile(req, res, next) {
+        try {
+            this.upload(req, res, (err) => {
                 if (err) {
-                  return res.status(400).send({ error: err.message });
+                    console.error(err);
+                    return res.status(500).send('File upload failed');
                 }
                 next();
-              });
-          }
-          catch (error) {
-              console.log(error)
-              return res.status('500').send(error)
-            }
-      }
-  }
-  
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+}
 
-
-
-
-
-
-module.exports = new imageUploadController()
+module.exports = new UploadMiddleware();

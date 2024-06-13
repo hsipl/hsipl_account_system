@@ -16,7 +16,7 @@ const delFile = require('../middleware/deleteFile')
 
 class profileController {
     addUserInfor = async (req, res) => {
-        try {
+        //try {
             const { name, studentID, phoneNum, birthday, lineID, mail } = req.body
             const checkUserExist = await User.findOne({
                 where: {
@@ -29,6 +29,7 @@ class profileController {
                 }
             })
             //確認資訊有無重複
+            //上傳邏輯：先確認user存不存在，若不存在則刪除上傳檔案
             if (checkUserExist) {
                 delFile(`/${req.file.path}`)
                 return res.status('409').json(errorHandler.userAlreadyExist())
@@ -51,13 +52,13 @@ class profileController {
                 message: "Updated information sucessfully.",
                 state: addInfor
             })
-        }
+        
 
-        catch (error) {
-            return res.status('500').json({
-                message: error
-            })
-        }
+    // }catch (error) {
+    //         return res.status('500').json({
+    //             message: error
+    //         })
+    //     }
     }
 
     changePassword = async (req, res) => {
@@ -80,9 +81,9 @@ class profileController {
                 message: 'Your password has been updated.'
             })
 
-        }
+        
 
-        catch (error) {
+        }catch (error) {
             return res.status('500').json({
                 message: error
             })

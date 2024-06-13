@@ -18,6 +18,8 @@ const mailConfig = require('../config/mail.config')
 const jwt = require("jsonwebtoken")
 const config = require('../config/auth.config')
 const redis = require('redis')
+const { generateSessionId } = require('../utils/sessionUtils');
+
 
 
 class userController {
@@ -98,62 +100,83 @@ class userController {
     }
 
     login = async (req, res) => {
+        /*登入邏輯
+            建立redis連線 -> 確認帳號密碼 -> 根據使用者資訊生成jwt & sessionID return 給 client -> sessionData儲存用戶登入狀態並設定時效 -> 將sessionData 存至 redis    
+         */
         try {
-            const redisClient = redis.createClient()
-            redisClient.connect()
-            redisClient.on('connect', () => {
-            console.log('Connected to Redis server sucessfully!');
-            })
+
+            // 创建 Redis 客户端实例
+            const redisClient = redis.createClient({
+                url: 'redis://127.0.0.1:6379',
+                no_ready_check: true,
+                legacyMode: true,
+                PORT: 6379
+            }
+               
+            );
+            await redisClient.connect()
+            // 设置错误处理
             redisClient.on('error', (err) => {
-            console.error('Redis server error:', err);
-            })
-          const { username, password } = req.body;
-      
+                console.error('Redis server error:', err);
+            });
+            // 监听连接事件
+            redisClient.on('connect', () => {
+                console.log('Connected to Redis server successfully!');
+            });
+            
+
+          const { username, password } = req.body
           const userExist = await User.findOne({
             where: {
               username: username
             }
-          });
-      
+          })
           if (!userExist) {
-            return res.status(400).json(errorHandler.loginError());
+            return res.status(400).json(errorHandler.loginError())
           }
-      
-          const id = userExist.id;
+          const id = userExist.id
           const payload = {
             username,
             id
-          };
-      
+          }
           if (!username || !password) {
             return res.status(400).json(errorHandler.contentEmpty());
           }
-      
           const checkPassword = await decrypt(password, userExist.password);
-      
           if (!checkPassword) {
             return res.status(400).json(errorHandler.loginError());
           }
-      
-          // JWT 簽署
-          const token = await TokenController.signToken({payload});
-      
-          // 創建 session
+          const jsonWebToken = await TokenController.signToken({payload});
+
+          //生成sessionID
+          const sessionId = generateSessionId()
+          console.log(sessionId)
+
+
+          // 創建 sessionData 儲存用戶登入狀態
           const sessionData = {
-            userId: id,
-            username: username,
-            role: 'user' // 假設有預設角色為 'user'
-          };
-      
-          // 將 session 存儲到 Redis
-          redisClient.set(`session:${id}`, JSON.stringify(sessionData));
-      
-          res.cookie('token', token);
+            loggedIn: true // 用户的登入狀態
+        }
+          // 將 sessionData 存儲到 Redis，時限一小時
+          redisClient.set(sessionId, JSON.stringify(sessionData), 'EX', 3600);
+
+          //回傳sessionID給client
+          res.cookie('sessionId', sessionId)
+          res.cookie('jsonWebToken', jsonWebToken);
+
+          //更新redis裡sessionData的使用者登入狀態
+          redisClient.get(sessionId, (err, data) => {
+            if (err) throw err
+            const updatedSessionData = JSON.parse(data);
+            updatedSessionData.loggedIn = true; // 更新用户登录状态为 true
+            redisClient.set(sessionId, JSON.stringify(updatedSessionData), 'EX', 3600); // 更新 sessionData
+        });
       
           return res.status(200).json({
             message: `Login successfully! Welcome back ${userExist.name}.`,
-            accessToken: token
-          });
+            accessToken: jsonWebToken,
+            sessionId: sessionId
+          })
         } catch (error) {
           console.error(error);
           return res.status(500).json({
