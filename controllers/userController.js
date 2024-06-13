@@ -28,7 +28,7 @@ class userController {
 
         }
         catch (error) {
-            return res.status('500').json({
+            return res.status(500).json({
                 message: error
             })
         }
@@ -45,7 +45,7 @@ class userController {
             // }
 
             if (!name || !username || !password || !mail) {
-                return res.status('400').json(errorHandler.contentEmpty())
+                return res.status(400).json(errorHandler.contentEmpty())
             }
             //確認user 資訊是否存在
             const checkUserExist = await User.findOne({
@@ -58,7 +58,7 @@ class userController {
                 }
             })
             if (checkUserExist) {
-                return res.status('409').json(errorHandler.userAlreadyExist())
+                return res.status(409).json(errorHandler.userAlreadyExist())
             }
 
             //密碼加鹽
@@ -85,12 +85,12 @@ class userController {
             }
             //新增user
             await User.create(infor)
-            return res.status('200').json({
+            return res.status(200).json({
                 message: `Created ${req.body.name} sucessfully.`
             })
         }
         catch (error) {
-            return res.status('500').json({
+            return res.status(500).json({
                 message: error
             })
         }
@@ -150,12 +150,12 @@ class userController {
                 }
             })
             if (!user) {
-                return res.status('404').json(errorHandler.dataNotFind())
+                return res.status(404).json(errorHandler.dataNotFind())
             }
-            return res.status('200').json(user)
+            return res.status(200).json(user)
         }
         catch (error) {
-            return res.status('500').json({
+            return res.status(500).json({
                 message: error
             })
         }
@@ -168,16 +168,16 @@ class userController {
             })
             //確認刪除該位user前餘額為0，以保證實驗室經費正確
             if (user.balance !== 0) {
-                return res.status('409').send(errorHandler.balanceNotZero())
+                return res.status(409).send(errorHandler.balanceNotZero())
             }
             await User.destroy({ where: { id: user.id } })
             await UserLog.create({ message: `${user.name} was deleted.` })
-            return res.status('200').json({
+            return res.status(200).json({
                 message: `Deleted ${user.name} Sucessfully!`
             })
         }
         catch (error) {
-            return res.status('500').json({
+            return res.status(500).json({
                 message: error
             })
         }
@@ -191,18 +191,18 @@ class userController {
                 const user = await User.findAll({
                     raw: true
                 })
-                return res.status('200').json({ data: user })
+                return res.status(200).json({ data: user })
             }
             const user = await User.findAll({
                 attributes: Object.keys(attributes),
                 raw: true
             })
-            return res.status('200').json({
+            return res.status(200).json({
                 data: user
             })
         }
         catch (error) {
-            return res.status('500').json({
+            return res.status(500).json({
                 message: error
             })
         }
@@ -213,7 +213,7 @@ class userController {
             //確認信箱有無正確
             const user = await User.findOne({ where: { mail: mail } })
             if (!user) {
-                return res.status('404').json(errorHandler.dataNotFind())
+                return res.status(404).json(errorHandler.dataNotFind())
             }
             //將使用者的id, username, mail 做成token
             const resetPasswordToken = await TokenController.signToken({ id: user.id, username: user.username, mail: user.mail })
@@ -237,14 +237,14 @@ class userController {
 
             await transporter.sendMail(mailOption)
 
-            return res.status('200').json({
+            return res.status(200).json({
                 message: 'Mail for reset password was sent to your mail, please check.',
                 resetPasswordToken: resetPasswordToken
             })
         }
 
         catch (error) {
-            return res.status('500').json({
+            return res.status(500).json({
                 message: error
             })
         }
@@ -256,13 +256,13 @@ class userController {
             //檢查queryString中的token是否存在於資料庫
             const verifyUser = await User.findOne({ where: { resetPasswordToken: resetPasswordToken } })
             if (!verifyUser) {
-                return res.status('401').json(errorHandler.loginError())
+                return res.status(401).json(errorHandler.loginError())
             }
             const verifyToken = await jwt.verify(resetPasswordToken, config.secret)
             const currentTime = Date.now() / 1000
             //檢查token是否過期
             if (verifyToken.exp < currentTime) {
-                return res.status('401').json(errorHandler.loginError())
+                return res.status(401).json(errorHandler.loginError())
             }
             const { newPassword } = req.body
             const eNewPassword = await encrypt(newPassword)
@@ -277,11 +277,11 @@ class userController {
                 text: 'Your password has been successfully reset, please login again.'
             }
             await transporter.sendMail(mailOption)
-            return res.status('200').json({
+            return res.status(200).json({
                 message: 'Your password was updated sucessfully.'
             })
         } catch (error) {
-            return res.status('500').json({
+            return res.status(500).json({
                 message: error
             })
         }
