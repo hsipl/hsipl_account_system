@@ -19,6 +19,4 @@ router.delete("/:id", tokenController.verifyToken, sessionIdController.verifySes
 
 
 
-
-
 module.exports = router
